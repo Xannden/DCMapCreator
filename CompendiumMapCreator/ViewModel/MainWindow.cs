@@ -224,7 +224,7 @@ namespace CompendiumMapCreator.ViewModel
 
 			bool result = this.ProjectFile != null;
 
-			if (this.ProjectFile == string.Empty)
+			if (this.ProjectFile?.Length == 0)
 			{
 				SaveFileDialog dialog = new SaveFileDialog
 				{
