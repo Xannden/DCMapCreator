@@ -34,6 +34,7 @@ namespace CompendiumMapCreator.ViewModel
 			get => this.background;
 			set
 			{
+				this.background?.Dispose();
 				this.background = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.BackgroundImage)));
 			}
