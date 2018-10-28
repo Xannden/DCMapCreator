@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="CompendiumMapCreator.ZoomControl"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 mc:Ignorable="d"
+			 d:DesignHeight="450" d:DesignWidth="800" Name="UC">
+
+	<Grid Name="Grid" Background="Transparent" MouseWheel="Grid_MouseWheel" MouseLeftButtonDown="Grid_MouseLeftButtonDown" MouseLeftButtonUp="Grid_MouseLeftButtonUp" MouseMove="Grid_MouseMove">
+		<ContentControl Name="CC" Content="{Binding ElementName=UC, Path=Child}">
+			<ContentControl.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform ScaleX="{Binding ElementName=UC, Path=Scale}" ScaleY="{Binding ElementName=UC, Path=Scale}" />
+					<TranslateTransform  X="{Binding ElementName=UC, Path=ViewportPositionX}" Y="{Binding ElementName=UC, Path=ViewportPositionY}" />
+				</TransformGroup>
+			</ContentControl.RenderTransform>
+		</ContentControl>
+	</Grid>
+</UserControl>
