@@ -94,6 +94,11 @@ namespace CompendiumMapCreator.ViewModel
 			{
 				if (e.Key == Key.Z && this.Elements.Count > 0)
 				{
+					if (this.Elements.Count > 0)
+					{
+						this.Elements[this.Elements.Count - 1].IsSelected = false;
+					}
+
 					this.Elements.Undo();
 				}
 				else if (e.Key == Key.Y)
@@ -126,45 +131,49 @@ namespace CompendiumMapCreator.ViewModel
 			}
 			else if (e.Key == Key.D1)
 			{
-				this.IconType = IconType.NormalChest;
+				this.IconType = IconType.None;
 			}
 			else if (e.Key == Key.D2)
 			{
-				this.IconType = IconType.TrappedChest;
+				this.IconType = IconType.NormalChest;
 			}
 			else if (e.Key == Key.D3)
 			{
-				this.IconType = IconType.LockedChest;
+				this.IconType = IconType.TrappedChest;
 			}
 			else if (e.Key == Key.D4)
 			{
-				this.IconType = IconType.LockedDoor;
+				this.IconType = IconType.LockedChest;
 			}
 			else if (e.Key == Key.D5)
 			{
-				this.IconType = IconType.LeverValveRune;
+				this.IconType = IconType.LockedDoor;
 			}
 			else if (e.Key == Key.D6)
 			{
-				this.IconType = IconType.ControlBox;
+				this.IconType = IconType.LeverValveRune;
 			}
 			else if (e.Key == Key.D7)
 			{
-				this.IconType = IconType.Collectible;
+				this.IconType = IconType.ControlBox;
 			}
 			else if (e.Key == Key.D8)
 			{
-				this.IconType = IconType.QuestItem;
+				this.IconType = IconType.Collectible;
 			}
 			else if (e.Key == Key.D9)
 			{
-				this.IconType = IconType.QuestNPC;
+				this.IconType = IconType.QuestItem;
 			}
 			else if (e.Key == Key.D0)
 			{
-				this.IconType = IconType.SecretDoor;
+				this.IconType = IconType.QuestNPC;
 			}
 			else if (e.Key == Key.OemMinus)
+			{
+				this.IconType = IconType.SecretDoor;
+			}
+			else if (e.Key == Key.OemPlus)
 			{
 				this.IconType = IconType.QuestExit;
 			}
@@ -304,6 +313,29 @@ namespace CompendiumMapCreator.ViewModel
 					this.Elements.SetCount(count);
 				}
 			}
+		}
+
+		public Element Select(System.Windows.Point point)
+		{
+			bool found = false;
+			Element item = null;
+
+			for (int i = this.Elements.Count - 1; i >= 0; i--)
+			{
+				if (this.Elements[i].IsSelected)
+				{
+					this.Elements[i].IsSelected = false;
+				}
+
+				if (this.Elements[i].Contains(point) && !found)
+				{
+					this.Elements[i].IsSelected = true;
+					item = this.Elements[i];
+					found = true;
+				}
+			}
+
+			return item;
 		}
 
 		private void DrawLegend(Graphics g, DImage image)

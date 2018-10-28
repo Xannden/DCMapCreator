@@ -6,7 +6,7 @@
 		xmlns:local="clr-namespace:CompendiumMapCreator"
 		xmlns:vm="clr-namespace:CompendiumMapCreator.ViewModel"
 		mc:Ignorable="d"
-		Title="{Binding ProjectFile, UpdateSourceTrigger=PropertyChanged}" Height="720" Width="1024" KeyDown="Window_KeyDown">
+		Title="{Binding ProjectFile, UpdateSourceTrigger=PropertyChanged}" Height="730" Width="1024" KeyDown="Window_KeyDown">
 	<Window.DataContext>
 		<vm:MainWindow />
 	</Window.DataContext>
@@ -49,13 +49,15 @@
 				</VisualStateManager.VisualStateGroups>
 
 				<Rectangle Name="Hover" Margin="4" Fill="#00000000" />
-				<Image Name="Image" Source="{Binding Path=(local:Extensions.Source), RelativeSource={RelativeSource AncestorType={x:Type RadioButton}}}" RenderOptions.BitmapScalingMode="NearestNeighbor"  Opacity="0.5" SnapsToDevicePixels="True" Margin="4" />
+				<Image Name="Image" Source="{Binding Path=(local:Extensions.Source), RelativeSource={RelativeSource AncestorType={x:Type RadioButton}}}" Opacity="0.5" SnapsToDevicePixels="True" Margin="4" />
 
 				<ContentPresenter Grid.Column="1" VerticalAlignment="Center" />
 			</Grid>
 		</ControlTemplate>
 
 		<local:EnumBooleanConverter x:Key="EnumBooleanConverter" />
+		<local:BoolToBrushConverter x:Key="BoolToBrushConverter" IsFalse="Transparent" IsTrue="#7F87CEFA" />
+		<local:AddConverter x:Key="AddOne" Value="2" />
 	</Window.Resources>
 
 	<Grid>
@@ -64,6 +66,7 @@
 			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 			<RowDefinition Height="Auto" />
@@ -79,29 +82,32 @@
 			</MenuItem>
 		</Menu>
 
-		<StackPanel Grid.Row="1">
-			<Button Height="40" Content="New" Margin="10" Focusable="False" Click="LoadImage" />
+		<Button Grid.Row="1" Height="40" Content="New" Margin="10" Focusable="False" Click="LoadImage" />
 
-			<RadioButton IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.NormalChest}}" local:Extensions.Source="/Icons/normalChest.png" Template="{StaticResource imageButton}" Content="Normal Chest" GroupName="Selection" />
-			<RadioButton IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.TrappedChest}}" local:Extensions.Source="/Icons/trappedChest.png" Template="{StaticResource imageButton}" Content="Trapped Chest" GroupName="Selection" />
-			<RadioButton IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.LockedChest}}" local:Extensions.Source="/Icons/lockedChest.png" Template="{StaticResource imageButton}"  Content="Locked Chest" GroupName="Selection" />
-			<RadioButton IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.LockedDoor}}" local:Extensions.Source="/Icons/lockedDoor.png" Template="{StaticResource imageButton}" Content="Locked Door" GroupName="Selection" />
-			<RadioButton IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.LeverValveRune}}" local:Extensions.Source="/Icons/leverValve.png" Template="{StaticResource imageButton}" Content="Lever/Valve/Rune" GroupName="Selection" />
-			<RadioButton IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.ControlBox}}" local:Extensions.Source="/Icons/controlBox.png" Template="{StaticResource imageButton}" Content="Control Box" GroupName="Selection" />
-			<RadioButton IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Collectible}}" local:Extensions.Source="/Icons/collectible.png" Template="{StaticResource imageButton}"  Content="Collectible" GroupName="Selection" />
-			<RadioButton IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.QuestItem}}" local:Extensions.Source="/Icons/questItem.png" Template="{StaticResource imageButton}"  Content="Quest Item" GroupName="Selection" />
-			<RadioButton IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.QuestNPC}}" local:Extensions.Source="/Icons/questNPC.png" Template="{StaticResource imageButton}"  Content="Quest NPC" GroupName="Selection" />
-			<RadioButton IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.SecretDoor}}" local:Extensions.Source="/Icons/secretDoor.png" Template="{StaticResource imageButton}"  Content="Secret Door" GroupName="Selection" />
-			<RadioButton IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.QuestExit}}" local:Extensions.Source="/Icons/questExit.png" Template="{StaticResource imageButton}"  Content="Quest Exit" GroupName="Selection" />
-			<RadioButton IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Portal1}}" local:Extensions.Source="/Icons/portal1.png" Template="{StaticResource imageButton}"  Content="Waypoint/Portal 1" GroupName="Selection" />
-			<RadioButton IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Portal2}}" local:Extensions.Source="/Icons/portal2.png" Template="{StaticResource imageButton}"  Content="Waypoint/Portal 2" GroupName="Selection" />
-			<RadioButton IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Portal3}}" local:Extensions.Source="/Icons/portal3.png" Template="{StaticResource imageButton}"  Content="Waypoint/Portal 3" GroupName="Selection" />
-			<RadioButton IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Portal4}}" local:Extensions.Source="/Icons/portal4.png" Template="{StaticResource imageButton}"  Content="Waypoint/Portal 4" GroupName="Selection" />
-		</StackPanel>
+		<ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+			<StackPanel>
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.None}}" local:Extensions.Source="/Icons/cursor.png" Template="{StaticResource imageButton}" Content="Cursor" GroupName="Selection" RenderOptions.BitmapScalingMode="Linear" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.NormalChest}}" local:Extensions.Source="/Icons/normalChest.png" Template="{StaticResource imageButton}" Content="Normal Chest" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.TrappedChest}}" local:Extensions.Source="/Icons/trappedChest.png" Template="{StaticResource imageButton}" Content="Trapped Chest" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.LockedChest}}" local:Extensions.Source="/Icons/lockedChest.png" Template="{StaticResource imageButton}"  Content="Locked Chest" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.LockedDoor}}" local:Extensions.Source="/Icons/lockedDoor.png" Template="{StaticResource imageButton}" Content="Locked Door" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.LeverValveRune}}" local:Extensions.Source="/Icons/leverValve.png" Template="{StaticResource imageButton}" Content="Lever/Valve/Rune" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.ControlBox}}" local:Extensions.Source="/Icons/controlBox.png" Template="{StaticResource imageButton}" Content="Control Box" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Collectible}}" local:Extensions.Source="/Icons/collectible.png" Template="{StaticResource imageButton}"  Content="Collectible" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.QuestItem}}" local:Extensions.Source="/Icons/questItem.png" Template="{StaticResource imageButton}"  Content="Quest Item" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.QuestNPC}}" local:Extensions.Source="/Icons/questNPC.png" Template="{StaticResource imageButton}"  Content="Quest NPC" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.SecretDoor}}" local:Extensions.Source="/Icons/secretDoor.png" Template="{StaticResource imageButton}"  Content="Secret Door" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.QuestExit}}" local:Extensions.Source="/Icons/questExit.png" Template="{StaticResource imageButton}"  Content="Quest Exit" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Portal1}}" local:Extensions.Source="/Icons/portal1.png" Template="{StaticResource imageButton}"  Content="Waypoint/Portal 1" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Portal2}}" local:Extensions.Source="/Icons/portal2.png" Template="{StaticResource imageButton}"  Content="Waypoint/Portal 2" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Portal3}}" local:Extensions.Source="/Icons/portal3.png" Template="{StaticResource imageButton}"  Content="Waypoint/Portal 3" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Portal4}}" local:Extensions.Source="/Icons/portal4.png" Template="{StaticResource imageButton}"  Content="Waypoint/Portal 4" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+			</StackPanel>
+		</ScrollViewer>
 
-		<Button Grid.Row="2" Height="40" Margin="10" Content="Export Image" Focusable="False" Click="SaveImage" />
+		<Button Grid.Row="3" Height="40" Margin="10" Content="Export Image" Focusable="False" Click="SaveImage" />
 
-		<Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" BorderThickness="1,0,0,0" BorderBrush="Black" MouseLeftButtonUp="Border_MouseLeftButtonUp" ClipToBounds="True">
+		<Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" BorderThickness="1,0,0,0" BorderBrush="Black" MouseLeftButtonUp="Border_MouseLeftButtonUp" MouseLeftButtonDown="Border_MouseLeftButtonDown" MouseMove="Border_MouseMove" ClipToBounds="True">
 			<local:ZoomControl x:Name="Zoom" Background="Black" ChildWidth="{Binding BackgroundImage.Width}" ChildHeight="{Binding BackgroundImage.Height}">
 				<local:ZoomControl.Child>
 					<Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext}">
@@ -109,7 +115,7 @@
 							<Image  Width="{Binding BackgroundImage.Width}" Height="{Binding BackgroundImage.Height}" Source="{Binding BackgroundImage.BitmapImage}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" />
 						</Canvas>
 
-						<ItemsControl  ItemsSource="{Binding Elements}" SnapsToDevicePixels="True">
+						<ItemsControl ItemsSource="{Binding Elements}" SnapsToDevicePixels="True">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
 									<Canvas />
@@ -117,11 +123,17 @@
 							</ItemsControl.ItemsPanel>
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
-									<Image Source="{Binding Image}" RenderOptions.BitmapScalingMode="NearestNeighbor" Width="{Binding Width}" Height="{Binding Height}" SnapsToDevicePixels="True">
-										<Image.RenderTransform>
+									<Canvas Width="{Binding Width}" Height="{Binding Height}" ClipToBounds="False">
+										<Canvas.RenderTransform>
 											<TranslateTransform X="{Binding  X}" Y="{Binding Y}" />
-										</Image.RenderTransform>
-									</Image>
+										</Canvas.RenderTransform>
+										<Image Source="{Binding Image}" Width="{Binding Width}" Height="{Binding Height}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" />
+										<Border Width="{Binding Width, Converter={StaticResource AddOne}}" Height="{Binding Height, Converter={StaticResource AddOne }}" BorderThickness="1" BorderBrush="{Binding IsSelected, Converter={StaticResource BoolToBrushConverter}}">
+											<Border.RenderTransform>
+												<TranslateTransform X="-1" Y="-1" />
+											</Border.RenderTransform>
+										</Border>
+									</Canvas>
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>
 						</ItemsControl>

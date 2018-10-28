@@ -56,6 +56,8 @@
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
     <Compile Include="Commands\DelegateCommand.cs" />
+    <Compile Include="Converter\AddConverter.cs" />
+    <Compile Include="Converter\BoolToBrushConverter.cs" />
     <Compile Include="Converter\EnumBooleanConverter.cs" />
     <Compile Include="Data\IconType.cs" />
     <Compile Include="Data\Image.cs" />
@@ -133,6 +135,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\entrance.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\cursor.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
