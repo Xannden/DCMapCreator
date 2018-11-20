@@ -230,12 +230,12 @@ namespace CompendiumMapCreator.ViewModel
 					if (this.BackgroundImage.Height > (legend?.Height ?? 0))
 					{
 						info = this.CreateInfoList(width, font);
-						height = this.BackgroundImage.Height + (info?.Height ?? 0) + 3;
+						height = this.BackgroundImage.Height + (info == null ? 0 : info.Height + 3);
 					}
 					else
 					{
 						info = this.CreateInfoList(this.BackgroundImage.Width, font);
-						height = Math.Max(legend.Height, this.BackgroundImage.Height + (info?.Height ?? 0) + 3);
+						height = Math.Max(legend.Height, this.BackgroundImage.Height + (info == null ? 0 : info.Height + 3));
 					}
 
 					using (DImage image = new Bitmap(width, height, PixelFormat.Format32bppArgb))
@@ -248,10 +248,10 @@ namespace CompendiumMapCreator.ViewModel
 							{
 								if (info != null)
 								{
-									this.DrawHorizontalLine(g, 0, this.BackgroundImage.Height + 2, image.Width, this.BackgroundImage.Height + 2);
+									this.DrawHorizontalLine(g, 0, this.BackgroundImage.Height + 1, image.Width, this.BackgroundImage.Height + 1);
 								}
 
-								this.DrawVerticalLine(g, 149, 0, 149, this.BackgroundImage.Height + 1);
+								this.DrawVerticalLine(g, 149, 0, 149, this.BackgroundImage.Height);
 							}
 							else
 							{
@@ -259,7 +259,7 @@ namespace CompendiumMapCreator.ViewModel
 
 								if (info != null)
 								{
-									this.DrawHorizontalLine(g, 150, this.BackgroundImage.Height + 2, image.Width, this.BackgroundImage.Height + 2);
+									this.DrawHorizontalLine(g, 150, this.BackgroundImage.Height + 1, image.Width, this.BackgroundImage.Height + 1);
 								}
 							}
 

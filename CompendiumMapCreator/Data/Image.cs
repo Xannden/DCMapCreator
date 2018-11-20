@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -27,11 +28,11 @@ namespace CompendiumMapCreator
 			}
 		}
 
-		public MemoryStream Data { get; }
+		public MemoryStream Data { get; private set; }
 
-		public System.Drawing.Image DrawingImage { get; }
+		public Bitmap DrawingImage { get; private set; }
 
-		public BitmapImage BitmapImage { get; }
+		public BitmapImage BitmapImage { get; private set; }
 
 		public int Width => this.DrawingImage.Width;
 
@@ -47,22 +48,20 @@ namespace CompendiumMapCreator
 
 			byte[] data = new BinaryReader(stream).ReadBytes((int)stream.Length);
 
-			this.Data = new MemoryStream(data, 0, data.Length, false, true);
-
-			this.BitmapImage = new BitmapImage();
-			this.BitmapImage.BeginInit();
-			this.BitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-			this.BitmapImage.StreamSource = this.Data;
-			this.BitmapImage.EndInit();
-
-			this.DrawingImage = System.Drawing.Image.FromStream(this.Data);
+			this.Load(new MemoryStream(data, 0, data.Length, false, true));
 		}
 
-		public Image(byte[] data) : this(new MemoryStream(data, 0, data.Length, false, true))
+		public Image(byte[] data)
 		{
+			this.Load(new MemoryStream(data, 0, data.Length, false, true));
 		}
 
 		public Image(MemoryStream stream)
+		{
+			this.Load(stream);
+		}
+
+		private void Load(MemoryStream stream)
 		{
 			this.Data = stream;
 
@@ -72,7 +71,9 @@ namespace CompendiumMapCreator
 			this.BitmapImage.StreamSource = this.Data;
 			this.BitmapImage.EndInit();
 
-			this.DrawingImage = System.Drawing.Image.FromStream(this.Data);
+			this.DrawingImage = (Bitmap)Bitmap.FromStream(this.Data);
+
+			this.DrawingImage.SetResolution(96, 96);
 		}
 
 		#region IDisposable Support
