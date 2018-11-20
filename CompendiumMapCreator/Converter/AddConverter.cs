@@ -2,9 +2,10 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace CompendiumMapCreator
+namespace CompendiumMapCreator.Converter
 {
 	public class AddConverter : IValueConverter
+
 	{
 		public int Value { get; set; }
 

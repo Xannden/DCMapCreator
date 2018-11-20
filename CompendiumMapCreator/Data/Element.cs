@@ -1,21 +1,29 @@
 ﻿using System.ComponentModel;
-using System.Windows;
-using System.Windows.Media.Imaging;
+using CompendiumMapCreator.Data;
 
 namespace CompendiumMapCreator
 {
 	public class Element : INotifyPropertyChanged
 	{
-		private bool isSelected;
 		private int x;
 		private int y;
+		private double opacity = 1;
+		private Image image;
 
-		public Element(int x, int y, IconType type)
+		public Element(IconType type)
 		{
-			this.X = x;
-			this.Y = y;
+			this.X = 0;
+			this.Y = 0;
 			this.Type = type;
-			this.Image = this.Type.GetImage();
+			this.image = Image.GetImageFromResources(type.GetImageFile());
+		}
+
+		protected Element(Image image, IconType type)
+		{
+			this.X = 0;
+			this.Y = 0;
+			this.Type = type;
+			this.image = image;
 		}
 
 		public int X
@@ -38,26 +46,38 @@ namespace CompendiumMapCreator
 			}
 		}
 
-		public int Width => this.Image.PixelWidth;
+		public int Width => this.Image.Width;
 
-		public int Height => this.Image.PixelHeight;
+		public int Height => this.Image.Height;
 
-		public BitmapImage Image { get; }
+		public Image Image
+		{
+			get => this.image;
+			set
+			{
+				this.image = value;
+
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Image)));
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Width)));
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Height)));
+			}
+		}
 
 		public IconType Type { get; }
 
-		public bool IsSelected
+		public double Opacity
 		{
-			get => this.isSelected;
+			get => this.opacity;
+
 			set
 			{
-				this.isSelected = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsSelected)));
+				this.opacity = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Opacity)));
 			}
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public bool Contains(Point point) => this.X < point.X && (this.X + this.Width) >= point.X && this.Y < point.Y && (this.Y + this.Width) >= point.Y;
+		public bool Contains(ImagePoint point) => this.X <= point.X && (this.X + this.Width) > point.X && this.Y <= point.Y && (this.Y + this.Height) > point.Y;
 	}
 }

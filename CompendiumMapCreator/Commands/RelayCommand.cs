@@ -24,6 +24,6 @@ namespace CompendiumMapCreator
 
 		public void Execute(object parameter) => this.execute?.Invoke(parameter);
 
-		protected void OnCanExecuteChanged(EventArgs e) => this.CanExecuteChanged?.Invoke(this, e);
+		public void RaiseCanExecuteChanged() => this.CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 	}
 }

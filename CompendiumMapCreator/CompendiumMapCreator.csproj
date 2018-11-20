@@ -13,7 +13,6 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -55,21 +54,50 @@
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Compile Include="Converter\ElementToVisibilityConverter.cs" />
+    <Compile Include="Data\Direction.cs" />
+    <Compile Include="Data\ElementCopy.cs" />
+    <Compile Include="Data\ImagePoint.cs" />
+    <Compile Include="Data\Label.cs" />
+    <Compile Include="Data\NumberedElement.cs" />
+    <Compile Include="Data\Portal.cs" />
+    <Compile Include="Data\WindowPoint.cs" />
+    <Compile Include="Edits\Add.cs" />
+    <Compile Include="Edits\ChangeLabel.cs" />
+    <Compile Include="Edits\Copy.cs" />
+    <Compile Include="Edits\Edit.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
     <Compile Include="Converter\AddConverter.cs" />
-    <Compile Include="Converter\BoolToBrushConverter.cs" />
+    <Compile Include="Converter\EqualsToBrushConverter.cs" />
     <Compile Include="Converter\EnumBooleanConverter.cs" />
     <Compile Include="Data\IconType.cs" />
     <Compile Include="Data\Image.cs" />
     <Compile Include="Converter\IconTypeToFileConverter.cs" />
     <Compile Include="Data\UndoRedoStack.cs" />
+    <Compile Include="Edits\Move.cs" />
+    <Compile Include="Edits\Remove.cs" />
     <Compile Include="ViewModel\MainWindow.cs" />
     <Compile Include="ViewModel\RadioButtonImage.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Data\Element.cs" />
+    <Compile Include="View\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\EditWindow.xaml.cs">
+      <DependentUpon>EditWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ShortcutsWindow.xaml.cs">
+      <DependentUpon>ShortcutsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ZoomControl.xaml.cs">
       <DependentUpon>ZoomControl.xaml</DependentUpon>
     </Compile>
+    <Page Include="View\AboutWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\EditWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -82,6 +110,9 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\ShortcutsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ZoomControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -123,10 +154,6 @@
     <Resource Include="Icons\leverValve.png" />
     <Resource Include="Icons\lockedChest.png" />
     <Resource Include="Icons\lockedDoor.png" />
-    <Resource Include="Icons\portal1.png" />
-    <Resource Include="Icons\portal2.png" />
-    <Resource Include="Icons\portal3.png" />
-    <Resource Include="Icons\portal4.png" />
     <Resource Include="Icons\questExit.png" />
     <Resource Include="Icons\questItem.png" />
     <Resource Include="Icons\questNPC.png" />
@@ -138,6 +165,22 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\cursor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\0.png" />
+    <Resource Include="Icons\1.png" />
+    <Resource Include="Icons\2.png" />
+    <Resource Include="Icons\3.png" />
+    <Resource Include="Icons\4.png" />
+    <Resource Include="Icons\5.png" />
+    <Resource Include="Icons\6.png" />
+    <Resource Include="Icons\7.png" />
+    <Resource Include="Icons\8.png" />
+    <Resource Include="Icons\9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\label.png" />
+    <Resource Include="Icons\portal.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

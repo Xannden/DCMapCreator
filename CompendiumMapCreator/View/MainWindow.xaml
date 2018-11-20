@@ -4,9 +4,15 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:CompendiumMapCreator"
+		xmlns:converter="clr-namespace:CompendiumMapCreator.Converter"
 		xmlns:vm="clr-namespace:CompendiumMapCreator.ViewModel"
+		xmlns:data="clr-namespace:CompendiumMapCreator.Data"
+		PreviewKeyDown="Window_KeyDown"
+		PreviewKeyUp="Window_KeyUp"
+		PreviewMouseDown="Window_MouseDown"
+		Name="Window"
 		mc:Ignorable="d"
-		Title="{Binding ProjectFile, UpdateSourceTrigger=PropertyChanged}" Height="730" Width="1024" KeyDown="Window_KeyDown">
+		Title="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Height="730" Width="1024">
 	<Window.DataContext>
 		<vm:MainWindow />
 	</Window.DataContext>
@@ -15,7 +21,7 @@
 		<ControlTemplate x:Key="imageButton" TargetType="{x:Type RadioButton}">
 			<Grid Height="34">
 				<Grid.Resources>
-					<local:IconTypeToFileConverter x:Key="IconTypeToFile" />
+					<converter:IconTypeToFileConverter x:Key="IconTypeToFile" />
 				</Grid.Resources>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="34" />
@@ -54,11 +60,55 @@
 				<ContentPresenter Grid.Column="1" VerticalAlignment="Center" />
 			</Grid>
 		</ControlTemplate>
-
-		<local:EnumBooleanConverter x:Key="EnumBooleanConverter" />
-		<local:BoolToBrushConverter x:Key="BoolToBrushConverter" IsFalse="Transparent" IsTrue="#7F87CEFA" />
-		<local:AddConverter x:Key="AddOne" Value="2" />
+		<converter:EnumBooleanConverter x:Key="EnumBooleanConverter" />
+		<converter:EqualsToBrushConverter x:Key="EqualsToBrushConverter" IsFalse="Transparent" IsTrue="#7F87CEFA" />
+		<converter:AddConverter x:Key="AddOne" Value="2" />
+		<converter:ElementToVisibilityConverter x:Key="ElementToVisibility" />
 	</Window.Resources>
+
+	<Window.CommandBindings>
+		<CommandBinding Command="Copy" Executed="Copy" />
+		<CommandBinding Command="Paste" Executed="Paste" />
+	</Window.CommandBindings>
+
+	<Window.InputBindings>
+		<KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding LoadImageCommand}" />
+		<KeyBinding Key="E" Modifiers="Ctrl" Command="{Binding ExportCommand}" />
+		<KeyBinding Key="D1" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.Cursor}" />
+		<KeyBinding Key="D2" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.NormalChest}" />
+		<KeyBinding Key="D3" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.TrappedChest}" />
+		<KeyBinding Key="D4" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.LockedChest}" />
+		<KeyBinding Key="D5" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.LockedDoor}" />
+		<KeyBinding Key="D6" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.LeverValveRune}" />
+		<KeyBinding Key="D7" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.ControlBox}" />
+		<KeyBinding Key="D8" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.Collectible}" />
+		<KeyBinding Key="D9" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.QuestItem}" />
+		<KeyBinding Key="D0" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.QuestNPC}" />
+		<KeyBinding Key="OemMinus" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.SecretDoor}" />
+		<KeyBinding Key="OemPlus" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.QuestExit}" />
+		<KeyBinding Key="D1" Modifiers="Shift" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.Portal}" />
+		<KeyBinding Key="D2" Modifiers="Shift" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.Label}" />
+
+		<KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
+		<KeyBinding Key="Y" Modifiers="Ctrl" Command="{Binding RedoCommand}" />
+
+		<KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
+
+		<KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SaveProjectCommand}" />
+		<KeyBinding Key="L" Modifiers="Ctrl" Command="{Binding LoadProjectCommand}" />
+
+		<KeyBinding Key="Up" Command="{Binding MoveCommand}" CommandParameter="{x:Static data:Direction.Up}" />
+		<KeyBinding Key="Down" Command="{Binding MoveCommand}" CommandParameter="{x:Static data:Direction.Down}" />
+		<KeyBinding Key="Left"  Command="{Binding MoveCommand}" CommandParameter="{x:Static data:Direction.Left}" />
+		<KeyBinding Key="Right" Command="{Binding MoveCommand}" CommandParameter="{x:Static data:Direction.Right}" />
+		<KeyBinding Key="Up" Modifiers="Shift" Command="{Binding MoveCommand}" CommandParameter="{x:Static data:Direction.Up}" />
+		<KeyBinding Key="Down" Modifiers="Shift" Command="{Binding MoveCommand}" CommandParameter="{x:Static data:Direction.Down}" />
+		<KeyBinding Key="Left" Modifiers="Shift"  Command="{Binding MoveCommand}" CommandParameter="{x:Static data:Direction.Left}" />
+		<KeyBinding Key="Right" Modifiers="Shift" Command="{Binding MoveCommand}" CommandParameter="{x:Static data:Direction.Right}" />
+
+		<KeyBinding Command="Copy" Key="C" Modifiers="Ctrl" />
+		<KeyBinding Command="Paste" Key="V" Modifiers="Ctrl" />
+	</Window.InputBindings>
 
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -74,19 +124,27 @@
 
 		<Menu Grid.Row="0" Grid.ColumnSpan="2" Height="20">
 			<MenuItem Header="File">
-				<MenuItem Header="Save Project" Click="SaveProject_Click" />
-				<MenuItem Header="Load Project" Click="LoadProject_Click" />
+				<MenuItem Header="Save Project" InputGestureText="Ctrl+S" Command="{Binding SaveProjectCommand}" />
+				<MenuItem Header="Load Project" InputGestureText="Ctrl+L" Command="{Binding LoadProjectCommand}" />
+			</MenuItem>
+			<MenuItem Header="Edit">
+				<MenuItem Header="Undo" InputGestureText="Ctrl+Z" Command="{Binding UndoCommand}" />
+				<MenuItem Header="Redo" InputGestureText="Ctrl+Y" Command="{Binding RedoCommand}" />
 			</MenuItem>
 			<MenuItem Header="Options">
 				<MenuItem Header="Add Legend" IsCheckable="True" IsChecked="{Binding AddLegend}" />
 			</MenuItem>
+			<MenuItem Header="Help">
+				<MenuItem Header="Keyboard Shortcuts" Click="ShowShortcuts" />
+				<MenuItem Header="About" Click="AboutWindow" />
+			</MenuItem>
 		</Menu>
 
-		<Button Grid.Row="1" Height="40" Content="New" Margin="10" Focusable="False" Click="LoadImage" />
+		<Button Grid.Row="1" Height="40" Content="New" Margin="10" Focusable="False" Command="{Binding LoadImageCommand}" />
 
 		<ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
 			<StackPanel>
-				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.None}}" local:Extensions.Source="/Icons/cursor.png" Template="{StaticResource imageButton}" Content="Cursor" GroupName="Selection" RenderOptions.BitmapScalingMode="Linear" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Cursor}}" local:Extensions.Source="/Icons/cursor.png" Template="{StaticResource imageButton}" Content="Cursor" GroupName="Selection" RenderOptions.BitmapScalingMode="Linear" />
 				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.NormalChest}}" local:Extensions.Source="/Icons/normalChest.png" Template="{StaticResource imageButton}" Content="Normal Chest" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
 				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.TrappedChest}}" local:Extensions.Source="/Icons/trappedChest.png" Template="{StaticResource imageButton}" Content="Trapped Chest" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
 				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.LockedChest}}" local:Extensions.Source="/Icons/lockedChest.png" Template="{StaticResource imageButton}"  Content="Locked Chest" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
@@ -98,19 +156,22 @@
 				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.QuestNPC}}" local:Extensions.Source="/Icons/questNPC.png" Template="{StaticResource imageButton}"  Content="Quest NPC" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
 				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.SecretDoor}}" local:Extensions.Source="/Icons/secretDoor.png" Template="{StaticResource imageButton}"  Content="Secret Door" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
 				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.QuestExit}}" local:Extensions.Source="/Icons/questExit.png" Template="{StaticResource imageButton}"  Content="Quest Exit" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
-				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Portal1}}" local:Extensions.Source="/Icons/portal1.png" Template="{StaticResource imageButton}"  Content="Waypoint/Portal 1" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
-				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Portal2}}" local:Extensions.Source="/Icons/portal2.png" Template="{StaticResource imageButton}"  Content="Waypoint/Portal 2" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
-				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Portal3}}" local:Extensions.Source="/Icons/portal3.png" Template="{StaticResource imageButton}"  Content="Waypoint/Portal 3" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
-				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Portal4}}" local:Extensions.Source="/Icons/portal4.png" Template="{StaticResource imageButton}"  Content="Waypoint/Portal 4" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Portal}}" local:Extensions.Source="/Icons/portal.png" Template="{StaticResource imageButton}"  Content="Waypoint/Portal" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Label}}" local:Extensions.Source="/Icons/label.png" Template="{StaticResource imageButton}"  Content="Label" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
 			</StackPanel>
 		</ScrollViewer>
 
-		<Button Grid.Row="3" Height="40" Margin="10" Content="Export Image" Focusable="False" Click="SaveImage" />
+		<Button Grid.Row="3" Height="40" Margin="10" Content="Export Image" Focusable="False" Command="{Binding ExportCommand}" />
 
-		<Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" BorderThickness="1,0,0,0" BorderBrush="Black" MouseLeftButtonUp="Border_MouseLeftButtonUp" MouseLeftButtonDown="Border_MouseLeftButtonDown" MouseMove="Border_MouseMove" ClipToBounds="True">
+		<Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" BorderThickness="1,0,0,0" BorderBrush="Black" MouseLeftButtonUp="Border_MouseLeftButtonUp" MouseLeftButtonDown="Border_MouseLeftButtonDown" MouseRightButtonDown="Border_MouseRightButtonDown" MouseMove="Border_MouseMove" ClipToBounds="True">
 			<local:ZoomControl x:Name="Zoom" Background="Black" ChildWidth="{Binding BackgroundImage.Width}" ChildHeight="{Binding BackgroundImage.Height}">
 				<local:ZoomControl.Child>
 					<Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext}">
+						<Grid.ContextMenu>
+							<ContextMenu>
+								<MenuItem Header="Paste" Click="Paste" InputGestureText="Ctrl+V" />
+							</ContextMenu>
+						</Grid.ContextMenu>
 						<Canvas>
 							<Image  Width="{Binding BackgroundImage.Width}" Height="{Binding BackgroundImage.Height}" Source="{Binding BackgroundImage.BitmapImage}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" />
 						</Canvas>
@@ -123,12 +184,31 @@
 							</ItemsControl.ItemsPanel>
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
-									<Canvas Width="{Binding Width}" Height="{Binding Height}" ClipToBounds="False">
+									<Canvas Width="{Binding Width}" Height="{Binding Height}" ClipToBounds="False" Opacity="{Binding Opacity}">
+
 										<Canvas.RenderTransform>
 											<TranslateTransform X="{Binding  X}" Y="{Binding Y}" />
 										</Canvas.RenderTransform>
-										<Image Source="{Binding Image}" Width="{Binding Width}" Height="{Binding Height}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" />
-										<Border Width="{Binding Width, Converter={StaticResource AddOne}}" Height="{Binding Height, Converter={StaticResource AddOne }}" BorderThickness="1" BorderBrush="{Binding IsSelected, Converter={StaticResource BoolToBrushConverter}}">
+
+										<Image Source="{Binding Image.BitmapImage}" Width="{Binding Width}" Height="{Binding Height}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True">
+											<Image.ContextMenu>
+												<ContextMenu>
+													<MenuItem Header="Edit" Visibility="{Binding Converter={StaticResource ElementToVisibility}}" Click="Edit" />
+													<MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy" />
+													<MenuItem Header="Delete" Command="{Binding  Source={x:Reference Window}, Path=DataContext.DeleteCommand}" InputGestureText="Del" />
+												</ContextMenu>
+											</Image.ContextMenu>
+										</Image>
+
+										<Border Width="{Binding Width, Converter={StaticResource AddOne}}" Height="{Binding Height, Converter={StaticResource AddOne }}" BorderThickness="1">
+
+											<Border.BorderBrush>
+												<MultiBinding Converter="{StaticResource EqualsToBrushConverter}">
+													<Binding Path="DataContext.Selected" RelativeSource="{RelativeSource AncestorType=Window}" />
+													<Binding Path="." />
+												</MultiBinding>
+											</Border.BorderBrush>
+
 											<Border.RenderTransform>
 												<TranslateTransform X="-1" Y="-1" />
 											</Border.RenderTransform>

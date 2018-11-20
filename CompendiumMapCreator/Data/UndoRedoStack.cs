@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
+using CompendiumMapCreator.Edits;
 
 namespace CompendiumMapCreator.Data
 {
-	public class UndoRedoStack<T> : INotifyCollectionChanged, INotifyPropertyChanged, IList<T>
+	public class UndoRedoStack<T> : IList<T>
+		where T : Edit
 	{
 		private readonly List<T> data;
-
-		public event NotifyCollectionChangedEventHandler CollectionChanged;
-
-		public event PropertyChangedEventHandler PropertyChanged;
 
 		public IEnumerable<T> Data
 		{
@@ -63,6 +59,12 @@ namespace CompendiumMapCreator.Data
 			this.data = new List<T>(size);
 		}
 
+		public void Add(T item, IList<Element> list)
+		{
+			item.Apply(list);
+			this.Add(item);
+		}
+
 		public void Add(T item)
 		{
 			if (this.Count < this.data.Count)
@@ -72,18 +74,12 @@ namespace CompendiumMapCreator.Data
 
 			this.data.Add(item);
 			this.Count++;
-
-			this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, this.Count - 1));
-			this.OnPropertyChanged(nameof(this.Count));
 		}
 
 		public void Clear()
 		{
 			this.data.Clear();
 			this.Count = 0;
-
-			this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-			this.OnPropertyChanged(nameof(this.Count));
 		}
 
 		public bool Contains(T item)
@@ -104,9 +100,6 @@ namespace CompendiumMapCreator.Data
 				T element = this.data[index];
 				this.data.RemoveAt(index);
 				this.Count--;
-
-				this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, element, index));
-				this.OnPropertyChanged(nameof(this.Count));
 
 				return true;
 			}
@@ -139,9 +132,6 @@ namespace CompendiumMapCreator.Data
 
 			this.data.Insert(index, item);
 			this.Count++;
-
-			this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
-			this.OnPropertyChanged(nameof(this.Count));
 		}
 
 		public void RemoveAt(int index)
@@ -155,48 +145,25 @@ namespace CompendiumMapCreator.Data
 
 			this.data.RemoveAt(index);
 			this.Count--;
-
-			this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, element, index));
-			this.OnPropertyChanged(nameof(this.Count));
 		}
 
-		public void Undo()
+		public void Undo(IList<Element> list)
 		{
 			if (this.Count > 0)
 			{
 				this.Count--;
 
-				this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, this.data[this.Count], this.Count));
-				this.OnPropertyChanged(nameof(this.Count));
+				this.data[this.Count].Undo(list);
 			}
 		}
 
-		public void Redo()
+		public void Redo(IList<Element> list)
 		{
 			if (this.Count < this.data.Count)
 			{
+				this.data[this.Count].Apply(list);
+
 				this.Count++;
-
-				this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, this.data[this.Count - 1], this.Count - 1));
-				this.OnPropertyChanged(nameof(this.Count));
-			}
-		}
-
-		public void SetCount(int count)
-		{
-			if (this.Count < count)
-			{
-				throw new ArgumentOutOfRangeException(nameof(count));
-			}
-
-			int diff = this.Count - count;
-
-			this.Count = count;
-			this.OnPropertyChanged(nameof(this.Count));
-
-			if (diff != 0)
-			{
-				this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, this.data.GetRange(count, diff), count));
 			}
 		}
 
@@ -209,8 +176,6 @@ namespace CompendiumMapCreator.Data
 				this.data.RemoveAt(this.data.Count - 1);
 			}
 		}
-
-		private void OnPropertyChanged(string property) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
 
 		private struct Enumerator : IEnumerator, IEnumerator<T>
 		{

@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Reflection;
-using System.Windows.Media.Imaging;
 
 namespace CompendiumMapCreator
 {
 	public enum IconType
 	{
-		None,
+		Cursor,
 		NormalChest,
 		TrappedChest,
 		LockedChest,
@@ -18,10 +16,8 @@ namespace CompendiumMapCreator
 		QuestNPC,
 		SecretDoor,
 		QuestExit,
-		Portal1,
-		Portal2,
-		Portal3,
-		Portal4,
+		Portal,
+		Label,
 	}
 
 	public static class IconTypeExtensions
@@ -30,6 +26,9 @@ namespace CompendiumMapCreator
 		{
 			switch (type)
 			{
+				case IconType.Cursor:
+					return "Cursor";
+
 				case IconType.NormalChest:
 					return "Normal Chest";
 
@@ -63,24 +62,18 @@ namespace CompendiumMapCreator
 				case IconType.QuestExit:
 					return "Quest Exit";
 
-				case IconType.Portal1:
-					return "Waypoint/Portal 1";
+				case IconType.Portal:
+					return "Waypoint/Portal";
 
-				case IconType.Portal2:
-					return "Waypoint/Portal 2";
-
-				case IconType.Portal3:
-					return "Waypoint/Portal 3";
-
-				case IconType.Portal4:
-					return "Waypoint/Portal 4";
+				case IconType.Label:
+					return "Label";
 
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
 		}
 
-		public static string GetFile(this IconType type)
+		public static string GetImageFile(this IconType type)
 		{
 			switch (type)
 			{
@@ -117,23 +110,12 @@ namespace CompendiumMapCreator
 				case IconType.QuestExit:
 					return "Icons/questExit.png";
 
-				case IconType.Portal1:
-					return "Icons/portal1.png";
-
-				case IconType.Portal2:
-					return "Icons/portal2.png";
-
-				case IconType.Portal3:
-					return "Icons/portal3.png";
-
-				case IconType.Portal4:
-					return "Icons/portal4.png";
+				case IconType.Portal:
+					return "Icons/portal.png";
 
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
 		}
-
-		public static BitmapImage GetImage(this IconType type) => new BitmapImage(new Uri("pack://application:,,,/" + Assembly.GetExecutingAssembly().GetName().Name + ";component/" + type.GetFile(), UriKind.Absolute));
 	}
 }

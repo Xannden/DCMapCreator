@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace CompendiumMapCreator
+namespace CompendiumMapCreator.Converter
 {
 	public class EnumBooleanConverter : IValueConverter
 	{
