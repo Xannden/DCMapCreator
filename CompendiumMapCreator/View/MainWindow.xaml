@@ -19,7 +19,7 @@
 
 	<Window.Resources>
 		<ControlTemplate x:Key="imageButton" TargetType="{x:Type RadioButton}">
-			<Grid Height="34">
+			<Grid Height="28">
 				<Grid.Resources>
 					<converter:IconTypeToFileConverter x:Key="IconTypeToFile" />
 				</Grid.Resources>
@@ -55,7 +55,7 @@
 				</VisualStateManager.VisualStateGroups>
 
 				<Rectangle Name="Hover" Margin="4" Fill="#00000000" />
-				<Image Name="Image" Source="{Binding Path=(local:Extensions.Source), RelativeSource={RelativeSource AncestorType={x:Type RadioButton}}}" Opacity="0.5" SnapsToDevicePixels="True" Margin="4" />
+				<Image Height="21" Width="21" Name="Image" Source="{Binding Path=(local:Extensions.Source), RelativeSource={RelativeSource AncestorType={x:Type RadioButton}}}" Opacity="0.5" RenderOptions.BitmapScalingMode="NearestNeighbor" Margin="4" />
 
 				<ContentPresenter Grid.Column="1" VerticalAlignment="Center" />
 			</Grid>
@@ -82,12 +82,15 @@
 		<KeyBinding Key="D6" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.LeverValveRune}" />
 		<KeyBinding Key="D7" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.ControlBox}" />
 		<KeyBinding Key="D8" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.Collectible}" />
-		<KeyBinding Key="D9" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.QuestItem}" />
-		<KeyBinding Key="D0" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.QuestNPC}" />
-		<KeyBinding Key="OemMinus" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.SecretDoor}" />
-		<KeyBinding Key="OemPlus" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.QuestExit}" />
-		<KeyBinding Key="D1" Modifiers="Shift" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.Portal}" />
-		<KeyBinding Key="D2" Modifiers="Shift" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.Label}" />
+		<KeyBinding Key="D9" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.Lore}" />
+		<KeyBinding Key="D0" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.Natural}" />
+		<KeyBinding Key="OemMinus" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.Arcane}" />
+		<KeyBinding Key="OemPlus" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.QuestItem}" />
+		<KeyBinding Key="D1" Modifiers="Shift" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.QuestNPC}" />
+		<KeyBinding Key="D2" Modifiers="Shift" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.SecretDoor}" />
+		<KeyBinding Key="D3" Modifiers="Shift" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.QuestExit}" />
+		<KeyBinding Key="D4" Modifiers="Shift" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.Portal}" />
+		<KeyBinding Key="D5" Modifiers="Shift" Command="{Binding SelectType}" CommandParameter="{x:Static local:IconType.Label}" />
 
 		<KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
 		<KeyBinding Key="Y" Modifiers="Ctrl" Command="{Binding RedoCommand}" />
@@ -151,7 +154,10 @@
 				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.LockedDoor}}" local:Extensions.Source="/Icons/lockedDoor.png" Template="{StaticResource imageButton}" Content="Locked Door" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
 				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.LeverValveRune}}" local:Extensions.Source="/Icons/leverValve.png" Template="{StaticResource imageButton}" Content="Lever/Valve/Rune" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
 				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.ControlBox}}" local:Extensions.Source="/Icons/controlBox.png" Template="{StaticResource imageButton}" Content="Control Box" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
-				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Collectible}}" local:Extensions.Source="/Icons/collectible.png" Template="{StaticResource imageButton}"  Content="Collectible" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Collectible}}" local:Extensions.Source="/Icons/collectible.png" Template="{StaticResource imageButton}"  Content="All Collectibles" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Lore}}" local:Extensions.Source="/Icons/book.png" Template="{StaticResource imageButton}"  Content="Lore Collectible" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Natural}}" local:Extensions.Source="/Icons/paw.png" Template="{StaticResource imageButton}"  Content="Natural Collectible" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.Arcane}}" local:Extensions.Source="/Icons/rune.png" Template="{StaticResource imageButton}"  Content="Arcane Collectible" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
 				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.QuestItem}}" local:Extensions.Source="/Icons/questItem.png" Template="{StaticResource imageButton}"  Content="Quest Item" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
 				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.QuestNPC}}" local:Extensions.Source="/Icons/questNPC.png" Template="{StaticResource imageButton}"  Content="Quest NPC" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />
 				<RadioButton Focusable="False" IsChecked="{Binding IconType, Converter={StaticResource EnumBooleanConverter}, ConverterParameter={x:Static local:IconType.SecretDoor}}" local:Extensions.Source="/Icons/secretDoor.png" Template="{StaticResource imageButton}"  Content="Secret Door" GroupName="Selection" RenderOptions.BitmapScalingMode="NearestNeighbor" />

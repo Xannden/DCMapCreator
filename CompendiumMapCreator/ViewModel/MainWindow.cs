@@ -169,17 +169,24 @@ namespace CompendiumMapCreator.ViewModel
 			OpenFileDialog dialog = new OpenFileDialog
 			{
 				DefaultExt = ".png",
-				Filter = "PNG Files (*.png)|*.png|JPEG Files (*.jpeg)|*.jpeg|JPG Files (*.jpg)|*.jpg",
+				Filter = "Image Files (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg|All files (*.*)|*.*",
 			};
 
 			bool? result = dialog.ShowDialog();
 
 			if (result.HasValue && result == true)
 			{
-				this.BackgroundImage = new Image(dialog.FileName);
-				this.IconType = IconType.Cursor;
-				this.ProjectFile = string.Empty;
-				this.Elements.Clear();
+				try
+				{
+					this.BackgroundImage = new Image(dialog.FileName);
+					this.IconType = IconType.Cursor;
+					this.ProjectFile = string.Empty;
+					this.Elements.Clear();
+				}
+				catch (Exception)
+				{
+					MessageBox.Show("Unable to load image.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				}
 			}
 		}
 

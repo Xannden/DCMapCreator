@@ -12,6 +12,9 @@ namespace CompendiumMapCreator
 		LeverValveRune,
 		ControlBox,
 		Collectible,
+		Lore,
+		Natural,
+		Arcane,
 		QuestItem,
 		QuestNPC,
 		SecretDoor,
@@ -48,7 +51,16 @@ namespace CompendiumMapCreator
 					return "Control Box";
 
 				case IconType.Collectible:
-					return "Collectible";
+					return "All Collectibles";
+
+				case IconType.Lore:
+					return "Lore Collectibles";
+
+				case IconType.Natural:
+					return "Natural Collectibles";
+
+				case IconType.Arcane:
+					return "Arcane Collectibles";
 
 				case IconType.QuestItem:
 					return "Quest Item";
@@ -97,6 +109,15 @@ namespace CompendiumMapCreator
 
 				case IconType.Collectible:
 					return "Icons/collectible.png";
+
+				case IconType.Lore:
+					return "Icons/book.png";
+
+				case IconType.Natural:
+					return "Icons/paw.png";
+
+				case IconType.Arcane:
+					return "Icons/rune.png";
 
 				case IconType.QuestItem:
 					return "Icons/questItem.png";
