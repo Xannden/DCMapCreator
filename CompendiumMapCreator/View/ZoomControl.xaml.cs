@@ -84,8 +84,8 @@ namespace CompendiumMapCreator
 
 		public void Center()
 		{
-			this.ViewportPositionX = (int)((this.Grid.ActualWidth / 2) - ((this.ChildWidth * this.Scale) / 2));
-			this.ViewportPositionY = (int)((this.Grid.ActualHeight / 2) - ((this.ChildHeight * this.Scale) / 2));
+			this.ViewportPositionX = (int)((this.Grid.ActualWidth / 2) - (this.ChildWidth * this.Scale / 2));
+			this.ViewportPositionY = (int)((this.Grid.ActualHeight / 2) - (this.ChildHeight * this.Scale / 2));
 		}
 
 		private void Grid_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)

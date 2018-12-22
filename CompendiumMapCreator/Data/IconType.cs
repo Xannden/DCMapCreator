@@ -25,6 +25,66 @@ namespace CompendiumMapCreator
 
 	public static class IconTypeExtensions
 	{
+		public static IconType FromDescription(this string s)
+		{
+			switch (s)
+			{
+				case "Cursor":
+					return IconType.Cursor;
+
+				case "Normal Chest":
+					return IconType.NormalChest;
+
+				case "Trapped Chest":
+					return IconType.TrappedChest;
+
+				case "Locked Chest":
+					return IconType.LockedChest;
+
+				case "Locked Door":
+					return IconType.LockedDoor;
+
+				case "Lever/Valve/Rune":
+					return IconType.LeverValveRune;
+
+				case "Control Box":
+					return IconType.ControlBox;
+
+				case "All Collectibles":
+					return IconType.Collectible;
+
+				case "Lore Collectibles":
+					return IconType.Lore;
+
+				case "Natural Collectibles":
+					return IconType.Natural;
+
+				case "Arcane Collectibles":
+					return IconType.Arcane;
+
+				case "Quest Item":
+					return IconType.QuestItem;
+
+				case "Quest NPC":
+					return IconType.QuestNPC;
+
+				case "Secret Door":
+					return IconType.SecretDoor;
+
+				case "Quest Exit":
+					return IconType.QuestExit;
+
+				case "Waypoint/Portal":
+					return IconType.Portal;
+
+				case "Label":
+					return IconType.Label;
+
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
 		public static string GetDescription(this IconType type)
 		{
 			switch (type)
@@ -89,6 +149,9 @@ namespace CompendiumMapCreator
 		{
 			switch (type)
 			{
+				case IconType.Cursor:
+					return "Icons/cursor.png";
+
 				case IconType.NormalChest:
 					return "Icons/normalChest.png";
 
@@ -133,6 +196,9 @@ namespace CompendiumMapCreator
 
 				case IconType.Portal:
 					return "Icons/portal.png";
+
+				case IconType.Label:
+					return "Icons/label.png";
 
 				default:
 					throw new ArgumentOutOfRangeException();

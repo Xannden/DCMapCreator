@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\..\..\c#\Yoware\CompendiumPageCreator\CompendiumPageCreator\CompendiumPageCreator.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -58,8 +59,8 @@
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
     <Compile Include="Converter\ElementToVisibilityConverter.cs" />
+    <Compile Include="Converter\IconTypeToDescriptionConverter.cs" />
     <Compile Include="Data\Direction.cs" />
-    <Compile Include="Data\ElementCopy.cs" />
     <Compile Include="Data\ImagePoint.cs" />
     <Compile Include="Data\Label.cs" />
     <Compile Include="Data\NumberedElement.cs" />
@@ -75,12 +76,15 @@
     <Compile Include="Converter\EnumBooleanConverter.cs" />
     <Compile Include="Data\IconType.cs" />
     <Compile Include="Data\Image.cs" />
-    <Compile Include="Converter\IconTypeToFileConverter.cs" />
+    <Compile Include="Converter\IconTypeToImageSourceConverter.cs" />
     <Compile Include="Data\UndoRedoStack.cs" />
     <Compile Include="Edits\Move.cs" />
     <Compile Include="Edits\Remove.cs" />
+    <Compile Include="Format\Project.cs" />
+    <Compile Include="Format\ProjectV2.cs" />
+    <Compile Include="Format\ProjectV1.cs" />
     <Compile Include="ViewModel\MainWindow.cs" />
-    <Compile Include="ViewModel\RadioButtonImage.cs" />
+    <Compile Include="ViewModel\RadioButtonExtension.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Data\Element.cs" />
     <Compile Include="View\AboutWindow.xaml.cs">

@@ -63,7 +63,10 @@ namespace CompendiumMapCreator
 			}
 		}
 
-		public IconType Type { get; }
+		public IconType Type
+		{
+			get;
+		}
 
 		public double Opacity
 		{
@@ -74,6 +77,11 @@ namespace CompendiumMapCreator
 				this.opacity = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Opacity)));
 			}
+		}
+
+		public bool IsCopy
+		{
+			get; set;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

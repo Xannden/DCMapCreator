@@ -5,18 +5,31 @@ namespace CompendiumMapCreator.Edits
 {
 	public class Copy : Edit
 	{
-		public Element Clone { get; }
+		public Element Clone
+		{
+			get;
+		}
 
 		public Copy(Element source, ImagePoint? point)
 		{
-			if (source is NumberedElement e)
+			switch (source)
 			{
-				this.Clone = new NumberedElementCopy(e);
+				case Label e:
+					this.Clone = new Label("", e.Number);
+					break;
+
+				case Portal p:
+					this.Clone = new Portal(p.Number);
+					break;
+
+				default:
+					this.Clone = new Element(source.Type);
+					break;
 			}
-			else
-			{
-				this.Clone = new ElementCopy(source);
-			}
+
+			this.Clone.IsCopy = true;
+			this.Clone.X = source.X;
+			this.Clone.Y = source.Y;
 
 			if (point != null)
 			{

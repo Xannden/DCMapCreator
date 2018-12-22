@@ -6,7 +6,10 @@ namespace CompendiumMapCreator.Edits
 {
 	public sealed class Remove : Edit
 	{
-		public Element Removed { get; }
+		public Element Removed
+		{
+			get;
+		}
 
 		public Remove(Element removed)
 		{
@@ -17,7 +20,7 @@ namespace CompendiumMapCreator.Edits
 		{
 			Debug.Assert(this.Removed != null);
 
-			if (this.Removed is NumberedElement r && !(this.Removed is NumberedElementCopy))
+			if (this.Removed is NumberedElement r && !this.Removed.IsCopy)
 			{
 				for (int i = 0; i < list.Count; i++)
 				{
@@ -40,7 +43,7 @@ namespace CompendiumMapCreator.Edits
 		{
 			Debug.Assert(this.Removed != null);
 
-			if (this.Removed is NumberedElement r && !(this.Removed is NumberedElementCopy))
+			if (this.Removed is NumberedElement r && !this.Removed.IsCopy)
 			{
 				for (int i = 0; i < list.Count; i++)
 				{

@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows;
 using System.Windows.Data;
-using CompendiumMapCreator.Data;
 
 namespace CompendiumMapCreator.Converter
 {
-	public class ElementToVisibilityConverter : IValueConverter
+	public class IconTypeToImageSourceConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (value is Label l && !l.IsCopy) ? Visibility.Visible : (object)Visibility.Collapsed;
+			string file = ((IconType)value).GetImageFile();
+
+			return Image.GetImageFromResources(file).BitmapImage;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;

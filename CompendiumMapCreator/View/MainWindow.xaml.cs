@@ -28,7 +28,7 @@ namespace CompendiumMapCreator
 
 			this.ViewModel.PropertyChanged += (_, e) =>
 			{
-				if (e.PropertyName == "BackgroundImage")
+				if (e.PropertyName == "Project")
 				{
 					this.Zoom.Center();
 				}
@@ -37,73 +37,11 @@ namespace CompendiumMapCreator
 
 		public ViewModel.MainWindow ViewModel => (ViewModel.MainWindow)this.DataContext;
 
-		public void Border_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+		private ItemsControl ElementDisplay
 		{
-			if (((this.Zoom.Child as Grid)?.Children[1]).IsMouseCaptured)
-			{
-				((this.Zoom.Child as Grid)?.Children[1]).ReleaseMouseCapture();
-
-				int xChanged = this.element.X - this.origin.X;
-				int yChanged = this.element.Y - this.origin.Y;
-
-				if (xChanged != 0 || yChanged != 0)
-				{
-					this.ViewModel.AddEdit(new Move(xChanged, yChanged, this.element), apply: false);
-				}
-
-				this.element.Opacity = 1;
-				this.element = null;
-			}
-			else if (!Keyboard.IsKeyDown(Key.Space) && this.ViewModel.IconType != IconType.Cursor)
-			{
-				Element element = this.ViewModel.CreateElement();
-
-				ImagePoint position = e.GetPosition(this.Zoom).ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY) - new ImagePoint(element.Width / 2, element.Height / 2);
-
-				element.X = position.X;
-				element.Y = position.Y;
-
-				this.ViewModel.AddElement(element);
-				this.ViewModel.Selected = null;
-			}
+			get;
+			set;
 		}
-
-		private void Border_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-		{
-			if (!Keyboard.IsKeyDown(Key.Space) && this.ViewModel.IconType == IconType.Cursor && !this.moving)
-			{
-				Element element = this.ViewModel.Select(e.GetPosition(this.Zoom).ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY));
-
-				if (element != null)
-				{
-					this.element = element;
-					this.element.Opacity = .45;
-
-					this.origin = new ImagePoint(element.X, element.Y);
-
-					Point p = e.GetPosition(this.Zoom);
-
-					ImagePoint ip = p.ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY);
-
-					this.offset = ip - this.origin;
-
-					((this.Zoom.Child as Grid)?.Children[1])?.CaptureMouse();
-				}
-			}
-		}
-
-		private void Border_MouseMove(object sender, MouseEventArgs e)
-		{
-			if (((this.Zoom.Child as Grid)?.Children[1]).IsMouseCaptured)
-			{
-				ImagePoint v = e.GetPosition(this.Zoom).ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY) - this.offset;
-
-				this.element.X = v.X;
-				this.element.Y = v.Y;
-			}
-		}
-
-		private void Border_MouseRightButtonDown(object sender, MouseButtonEventArgs e) => this.ViewModel.Select(e.GetPosition(this.Zoom).ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY));
 
 		private void Paste(object sender, EventArgs e)
 		{
@@ -159,7 +97,16 @@ namespace CompendiumMapCreator
 
 		private void Window_MouseDown(object sender, MouseButtonEventArgs e) => this.editWindow?.Close();
 
-		private void Window_KeyDown(object sender, KeyEventArgs e)
+		private void ShowShortcuts(object sender, RoutedEventArgs e) => new ShortcutsWindow() { Owner = this }.Show();
+
+		private void AboutWindow(object sender, RoutedEventArgs e) => new AboutWindow() { Owner = this }.Show();
+
+		private void ItemsControl_Initialized(object sender, EventArgs e)
+		{
+			this.ElementDisplay = sender as ItemsControl;
+		}
+
+		private void Zoom_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (this.ViewModel.Selected == null)
 			{
@@ -171,7 +118,7 @@ namespace CompendiumMapCreator
 				this.ViewModel.Selected.Opacity = .45;
 			}
 
-			if (((this.Zoom.Child as Grid)?.Children[1]).IsMouseCaptured)
+			if (this.ElementDisplay.IsMouseCaptured)
 			{
 				return;
 			}
@@ -183,7 +130,7 @@ namespace CompendiumMapCreator
 			}
 		}
 
-		private void Window_KeyUp(object sender, KeyEventArgs e)
+		private void Zoom_KeyUp(object sender, KeyEventArgs e)
 		{
 			if (this.ViewModel.Selected == null)
 			{
@@ -210,8 +157,74 @@ namespace CompendiumMapCreator
 			}
 		}
 
-		private void ShowShortcuts(object sender, RoutedEventArgs e) => new ShortcutsWindow() { Owner = this }.Show();
+		public void Zoom_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+		{
+			if (this.ElementDisplay.IsMouseCaptured)
+			{
+				this.ElementDisplay.ReleaseMouseCapture();
 
-		private void AboutWindow(object sender, RoutedEventArgs e) => new AboutWindow() { Owner = this }.Show();
+				int xChanged = this.element.X - this.origin.X;
+				int yChanged = this.element.Y - this.origin.Y;
+
+				if (xChanged != 0 || yChanged != 0)
+				{
+					this.ViewModel.AddEdit(new Move(xChanged, yChanged, this.element), apply: false);
+				}
+
+				this.element.Opacity = 1;
+				this.element = null;
+			}
+			else if (!Keyboard.IsKeyDown(Key.Space) && this.ViewModel.SelectedType != IconType.Cursor)
+			{
+				Element element = this.ViewModel.CreateElement(this.ViewModel.SelectedType);
+
+				ImagePoint position = e.GetPosition(this.Zoom).ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY) - new ImagePoint(element.Width / 2, element.Height / 2);
+
+				element.X = position.X;
+				element.Y = position.Y;
+
+				this.ViewModel.AddElement(element);
+				this.ViewModel.Selected = null;
+			}
+		}
+
+		private void Zoom_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			((ZoomControl)sender).Focus();
+
+			if (!Keyboard.IsKeyDown(Key.Space) && this.ViewModel.SelectedType == IconType.Cursor && !this.moving)
+			{
+				Element element = this.ViewModel.Select(e.GetPosition(this.Zoom).ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY));
+
+				if (element != null)
+				{
+					this.element = element;
+					this.element.Opacity = .45;
+
+					this.origin = new ImagePoint(element.X, element.Y);
+
+					Point p = e.GetPosition(this.Zoom);
+
+					ImagePoint ip = p.ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY);
+
+					this.offset = ip - this.origin;
+
+					this.ElementDisplay.CaptureMouse();
+				}
+			}
+		}
+
+		private void Zoom_MouseMove(object sender, MouseEventArgs e)
+		{
+			if (this.ElementDisplay.IsMouseCaptured)
+			{
+				ImagePoint v = e.GetPosition(this.Zoom).ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY) - this.offset;
+
+				this.element.X = v.X;
+				this.element.Y = v.Y;
+			}
+		}
+
+		private void Zoom_MouseRightButtonDown(object sender, MouseButtonEventArgs e) => this.ViewModel.Select(e.GetPosition(this.Zoom).ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY));
 	}
 }
