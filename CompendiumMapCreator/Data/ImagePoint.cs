@@ -2,9 +2,9 @@
 {
 	public struct ImagePoint
 	{
-		public int X { get; }
+		public int X { get; set; }
 
-		public int Y { get; }
+		public int Y { get; set; }
 
 		public ImagePoint(int x, int y)
 		{
@@ -16,6 +16,6 @@
 
 		public static ImagePoint operator +(ImagePoint lhs, ImagePoint rhs) => new ImagePoint(lhs.X + rhs.X, lhs.Y + rhs.Y);
 
-		public WindowPoint ToWindow(double scale, int x, int y) => new WindowPoint((int)((this.X * scale) + x), (int)((this.Y * scale) + y));
+		public WindowPoint ToWindow(ZoomControl zoom) => new WindowPoint((int)((this.X * zoom.Scale) + zoom.ViewportPositionX), (int)((this.Y * zoom.Scale) + zoom.ViewportPositionY));
 	}
 }

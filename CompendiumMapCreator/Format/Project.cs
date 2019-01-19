@@ -409,7 +409,7 @@ namespace CompendiumMapCreator.Format
 
 				for (int i = 0; i < labels.Count; i++)
 				{
-					float columnOffset = (i % columns) * columnWidth;
+					float columnOffset = i % columns * columnWidth;
 
 					Image icon = labels[i].Image;
 

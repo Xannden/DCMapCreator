@@ -1,65 +1,79 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using CompendiumMapCreator.Data;
 
 namespace CompendiumMapCreator.Edits
 {
 	public sealed class Remove : Edit
 	{
-		public Element Removed
-		{
-			get;
-		}
+		private readonly List<NumberedElement> numbered = new List<NumberedElement>();
 
-		public Remove(Element removed)
+		public List<Element> Removed { get; }
+
+		public Remove(List<Element> removed)
 		{
 			this.Removed = removed;
+
+			for (int i = 0; i < this.Removed.Count; i++)
+			{
+				if (this.Removed[i] is NumberedElement n && !n.IsCopy)
+				{
+					this.numbered.Add(n);
+				}
+			}
+
+			this.numbered.Sort((lhs, rhs) => rhs.Number.CompareTo(lhs.Number));
+
+			this.Removed.RemoveAll((e) => e is NumberedElement && !e.IsCopy);
 		}
 
 		public override void Apply(IList<Element> list)
 		{
-			Debug.Assert(this.Removed != null);
+			foreach (Element element in this.Removed)
+			{
+				list.Remove(element);
+			}
 
-			if (this.Removed is NumberedElement r && !this.Removed.IsCopy)
+			foreach (NumberedElement element in this.numbered)
 			{
 				for (int i = 0; i < list.Count; i++)
 				{
-					if (list[i].GetType() != this.Removed.GetType())
+					if (list[i].GetType() != element.GetType())
 					{
 						continue;
 					}
 
-					if (list[i] is NumberedElement e && e.Number > r.Number)
+					if (list[i] is NumberedElement n && n.Number > element.Number && !list[i].IsCopy)
 					{
-						e.Number--;
+						n.Number--;
 					}
 				}
+				list.Remove(element);
 			}
-
-			list.Remove(this.Removed);
 		}
 
 		public override void Undo(IList<Element> list)
 		{
-			Debug.Assert(this.Removed != null);
-
-			if (this.Removed is NumberedElement r && !this.Removed.IsCopy)
+			foreach (Element element in this.Removed)
 			{
-				for (int i = 0; i < list.Count; i++)
+				list.Add(element);
+			}
+
+			for (int i = this.numbered.Count - 1; i >= 0; i--)
+			{
+				for (int j = 0; j < list.Count; j++)
 				{
-					if (list[i].GetType() != this.Removed.GetType())
+					if (list[j].GetType() != this.numbered[i].GetType())
 					{
 						continue;
 					}
 
-					if (list[i] is NumberedElement e && e.Number >= r.Number)
+					if (list[j] is NumberedElement n && n.Number >= this.numbered[i].Number && !list[j].IsCopy)
 					{
-						e.Number++;
+						n.Number++;
 					}
 				}
+				list.Add(this.numbered[i]);
 			}
-
-			list.Add(this.Removed);
 		}
 	}
 }

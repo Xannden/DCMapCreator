@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,14 +14,14 @@ namespace CompendiumMapCreator
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private ImagePoint offset;
 		private ImagePoint origin;
-		private Element element;
-		private Element copied;
-		private EditWindow editWindow;
-		private Data.Label editing;
-		private Point contextMenuPosition;
+		private ImagePoint change = new ImagePoint(0, 0);
+		private IList<Element> copied;
+
 		private bool moving;
+
+		private readonly DragHelper drag;
+		private readonly EditHelper edit = new EditHelper();
 
 		public MainWindow()
 		{
@@ -33,78 +34,77 @@ namespace CompendiumMapCreator
 					this.Zoom.Center();
 				}
 			};
+
+			this.drag = new DragHelper(this.ViewModel);
 		}
 
 		public ViewModel.MainWindow ViewModel => (ViewModel.MainWindow)this.DataContext;
-
-		private ItemsControl ElementDisplay
-		{
-			get;
-			set;
-		}
 
 		private void Paste(object sender, EventArgs e)
 		{
 			if (this.copied != null)
 			{
-				ImagePoint p = Mouse.GetPosition(this.Zoom).ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY);
+				ImagePoint p = Mouse.GetPosition(this.Zoom).ToImage(this.Zoom);
 
-				this.ViewModel.Copy(p - new ImagePoint(this.copied.Width / 2, this.copied.Height / 2), this.copied);
+				this.ViewModel.Copy(p, this.copied);
 			}
 		}
 
-		private void Copy(object sender, EventArgs e) => this.copied = this.ViewModel.Selected;
+		private void Copy(object sender, EventArgs e)
+		{
+			this.copied = new List<Element>(this.ViewModel.Selected);
+		}
 
 		private void Edit(object sender, EventArgs e)
 		{
-			this.editWindow?.Close();
+			this.edit.editWindow?.Close();
 
-			this.editing = this.ViewModel.Selected as Data.Label;
-
-			this.editWindow = new EditWindow
+			if (this.ViewModel.Selected.Count != 1)
 			{
-				Text = this.editing.Text,
+				return;
+			}
+
+			this.edit.editing = this.ViewModel.Selected[0] as Data.Label;
+
+			this.edit.editWindow = new EditWindow
+			{
+				Text = this.edit.editing.Text,
 				ShowInTaskbar = false,
 				Owner = this,
 			};
 
-			this.editWindow.Closing += this.EditWindow_Closing;
+			this.edit.editWindow.Closing += this.EditWindow_Closing;
 
-			Point screen = this.PointToScreen(this.contextMenuPosition);
+			Point screen = this.PointToScreen(this.edit.contextMenuPosition);
 
-			this.editWindow.Left = screen.X;
-			this.editWindow.Top = screen.Y;
+			this.edit.editWindow.Left = screen.X;
+			this.edit.editWindow.Top = screen.Y;
 
-			this.editWindow.Show();
+			this.edit.editWindow.Show();
 
-			this.editWindow.Focus();
+			this.edit.editWindow.Focus();
 		}
 
 		private void EditWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			if (this.editing.Text != this.editWindow.Text)
+			if (this.edit.editing.Text != this.edit.editWindow.Text)
 			{
-				this.ViewModel.AddEdit(new ChangeLabel(this.editing, this.editWindow.Text));
+				this.ViewModel.AddEdit(new ChangeLabel(this.edit.editing, this.edit.editWindow.Text));
 			}
 		}
 
 		protected override void OnContextMenuOpening(ContextMenuEventArgs e)
 		{
-			this.contextMenuPosition = Mouse.GetPosition(this);
+			this.edit.contextMenuPosition = Mouse.GetPosition(this);
 
 			base.OnContextMenuOpening(e);
 		}
 
-		private void Window_MouseDown(object sender, MouseButtonEventArgs e) => this.editWindow?.Close();
+		private void Window_MouseDown(object sender, MouseButtonEventArgs e) => this.edit.editWindow?.Close();
 
 		private void ShowShortcuts(object sender, RoutedEventArgs e) => new ShortcutsWindow() { Owner = this }.Show();
 
 		private void AboutWindow(object sender, RoutedEventArgs e) => new AboutWindow() { Owner = this }.Show();
-
-		private void ItemsControl_Initialized(object sender, EventArgs e)
-		{
-			this.ElementDisplay = sender as ItemsControl;
-		}
 
 		private void Zoom_KeyDown(object sender, KeyEventArgs e)
 		{
@@ -115,18 +115,65 @@ namespace CompendiumMapCreator
 
 			if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
 			{
-				this.ViewModel.Selected.Opacity = .45;
+				foreach (Element element in this.ViewModel.Selected)
+				{
+					element.Opacity = 0.25;
+				}
 			}
 
-			if (this.ElementDisplay.IsMouseCaptured)
+			if (e.Key == Key.Up || e.Key == Key.Down || e.Key == Key.Left || e.Key == Key.Right)
 			{
-				return;
-			}
+				if (!this.moving && this.ViewModel.Selected.Count > 0)
+				{
+					this.moving = true;
+					this.origin = new ImagePoint(this.ViewModel.Selected[0].X, this.ViewModel.Selected[0].Y);
+					this.ViewModel.DragStart(this.origin);
 
-			if (!this.moving && (e.Key == Key.Up || e.Key == Key.Down || e.Key == Key.Left || e.Key == Key.Right))
-			{
-				this.moving = true;
-				this.origin = new ImagePoint(this.ViewModel.Selected.X, this.ViewModel.Selected.Y);
+					if (Keyboard.IsKeyDown(Key.Up))
+					{
+						this.change.Y--;
+					}
+
+					if (Keyboard.IsKeyDown(Key.Down))
+					{
+						this.change.Y++;
+					}
+
+					if (Keyboard.IsKeyDown(Key.Left))
+					{
+						this.change.X--;
+					}
+
+					if (Keyboard.IsKeyDown(Key.Right))
+					{
+						this.change.X++;
+					}
+					this.ViewModel.DragUpdate(this.origin + this.change);
+				}
+				else if (this.moving)
+				{
+					if (Keyboard.IsKeyDown(Key.Up))
+					{
+						this.change.Y--;
+					}
+
+					if (Keyboard.IsKeyDown(Key.Down))
+					{
+						this.change.Y++;
+					}
+
+					if (Keyboard.IsKeyDown(Key.Left))
+					{
+						this.change.X--;
+					}
+
+					if (Keyboard.IsKeyDown(Key.Right))
+					{
+						this.change.X++;
+					}
+
+					this.ViewModel.DragUpdate(this.origin + this.change);
+				}
 			}
 		}
 
@@ -139,92 +186,88 @@ namespace CompendiumMapCreator
 
 			if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
 			{
-				this.ViewModel.Selected.Opacity = 1;
+				foreach (Element element in this.ViewModel.Selected)
+				{
+					element.Opacity = 1;
+				}
 			}
 
 			if (this.moving && Keyboard.IsKeyUp(Key.Up) && Keyboard.IsKeyUp(Key.Down) && Keyboard.IsKeyUp(Key.Left) && Keyboard.IsKeyUp(Key.Right))
 			{
-				ImagePoint newPoint = new ImagePoint(this.ViewModel.Selected.X, this.ViewModel.Selected.Y);
+				this.ViewModel.DragEnd();
+				this.change = new ImagePoint(0, 0);
 
-				this.ViewModel.Selected.X = this.origin.X;
-				this.ViewModel.Selected.Y = this.origin.Y;
-
-				int xChange = newPoint.X - this.origin.X;
-				int yChange = newPoint.Y - this.origin.Y;
-
-				this.ViewModel.AddEdit(new Move(xChange, yChange, this.ViewModel.Selected));
 				this.moving = false;
 			}
 		}
 
-		public void Zoom_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-		{
-			if (this.ElementDisplay.IsMouseCaptured)
-			{
-				this.ElementDisplay.ReleaseMouseCapture();
-
-				int xChanged = this.element.X - this.origin.X;
-				int yChanged = this.element.Y - this.origin.Y;
-
-				if (xChanged != 0 || yChanged != 0)
-				{
-					this.ViewModel.AddEdit(new Move(xChanged, yChanged, this.element), apply: false);
-				}
-
-				this.element.Opacity = 1;
-				this.element = null;
-			}
-			else if (!Keyboard.IsKeyDown(Key.Space) && this.ViewModel.SelectedType != IconType.Cursor)
-			{
-				Element element = this.ViewModel.CreateElement(this.ViewModel.SelectedType);
-
-				ImagePoint position = e.GetPosition(this.Zoom).ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY) - new ImagePoint(element.Width / 2, element.Height / 2);
-
-				element.X = position.X;
-				element.Y = position.Y;
-
-				this.ViewModel.AddElement(element);
-				this.ViewModel.Selected = null;
-			}
-		}
+		public void Zoom_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) => this.drag.MouseUp(e.GetPosition(this.Zoom).ToImage(this.Zoom));
 
 		private void Zoom_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
 			((ZoomControl)sender).Focus();
 
-			if (!Keyboard.IsKeyDown(Key.Space) && this.ViewModel.SelectedType == IconType.Cursor && !this.moving)
+			this.drag.MouseDown();
+		}
+
+		private void Zoom_MouseMove(object sender, MouseEventArgs e) => this.drag.MouseMove(e.GetPosition(this.Zoom).ToImage(this.Zoom), e.LeftButton);
+
+		private void Zoom_MouseRightButtonDown(object sender, MouseButtonEventArgs e) => this.ViewModel.Select(e.GetPosition(this.Zoom).ToImage(this.Zoom));
+
+		private class DragHelper
+		{
+			private readonly ViewModel.MainWindow viewModel;
+			private bool dragging;
+			private bool mouseDown;
+
+			public DragHelper(ViewModel.MainWindow viewModel)
 			{
-				Element element = this.ViewModel.Select(e.GetPosition(this.Zoom).ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY));
+				this.viewModel = viewModel;
+			}
 
-				if (element != null)
+			public void MouseDown()
+			{
+				this.mouseDown = true;
+			}
+
+			public void MouseMove(ImagePoint p, MouseButtonState state)
+			{
+				if (this.mouseDown && state == MouseButtonState.Released)
 				{
-					this.element = element;
-					this.element.Opacity = .45;
-
-					this.origin = new ImagePoint(element.X, element.Y);
-
-					Point p = e.GetPosition(this.Zoom);
-
-					ImagePoint ip = p.ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY);
-
-					this.offset = ip - this.origin;
-
-					this.ElementDisplay.CaptureMouse();
+					this.MouseUp(p);
+				}
+				else if (this.dragging)
+				{
+					this.viewModel.DragUpdate(p);
+				}
+				else if (this.mouseDown)
+				{
+					this.dragging = true;
+					this.viewModel.DragStart(p);
 				}
 			}
-		}
 
-		private void Zoom_MouseMove(object sender, MouseEventArgs e)
-		{
-			if (this.ElementDisplay.IsMouseCaptured)
+			public void MouseUp(ImagePoint mousePosition)
 			{
-				ImagePoint v = e.GetPosition(this.Zoom).ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY) - this.offset;
+				if (this.dragging)
+				{
+					this.viewModel.DragEnd();
+				}
+				else if (this.mouseDown)
+				{
+					this.viewModel.Click(mousePosition);
+				}
 
-				this.element.X = v.X;
-				this.element.Y = v.Y;
+				this.dragging = false;
+				this.mouseDown = false;
 			}
 		}
 
-		private void Zoom_MouseRightButtonDown(object sender, MouseButtonEventArgs e) => this.ViewModel.Select(e.GetPosition(this.Zoom).ToImage(this.Zoom.Scale, this.Zoom.ViewportPositionX, this.Zoom.ViewportPositionY));
+		private class EditHelper
+		{
+			public EditWindow editWindow;
+			public Data.Label editing;
+			public Point contextMenuPosition;
+		}
 	}
 }

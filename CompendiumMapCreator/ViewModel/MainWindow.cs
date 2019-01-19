@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using CompendiumMapCreator.Data;
 using CompendiumMapCreator.Edits;
 using CompendiumMapCreator.Format;
@@ -21,12 +24,12 @@ namespace CompendiumMapCreator.ViewModel
 			}
 		}
 
-		private Element selected;
 		private RelayCommand undoCommand;
 		private RelayCommand redoCommand;
 		private RelayCommand deleteCommand;
 		private Project _project;
 		private IconType selectedType;
+		private DragHelper dragging;
 
 		public bool AddLegend { get; set; } = true;
 
@@ -34,16 +37,7 @@ namespace CompendiumMapCreator.ViewModel
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public Element Selected
-		{
-			get => this.selected;
-			set
-			{
-				this.selected = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Selected)));
-				this.DeleteCommand.RaiseCanExecuteChanged();
-			}
-		}
+		public ObservableCollection<Element> Selected { get; } = new ObservableCollection<Element>();
 
 		public IconType[] Types
 		{
@@ -100,13 +94,13 @@ namespace CompendiumMapCreator.ViewModel
 				{
 					this.deleteCommand = new RelayCommand(_ =>
 					{
-						if (this.Selected == null)
+						if (this.Selected.Count == 0)
 						{
 							return;
 						}
 
-						this.AddEdit(new Remove(this.Selected));
-						this.Selected = null;
+						this.AddEdit(new Remove(new List<Element>(this.Selected)));
+						this.Selected.Clear();
 					}, _ => this.Selected != null);
 				}
 
@@ -132,32 +126,10 @@ namespace CompendiumMapCreator.ViewModel
 
 		public RelayCommand ExportCommand => new RelayCommand((_) => this.Project.Export(this.AddLegend));
 
-		public DelegateCommand<Direction> MoveCommand => new DelegateCommand<Direction>(direction =>
+		public MainWindow()
 		{
-			if (this.Selected == null)
-			{
-				return;
-			}
-
-			switch (direction)
-			{
-				case Direction.Left:
-					this.Selected.X--;
-					break;
-
-				case Direction.Right:
-					this.Selected.X++;
-					break;
-
-				case Direction.Up:
-					this.Selected.Y--;
-					break;
-
-				case Direction.Down:
-					this.Selected.Y++;
-					break;
-			}
-		});
+			this.Selected.CollectionChanged += (s, e) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Selected)));
+		}
 
 		public void LoadImage(object parameter)
 		{
@@ -194,28 +166,38 @@ namespace CompendiumMapCreator.ViewModel
 			this.AddEdit(new Add(element));
 		}
 
-		public Element Select(ImagePoint point)
+		public void Select(ImagePoint point, bool clear = true)
 		{
 			if (this.Project == null)
 			{
-				return null;
+				return;
 			}
 
 			for (int i = this.Project.Elements.Count - 1; i >= 0; i--)
 			{
 				if (this.Project.Elements[i].Contains(point))
 				{
-					this.Selected = this.Project.Elements[i];
+					if (clear)
+					{
+						this.Selected.Clear();
+					}
+
+					if (this.Selected.Contains(this.Project.Elements[i]))
+					{
+						this.Selected.Remove(this.Project.Elements[i]);
+					}
+					else
+					{
+						this.Selected.Add(this.Project.Elements[i]);
+					}
 
 					this.Project.Elements.Move(i, this.Project.Elements.Count - 1);
 
-					return this.Selected;
+					return;
 				}
 			}
 
-			this.Selected = null;
-
-			return this.Selected;
+			this.Selected.Clear();
 		}
 
 		public Element CreateElement(IconType type)
@@ -223,17 +205,17 @@ namespace CompendiumMapCreator.ViewModel
 			switch (type)
 			{
 				case IconType.Label:
-					return new Label("", this.Project.Elements.Count((e) => e is Label));
+					return new Label("", this.Project.Elements.Count((e) => e is Label l && !l.IsCopy));
 
 				case IconType.Portal:
-					return new Portal(this.Project.Elements.Count((e) => e is Portal));
+					return new Portal(this.Project.Elements.Count((e) => e is Portal p && !p.IsCopy));
 
 				default:
 					return new Element(type);
 			}
 		}
 
-		public void Copy(ImagePoint? mousePosition, Element element) => this.AddEdit(new Copy(element, mousePosition));
+		public void Copy(ImagePoint mousePosition, IList<Element> elements) => this.AddEdit(new Copy(elements, mousePosition));
 
 		public void AddEdit(Edit edit, bool apply = true)
 		{
@@ -264,6 +246,117 @@ namespace CompendiumMapCreator.ViewModel
 
 			this.undoCommand?.RaiseCanExecuteChanged();
 			this.redoCommand?.RaiseCanExecuteChanged();
+		}
+
+		public void DragStart(ImagePoint p)
+		{
+			if (Keyboard.IsKeyDown(Key.LeftCtrl))
+			{
+				return;
+			}
+
+			if (!Keyboard.IsKeyDown(Key.Space) && this.SelectedType == IconType.Cursor)
+			{
+				if (!this.Selected.Any(e => e.Contains(p)))
+				{
+					this.Select(p);
+				}
+
+				if (this.Selected.Count != 0)
+				{
+					this.dragging = new DragHelper(new List<Element>(this.Selected), p);
+				}
+			}
+		}
+
+		public void DragUpdate(ImagePoint p)
+		{
+			this.dragging?.Update(p.X, p.Y);
+		}
+
+		public void DragEnd()
+		{
+			Edit result = this.dragging?.End();
+
+			if (result != null)
+			{
+				this.AddEdit(result, apply: false);
+			}
+
+			this.dragging = null;
+		}
+
+		public void Click(ImagePoint p)
+		{
+			if (this.SelectedType != IconType.Cursor)
+			{
+				Element element = this.CreateElement(this.SelectedType);
+
+				ImagePoint position = p - new ImagePoint(element.Width / 2, element.Height / 2);
+
+				element.X = position.X;
+				element.Y = position.Y;
+
+				this.AddElement(element);
+				this.Selected.Clear();
+			}
+			else
+			{
+				this.Select(p, !Keyboard.IsKeyDown(Key.LeftCtrl));
+			}
+		}
+
+		private class DragHelper
+		{
+			private (int X, int Y) Change { get; set; }
+
+			private IList<Element> Elements { get; }
+
+			private ImagePoint Start { get; }
+
+			private ImagePoint[] Offsets { get; }
+
+			public DragHelper(IList<Element> elements, ImagePoint start)
+			{
+				this.Elements = elements;
+				this.Start = start;
+				this.Offsets = this.Elements.Select(e => start - new ImagePoint(e.X, e.Y)).ToArray();
+
+				for (int i = 0; i < this.Elements.Count; i++)
+				{
+					this.Elements[i].Opacity = 0.25;
+				}
+			}
+
+			public void Update(int x, int y)
+			{
+				for (int i = 0; i < this.Elements.Count; i++)
+				{
+					this.Elements[i].X = x - this.Offsets[i].X;
+					this.Elements[i].Y = y - this.Offsets[i].Y;
+				}
+
+				this.Change = (x - this.Start.X, y - this.Start.Y);
+			}
+
+			public Edit End()
+			{
+				Edit result = null;
+
+				(int xChanged, int yChanged) = this.Change;
+
+				if (xChanged != 0 || yChanged != 0)
+				{
+					result = new Move(xChanged, yChanged, this.Elements);
+				}
+
+				for (int i = 0; i < this.Elements.Count; i++)
+				{
+					this.Elements[i].Opacity = 1;
+				}
+
+				return result;
+			}
 		}
 	}
 }

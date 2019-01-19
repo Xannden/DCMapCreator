@@ -8,30 +8,36 @@ namespace CompendiumMapCreator.Edits
 
 		public int Y { get; }
 
-		public Element Element { get; }
+		public IList<Element> Elements { get; }
 
-		public Move(int x, int y, Element element)
+		public Move(int x, int y, IList<Element> elements)
 		{
 			this.X = x;
 			this.Y = y;
-			this.Element = element;
+			this.Elements = elements;
 		}
 
 		public override void Apply(IList<Element> list)
 		{
-			if (list.Contains(this.Element))
+			for (int i = 0; i < this.Elements.Count; i++)
 			{
-				this.Element.X += this.X;
-				this.Element.Y += this.Y;
+				if (list.Contains(this.Elements[i]))
+				{
+					this.Elements[i].X += this.X;
+					this.Elements[i].Y += this.Y;
+				}
 			}
 		}
 
 		public override void Undo(IList<Element> list)
 		{
-			if (list.Contains(this.Element))
+			for (int i = 0; i < this.Elements.Count; i++)
 			{
-				this.Element.X -= this.X;
-				this.Element.Y -= this.Y;
+				if (list.Contains(this.Elements[i]))
+				{
+					this.Elements[i].X -= this.X;
+					this.Elements[i].Y -= this.Y;
+				}
 			}
 		}
 	}
