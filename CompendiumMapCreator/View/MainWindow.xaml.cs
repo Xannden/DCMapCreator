@@ -46,25 +46,29 @@ namespace CompendiumMapCreator
 			{
 				ImagePoint p = Mouse.GetPosition(this.Zoom).ToImage(this.Zoom);
 
-				this.ViewModel.Copy(p, this.copied);
+				this.ViewModel.Project.Copy(p, this.copied);
 			}
 		}
 
 		private void Copy(object sender, EventArgs e)
 		{
-			this.copied = new List<Element>(this.ViewModel.Selected);
+			if (this.ViewModel.Project == null)
+			{
+				return;
+			}
+			this.copied = new List<Element>(this.ViewModel.Project.Selected);
 		}
 
 		private void Edit(object sender, EventArgs e)
 		{
 			this.edit.editWindow?.Close();
 
-			if (this.ViewModel.Selected.Count != 1)
+			if (this.ViewModel.Project.Selected.Count != 1)
 			{
 				return;
 			}
 
-			this.edit.editing = this.ViewModel.Selected[0] as Data.Label;
+			this.edit.editing = this.ViewModel.Project.Selected[0] as Data.Label;
 
 			this.edit.editWindow = new EditWindow
 			{
@@ -89,7 +93,7 @@ namespace CompendiumMapCreator
 		{
 			if (this.edit.editing.Text != this.edit.editWindow.Text)
 			{
-				this.ViewModel.AddEdit(new ChangeLabel(this.edit.editing, this.edit.editWindow.Text));
+				this.ViewModel.Project.AddEdit(new ChangeLabel(this.edit.editing, this.edit.editWindow.Text));
 			}
 		}
 
@@ -108,14 +112,14 @@ namespace CompendiumMapCreator
 
 		private void Zoom_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (this.ViewModel.Selected == null)
+			if (this.ViewModel.Project == null)
 			{
 				return;
 			}
 
 			if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
 			{
-				foreach (Element element in this.ViewModel.Selected)
+				foreach (Element element in this.ViewModel.Project.Selected)
 				{
 					element.Opacity = 0.25;
 				}
@@ -123,10 +127,10 @@ namespace CompendiumMapCreator
 
 			if (e.Key == Key.Up || e.Key == Key.Down || e.Key == Key.Left || e.Key == Key.Right)
 			{
-				if (!this.moving && this.ViewModel.Selected.Count > 0)
+				if (!this.moving && this.ViewModel.Project.Selected.Count > 0)
 				{
 					this.moving = true;
-					this.origin = new ImagePoint(this.ViewModel.Selected[0].X, this.ViewModel.Selected[0].Y);
+					this.origin = new ImagePoint(this.ViewModel.Project.Selected[0].X, this.ViewModel.Project.Selected[0].Y);
 					this.ViewModel.DragStart(this.origin);
 
 					if (Keyboard.IsKeyDown(Key.Up))
@@ -179,14 +183,14 @@ namespace CompendiumMapCreator
 
 		private void Zoom_KeyUp(object sender, KeyEventArgs e)
 		{
-			if (this.ViewModel.Selected == null)
+			if (this.ViewModel.Project == null)
 			{
 				return;
 			}
 
 			if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
 			{
-				foreach (Element element in this.ViewModel.Selected)
+				foreach (Element element in this.ViewModel.Project.Selected)
 				{
 					element.Opacity = 1;
 				}
@@ -207,31 +211,35 @@ namespace CompendiumMapCreator
 		{
 			((ZoomControl)sender).Focus();
 
-			this.drag.MouseDown();
+			this.drag.MouseDown(e.GetPosition(this.Zoom).AsWindow());
 		}
 
-		private void Zoom_MouseMove(object sender, MouseEventArgs e) => this.drag.MouseMove(e.GetPosition(this.Zoom).ToImage(this.Zoom), e.LeftButton);
+		private void Zoom_MouseMove(object sender, MouseEventArgs e) => this.drag.MouseMove(e.GetPosition(this.Zoom).ToImage(this.Zoom), e.GetPosition(this.Zoom).AsWindow(), e.LeftButton);
 
-		private void Zoom_MouseRightButtonDown(object sender, MouseButtonEventArgs e) => this.ViewModel.Select(e.GetPosition(this.Zoom).ToImage(this.Zoom));
+		private void Zoom_MouseRightButtonDown(object sender, MouseButtonEventArgs e) => this.ViewModel.Project.Select(e.GetPosition(this.Zoom).ToImage(this.Zoom));
 
 		private class DragHelper
 		{
 			private readonly ViewModel.MainWindow viewModel;
 			private bool dragging;
 			private bool mouseDown;
+			private WindowPoint start;
 
 			public DragHelper(ViewModel.MainWindow viewModel)
 			{
 				this.viewModel = viewModel;
 			}
 
-			public void MouseDown()
+			public void MouseDown(WindowPoint p)
 			{
 				this.mouseDown = true;
+				this.start = p;
 			}
 
-			public void MouseMove(ImagePoint p, MouseButtonState state)
+			public void MouseMove(ImagePoint p, WindowPoint wp, MouseButtonState state)
 			{
+				WindowPoint diff = this.start - wp;
+
 				if (this.mouseDown && state == MouseButtonState.Released)
 				{
 					this.MouseUp(p);
@@ -240,7 +248,7 @@ namespace CompendiumMapCreator
 				{
 					this.viewModel.DragUpdate(p);
 				}
-				else if (this.mouseDown)
+				else if (this.mouseDown && (Math.Abs(diff.X) > 3 || Math.Abs(diff.Y) > 3))
 				{
 					this.dragging = true;
 					this.viewModel.DragStart(p);
@@ -268,6 +276,10 @@ namespace CompendiumMapCreator
 			public EditWindow editWindow;
 			public Data.Label editing;
 			public Point contextMenuPosition;
+		}
+
+		private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
 		}
 	}
 }

@@ -63,10 +63,11 @@
     </ApplicationDefinition>
     <Compile Include="Converter\ElementToVisibilityConverter.cs" />
     <Compile Include="Converter\IconTypeToDescriptionConverter.cs" />
+    <Compile Include="Data\Elements\Trap.cs" />
     <Compile Include="Data\ImagePoint.cs" />
-    <Compile Include="Data\Label.cs" />
-    <Compile Include="Data\NumberedElement.cs" />
-    <Compile Include="Data\Portal.cs" />
+    <Compile Include="Data\Elements\Label.cs" />
+    <Compile Include="Data\Elements\NumberedElement.cs" />
+    <Compile Include="Data\Elements\Portal.cs" />
     <Compile Include="Data\WindowPoint.cs" />
     <Compile Include="Edits\Add.cs" />
     <Compile Include="Edits\ChangeLabel.cs" />
@@ -87,7 +88,7 @@
     <Compile Include="Format\ProjectV1.cs" />
     <Compile Include="ViewModel\MainWindow.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
-    <Compile Include="Data\Element.cs" />
+    <Compile Include="Data\Elements\Element.cs" />
     <Compile Include="View\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
@@ -202,6 +203,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\book.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\trap.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

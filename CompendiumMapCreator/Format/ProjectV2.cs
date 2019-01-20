@@ -40,6 +40,15 @@ namespace CompendiumMapCreator.Format
 					}
 					break;
 
+				case IconType.Trap:
+					{
+						int width = reader.ReadInt32();
+						int height = reader.ReadInt32();
+
+						element = new Trap(0, 0, width, height);
+					}
+					break;
+
 				default:
 					element = new Element(type);
 					break;

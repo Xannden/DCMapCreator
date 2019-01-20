@@ -7,7 +7,7 @@
 		ResizeMode="NoResize"
 		WindowStartupLocation="CenterOwner"
 		mc:Ignorable="d"
-		Title="ShortcutsWindow" Height="310" Width="620">
+		Title="ShortcutsWindow" Height="310" Width="650">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
@@ -118,6 +118,18 @@
 				<TextBlock Text="Shift" />
 				<TextBlock Text=": " />
 				<TextBlock Text="Make Selected Transparent" />
+			</StackPanel>
+
+			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+				<TextBlock Text="Ctrl+Click" />
+				<TextBlock Text=": " />
+				<TextBlock Text="Select Multiple" />
+			</StackPanel>
+
+			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+				<TextBlock Text="Ctrl+D" />
+				<TextBlock Text=": " />
+				<TextBlock Text="Deselect all" />
 			</StackPanel>
 		</StackPanel>
 		<StackPanel Grid.Column="2">

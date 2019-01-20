@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
@@ -14,8 +15,10 @@ using DImage = System.Drawing.Image;
 
 namespace CompendiumMapCreator.Format
 {
-	public abstract class Project
+	public abstract class Project : INotifyPropertyChanged
 	{
+		public event PropertyChangedEventHandler PropertyChanged;
+
 		public static Project Load()
 		{
 			OpenFileDialog dialog = new OpenFileDialog
@@ -87,12 +90,14 @@ namespace CompendiumMapCreator.Format
 		{
 			this.Image = image;
 			this.Elements = new ObservableCollection<Element>();
+			this.Selected.CollectionChanged += (s, e) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Selected)));
 		}
 
 		protected Project(string file)
 		{
 			this.File = file;
 			this.Elements = new ObservableCollection<Element>();
+			this.Selected.CollectionChanged += (s, e) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Selected)));
 		}
 
 		public string File
@@ -111,6 +116,61 @@ namespace CompendiumMapCreator.Format
 		}
 
 		public UndoRedoStack<Edit> Edits { get; } = new UndoRedoStack<Edit>();
+
+		public ObservableCollection<Element> Selected { get; } = new ObservableCollection<Element>();
+
+		public void AddEdit(Edit edit, bool apply = true)
+		{
+			if (apply)
+			{
+				this.Edits.Add(edit, this.Elements);
+			}
+			else
+			{
+				this.Edits.Add(edit);
+			}
+		}
+
+		public void Undo()
+		{
+			this.Edits.Undo(this.Elements);
+		}
+
+		public void Redo()
+		{
+			this.Edits.Redo(this.Elements);
+		}
+
+		public void Copy(ImagePoint mousePosition, IList<Element> elements) => this.AddEdit(new Copy(elements, mousePosition));
+
+		public void Select(ImagePoint point, bool clear = true)
+		{
+			for (int i = this.Elements.Count - 1; i >= 0; i--)
+			{
+				if (this.Elements[i].Contains(point))
+				{
+					if (clear)
+					{
+						this.Selected.Clear();
+					}
+
+					if (this.Selected.Contains(this.Elements[i]))
+					{
+						this.Selected.Remove(this.Elements[i]);
+					}
+					else
+					{
+						this.Selected.Add(this.Elements[i]);
+					}
+
+					this.Elements.Move(i, this.Elements.Count - 1);
+
+					return;
+				}
+			}
+
+			this.Selected.Clear();
+		}
 
 		public void Save()
 		{
@@ -317,6 +377,11 @@ namespace CompendiumMapCreator.Format
 
 				case Portal p:
 					writer.Write(p.Number);
+					break;
+
+				case Trap t:
+					writer.Write(t.TrapWidth);
+					writer.Write(t.TrapHeight);
 					break;
 			}
 		}

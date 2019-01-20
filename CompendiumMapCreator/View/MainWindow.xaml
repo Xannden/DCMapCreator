@@ -41,6 +41,7 @@
 
 		<KeyBinding Command="Copy" Key="C" Modifiers="Ctrl" />
 		<KeyBinding Command="Paste" Key="V" Modifiers="Ctrl" />
+		<KeyBinding Key="D" Modifiers="Ctrl" Command="{Binding DeselectCommand}" />
 
 		<KeyBinding Key="D1" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.Cursor}" />
 		<KeyBinding Key="D2" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.NormalChest}" />
@@ -126,6 +127,8 @@
 						</Grid.ContextMenu>
 						<Canvas>
 							<Image  Width="{Binding Project.Image.Width}" Height="{Binding Project.Image.Height}" Source="{Binding Project.Image.BitmapImage}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" />
+
+							<Rectangle Canvas.Top="{Binding Selection.Y}" Canvas.Left="{Binding Selection.X}" Width="{Binding Selection.Width}" Height="{Binding Selection.Height}" SnapsToDevicePixels="True" StrokeThickness="1" Fill="{Binding SelectionFill}" Stroke="{Binding SelectionStroke}" />
 						</Canvas>
 
 						<ItemsControl Focusable="False" ItemsSource="{Binding Project.Elements}" SnapsToDevicePixels="True">
@@ -146,7 +149,7 @@
 
 											<Border.BorderBrush>
 												<MultiBinding Converter="{StaticResource EqualsToBrushConverter}">
-													<Binding Path="DataContext.Selected" RelativeSource="{RelativeSource AncestorType=Window}" />
+													<Binding Path="DataContext.Project.Selected" RelativeSource="{RelativeSource AncestorType=Window}" />
 													<Binding Path="." />
 												</MultiBinding>
 											</Border.BorderBrush>

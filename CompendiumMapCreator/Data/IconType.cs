@@ -21,6 +21,7 @@ namespace CompendiumMapCreator
 		QuestExit,
 		Portal,
 		Label,
+		Trap,
 	}
 
 	public static class IconTypeExtensions
@@ -79,6 +80,9 @@ namespace CompendiumMapCreator
 
 				case "Label":
 					return IconType.Label;
+
+				case "Trap":
+					return IconType.Trap;
 
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -140,6 +144,9 @@ namespace CompendiumMapCreator
 				case IconType.Label:
 					return "Label";
 
+				case IconType.Trap:
+					return "Trap";
+
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
@@ -199,6 +206,9 @@ namespace CompendiumMapCreator
 
 				case IconType.Label:
 					return "Icons/label.png";
+
+				case IconType.Trap:
+					return "Icons/trap.png";
 
 				default:
 					throw new ArgumentOutOfRangeException();
