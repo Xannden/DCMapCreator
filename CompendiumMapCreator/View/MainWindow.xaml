@@ -60,6 +60,8 @@
 		<KeyBinding Key="D3" Modifiers="Shift" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.QuestExit}" />
 		<KeyBinding Key="D4" Modifiers="Shift" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.Portal}" />
 		<KeyBinding Key="D5" Modifiers="Shift" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.Label}" />
+		<KeyBinding Key="D6" Modifiers="Shift" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.Trap}" />
+		<KeyBinding Key="D7" Modifiers="Shift" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.CollapsibleFloor}" />
 	</Window.InputBindings>
 
 	<Grid>
@@ -127,8 +129,6 @@
 						</Grid.ContextMenu>
 						<Canvas>
 							<Image  Width="{Binding Project.Image.Width}" Height="{Binding Project.Image.Height}" Source="{Binding Project.Image.BitmapImage}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" />
-
-							<Rectangle Canvas.Top="{Binding Selection.Y}" Canvas.Left="{Binding Selection.X}" Width="{Binding Selection.Width}" Height="{Binding Selection.Height}" SnapsToDevicePixels="True" StrokeThickness="1" Fill="{Binding SelectionFill}" Stroke="{Binding SelectionStroke}" />
 						</Canvas>
 
 						<ItemsControl Focusable="False" ItemsSource="{Binding Project.Elements}" SnapsToDevicePixels="True">
@@ -172,6 +172,10 @@
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>
 						</ItemsControl>
+
+						<Canvas>
+							<Rectangle Canvas.Top="{Binding Selection.Y}" Canvas.Left="{Binding Selection.X}" Width="{Binding Selection.Width}" Height="{Binding Selection.Height}" SnapsToDevicePixels="True" StrokeThickness="1" Fill="{Binding SelectionFill}" Stroke="{Binding SelectionStroke}" />
+						</Canvas>
 					</Grid>
 				</local:ZoomControl.Child>
 			</local:ZoomControl>

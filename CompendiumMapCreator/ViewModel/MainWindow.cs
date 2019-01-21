@@ -34,46 +34,17 @@ namespace CompendiumMapCreator.ViewModel
 		private RelayCommand redoCommand;
 		private RelayCommand deleteCommand;
 
-		public Rectangle Selection
-		{
-			get
-			{
-				switch (this.dragging)
-				{
-					case DragSelect s:
-						return s.Selection;
-
-					case DragTrap t:
-						return t.Selection;
-
-					default:
-						return new Rectangle(0, 0, 0, 0);
-				}
-			}
-		}
+		public Rectangle Selection => this.dragging?.Selection ?? new Rectangle(0, 0, 0, 0);
 
 		public MBrush SelectionFill
 		{
 			get
 			{
-				(byte r, byte g, byte b) color;
+				MColor color = this.dragging?.Color ?? Colors.Transparent;
 
-				switch (this.dragging)
-				{
-					case DragSelect s:
-						color = s.Color;
-						break;
+				color.A = 60;
 
-					case DragTrap t:
-						color = t.Color;
-						break;
-
-					default:
-						color = (0, 0, 0);
-						break;
-				}
-
-				return new SolidColorBrush(MColor.FromArgb(60, color.r, color.g, color.b));
+				return new SolidColorBrush(color);
 			}
 		}
 
@@ -81,24 +52,11 @@ namespace CompendiumMapCreator.ViewModel
 		{
 			get
 			{
-				(byte r, byte g, byte b) color;
+				MColor color = this.dragging?.Color ?? Colors.Transparent;
 
-				switch (this.dragging)
-				{
-					case DragSelect s:
-						color = s.Color;
-						break;
+				color.A = 255;
 
-					case DragTrap t:
-						color = t.Color;
-						break;
-
-					default:
-						color = (0, 0, 0);
-						break;
-				}
-
-				return new SolidColorBrush(MColor.FromArgb(255, color.r, color.g, color.b));
+				return new SolidColorBrush(color);
 			}
 		}
 
@@ -108,13 +66,7 @@ namespace CompendiumMapCreator.ViewModel
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public IconType[] Types
-		{
-			get
-			{
-				return Enum.GetValues(typeof(IconType)) as IconType[];
-			}
-		}
+		public IconType[] Types => Enum.GetValues(typeof(IconType)) as IconType[];
 
 		public IconType SelectedType
 		{
@@ -126,7 +78,11 @@ namespace CompendiumMapCreator.ViewModel
 			}
 		}
 
-		public DelegateCommand<IconType> SetType => new DelegateCommand<IconType>((value) => this.SelectedType = value);
+		public DelegateCommand<IconType> SetType => new DelegateCommand<IconType>((value) =>
+		{
+			this.SelectedType = value;
+			this.Project.Selected.Clear();
+		});
 
 		public RelayCommand LoadImageCommand => new RelayCommand(this.LoadImage);
 
@@ -140,6 +96,7 @@ namespace CompendiumMapCreator.ViewModel
 				this.Project = result;
 				this.Project.Edits.Clear();
 				this.SelectedType = IconType.Cursor;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 			}
 		});
 
@@ -207,10 +164,7 @@ namespace CompendiumMapCreator.ViewModel
 			}
 		}
 
-		public RelayCommand DeselectCommand
-		{
-			get => new RelayCommand((_) => this.Project?.Selected.Clear());
-		}
+		public RelayCommand DeselectCommand => new RelayCommand((_) => this.Project?.Selected.Clear());
 #pragma warning restore RCS1171 // Simplify lazy initialization.
 
 		public void LoadImage(object parameter)
@@ -228,6 +182,7 @@ namespace CompendiumMapCreator.ViewModel
 				try
 				{
 					this.Project = Project.FromImage(new Image(dialog.FileName));
+					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 
 					this.SelectedType = IconType.Cursor;
 				}
@@ -279,13 +234,13 @@ namespace CompendiumMapCreator.ViewModel
 
 			if (!Keyboard.IsKeyDown(Key.Space))
 			{
-				if (!this.Project.Selected.Any(e => e.Contains(p)))
-				{
-					this.Project.Select(p);
-				}
-
 				if (this.SelectedType == IconType.Cursor)
 				{
+					if (!this.Project.Selected.Any(e => e.Contains(p)))
+					{
+						this.Project.Select(p);
+					}
+
 #pragma warning disable IDE0045 // Convert to conditional expression
 					if (this.Project.Selected.Count != 0)
 					{
@@ -301,6 +256,10 @@ namespace CompendiumMapCreator.ViewModel
 				else if (this.SelectedType == IconType.Trap)
 				{
 					this.dragging = new DragTrap(p);
+				}
+				else if (this.SelectedType == IconType.CollapsibleFloor)
+				{
+					this.dragging = new DragCollapsibleFloor(p);
 				}
 
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.SelectionStroke)));
@@ -329,7 +288,7 @@ namespace CompendiumMapCreator.ViewModel
 
 		public void Click(ImagePoint p)
 		{
-			if (this.Project == null || this.SelectedType == IconType.Trap)
+			if (this.Project == null || this.SelectedType == IconType.Trap || this.SelectedType == IconType.CollapsibleFloor)
 			{
 				return;
 			}
@@ -357,6 +316,10 @@ namespace CompendiumMapCreator.ViewModel
 			void Update(int x, int y, Project project);
 
 			(bool apply, Edit) End();
+
+			MColor Color { get; }
+
+			Rectangle Selection { get; }
 		}
 
 		private class DragMove : IDrag
@@ -410,15 +373,19 @@ namespace CompendiumMapCreator.ViewModel
 
 				return (false, result);
 			}
+
+			public MColor Color => MColor.FromRgb(0, 0, 0);
+
+			public Rectangle Selection => Rectangle.Empty;
 		}
 
 		private class DragSelect : IDrag
 		{
 			private ImagePoint start;
 
-			public Rectangle Selection;
+			public Rectangle Selection { get; private set; }
 
-			public (byte r, byte g, byte b) Color = (0, 120, 215);
+			public MColor Color => MColor.FromRgb(0, 120, 215);
 
 			public DragSelect(ImagePoint start)
 			{
@@ -452,34 +419,48 @@ namespace CompendiumMapCreator.ViewModel
 				}
 			}
 
-			public (bool apply, Edit) End()
-			{
-				return (false, null);
-			}
+			public (bool apply, Edit) End() => (false, null);
 		}
 
 		private class DragTrap : IDrag
 		{
 			private ImagePoint start;
 
-			public Rectangle Selection;
+			public Rectangle Selection { get; private set; }
 
-			public (byte r, byte g, byte b) Color = (76, 255, 00);
+			public MColor Color => Trap.DrawingColor.ToMediaColor();
 
 			public DragTrap(ImagePoint start)
 			{
 				this.start = start;
 			}
 
-			public void Update(int x, int y, Project project)
+			public void Update(int x, int y, Project project) => this.Selection = Rectangle.FromLTRB(Math.Min(this.start.X, x), Math.Min(this.start.Y, y), Math.Max(this.start.X, x) + 1, Math.Max(this.start.Y, y) + 1);
+
+			public (bool apply, Edit) End() => (true, new Add(new Trap(this.Selection.Width, this.Selection.Height) { X = this.Selection.Left, Y = this.Selection.Top }));
+		}
+
+		private class DragCollapsibleFloor : IDrag
+		{
+			private ImagePoint start;
+
+			public Rectangle Selection { get; private set; }
+
+			public MColor Color => CollapsibleFloor.DrawingColor.ToMediaColor();
+
+			public DragCollapsibleFloor(ImagePoint start)
 			{
-				this.Selection = Rectangle.FromLTRB(Math.Min(this.start.X, x), Math.Min(this.start.Y, y), Math.Max(this.start.X, x) + 1, Math.Max(this.start.Y, y) + 1);
+				this.start = start;
 			}
 
-			public (bool apply, Edit) End()
-			{
-				return (true, new Add(new Trap(this.Selection.Left, this.Selection.Top, this.Selection.Width, this.Selection.Height)));
-			}
+			public void Update(int x, int y, Project project) => this.Selection = Rectangle.FromLTRB(Math.Min(this.start.X, x), Math.Min(this.start.Y, y), Math.Max(this.start.X, x) + 1, Math.Max(this.start.Y, y) + 1);
+
+			public (bool apply, Edit) End() => (true, new Add(new CollapsibleFloor(this.Selection.Width, this.Selection.Height) { X = this.Selection.Left, Y = this.Selection.Top }));
 		}
+	}
+
+	public static class Extensions
+	{
+		public static MColor ToMediaColor(this System.Drawing.Color c) => MColor.FromArgb(c.A, c.R, c.G, c.B);
 	}
 }

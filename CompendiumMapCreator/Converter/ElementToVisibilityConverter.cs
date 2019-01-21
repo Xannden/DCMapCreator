@@ -9,9 +9,7 @@ namespace CompendiumMapCreator.Converter
 	public class ElementToVisibilityConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			return (value is Label l && !l.IsCopy) ? Visibility.Visible : (object)Visibility.Collapsed;
-		}
+			=> (value is Label l && !l.IsCopy) ? Visibility.Visible : (object)Visibility.Collapsed;
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
 	}

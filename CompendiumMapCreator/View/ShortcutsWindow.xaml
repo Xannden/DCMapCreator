@@ -7,7 +7,7 @@
 		ResizeMode="NoResize"
 		WindowStartupLocation="CenterOwner"
 		mc:Ignorable="d"
-		Title="ShortcutsWindow" Height="310" Width="650">
+		Title="ShortcutsWindow" Height="330" Width="650">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
@@ -218,6 +218,11 @@
 				<TextBlock Text="Shift+5" />
 				<TextBlock Text=": " />
 				<TextBlock Text="Select Label" />
+			</StackPanel>
+			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+				<TextBlock Text="Shift+6" />
+				<TextBlock Text=": " />
+				<TextBlock Text="Select Trap" />
 			</StackPanel>
 		</StackPanel>
 	</Grid>

@@ -63,6 +63,8 @@
     </ApplicationDefinition>
     <Compile Include="Converter\ElementToVisibilityConverter.cs" />
     <Compile Include="Converter\IconTypeToDescriptionConverter.cs" />
+    <Compile Include="Data\Elements\AreaElement.cs" />
+    <Compile Include="Data\Elements\CollapsableFloor.cs" />
     <Compile Include="Data\Elements\Trap.cs" />
     <Compile Include="Data\ImagePoint.cs" />
     <Compile Include="Data\Elements\Label.cs" />
@@ -206,6 +208,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\trap.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\collapsibleFloor.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

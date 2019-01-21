@@ -53,6 +53,14 @@ namespace CompendiumMapCreator.Edits
 						clone = new Portal(p.Number);
 						break;
 
+					case Trap t:
+						clone = new Trap(t.AreaWidth, t.AreaHeight);
+						break;
+
+					case CollapsibleFloor f:
+						clone = new CollapsibleFloor(f.AreaWidth, f.AreaHeight);
+						break;
+
 					default:
 						clone = new Element(source[i].Type);
 						break;

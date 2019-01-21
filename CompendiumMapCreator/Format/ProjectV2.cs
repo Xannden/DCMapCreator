@@ -45,7 +45,16 @@ namespace CompendiumMapCreator.Format
 						int width = reader.ReadInt32();
 						int height = reader.ReadInt32();
 
-						element = new Trap(0, 0, width, height);
+						element = new Trap(width, height);
+					}
+					break;
+
+				case IconType.CollapsibleFloor:
+					{
+						int width = reader.ReadInt32();
+						int height = reader.ReadInt32();
+
+						element = new CollapsibleFloor(width, height);
 					}
 					break;
 

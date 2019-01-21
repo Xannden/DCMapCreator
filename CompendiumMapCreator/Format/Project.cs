@@ -81,10 +81,7 @@ namespace CompendiumMapCreator.Format
 			return null;
 		}
 
-		public static Project FromImage(Image image)
-		{
-			return new ProjectV2(image);
-		}
+		public static Project FromImage(Image image) => new ProjectV2(image);
 
 		protected Project(Image image)
 		{
@@ -131,15 +128,9 @@ namespace CompendiumMapCreator.Format
 			}
 		}
 
-		public void Undo()
-		{
-			this.Edits.Undo(this.Elements);
-		}
+		public void Undo() => this.Edits.Undo(this.Elements);
 
-		public void Redo()
-		{
-			this.Edits.Redo(this.Elements);
-		}
+		public void Redo() => this.Edits.Redo(this.Elements);
 
 		public void Copy(ImagePoint mousePosition, IList<Element> elements) => this.AddEdit(new Copy(elements, mousePosition));
 
@@ -163,7 +154,25 @@ namespace CompendiumMapCreator.Format
 						this.Selected.Add(this.Elements[i]);
 					}
 
-					this.Elements.Move(i, this.Elements.Count - 1);
+					if (this.Elements[i] is AreaElement)
+					{
+						int index = 0;
+
+						for (int j = this.Elements.Count - 1; j >= 0; j--)
+						{
+							if (this.Elements[j] is AreaElement)
+							{
+								index = j;
+								break;
+							}
+						}
+
+						this.Elements.Move(i, index);
+					}
+					else
+					{
+						this.Elements.Move(i, this.Elements.Count - 1);
+					}
 
 					return;
 				}
@@ -379,9 +388,9 @@ namespace CompendiumMapCreator.Format
 					writer.Write(p.Number);
 					break;
 
-				case Trap t:
-					writer.Write(t.TrapWidth);
-					writer.Write(t.TrapHeight);
+				case AreaElement a:
+					writer.Write(a.AreaWidth);
+					writer.Write(a.AreaHeight);
 					break;
 			}
 		}

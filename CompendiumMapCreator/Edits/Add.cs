@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using CompendiumMapCreator.Data;
 
 namespace CompendiumMapCreator.Edits
 {
@@ -16,7 +17,27 @@ namespace CompendiumMapCreator.Edits
 		{
 			Debug.Assert(this.Added != null);
 
-			list.Add(this.Added);
+			if (this.Added is AreaElement)
+			{
+				int index = 0;
+
+				for (int i = list.Count - 1; i >= 0; i--)
+				{
+					if (list[i] is AreaElement)
+					{
+						index = i;
+						break;
+					}
+				}
+
+				index = index == 0 ? 0 : index + 1;
+
+				list.Insert(index, this.Added);
+			}
+			else
+			{
+				list.Add(this.Added);
+			}
 		}
 
 		public override void Undo(IList<Element> list)

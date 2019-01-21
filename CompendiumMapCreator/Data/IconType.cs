@@ -22,6 +22,7 @@ namespace CompendiumMapCreator
 		Portal,
 		Label,
 		Trap,
+		CollapsibleFloor,
 	}
 
 	public static class IconTypeExtensions
@@ -83,6 +84,9 @@ namespace CompendiumMapCreator
 
 				case "Trap":
 					return IconType.Trap;
+
+				case "Collapsible Floor":
+					return IconType.CollapsibleFloor;
 
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -147,6 +151,9 @@ namespace CompendiumMapCreator
 				case IconType.Trap:
 					return "Trap";
 
+				case IconType.CollapsibleFloor:
+					return "Collapsible Floor";
+
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
@@ -209,6 +216,9 @@ namespace CompendiumMapCreator
 
 				case IconType.Trap:
 					return "Icons/trap.png";
+
+				case IconType.CollapsibleFloor:
+					return "Icons/collapsibleFloor.png";
 
 				default:
 					throw new ArgumentOutOfRangeException();
