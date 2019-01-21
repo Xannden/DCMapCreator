@@ -85,9 +85,9 @@
     <Compile Include="Data\UndoRedoStack.cs" />
     <Compile Include="Edits\Move.cs" />
     <Compile Include="Edits\Remove.cs" />
-    <Compile Include="Format\Project.cs" />
-    <Compile Include="Format\ProjectV2.cs" />
-    <Compile Include="Format\ProjectV1.cs" />
+    <Compile Include="Project\Project.cs" />
+    <Compile Include="Project\ProjectV2.cs" />
+    <Compile Include="Project\ProjectV1.cs" />
     <Compile Include="ViewModel\MainWindow.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Data\Elements\Element.cs" />

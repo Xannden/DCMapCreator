@@ -62,7 +62,7 @@ namespace CompendiumMapCreator.ViewModel
 
 		public bool AddLegend { get; set; } = true;
 
-		public string Title => $"DDO Compendium Map Creator{(string.IsNullOrEmpty(this.Project?.File) ? "" : $" - {this.Project?.File}")}";
+		public string Title => $"DDO Compendium Map Creator{(string.IsNullOrEmpty(this.Project?.File) ? "" : $" - {(this.Project.HasUnsaved() ? this.Project?.File + "*" : this.Project?.File)}")}";
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
@@ -86,10 +86,19 @@ namespace CompendiumMapCreator.ViewModel
 
 		public RelayCommand LoadImageCommand => new RelayCommand(this.LoadImage);
 
-		public RelayCommand SaveProjectCommand => new RelayCommand((_) => this.Project.Save());
-
-		public RelayCommand LoadProjectCommand => new RelayCommand((_) =>
+		public RelayCommand SaveProjectCommand => new RelayCommand((_) =>
 		{
+			this.Project.Save();
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
+		});
+
+		public RelayCommand LoadProjectCommand => new RelayCommand((p) =>
+		{
+			if (this.Changing(p as Window))
+			{
+				return;
+			}
+
 			Project result = Project.Load();
 			if (result != null)
 			{
@@ -114,6 +123,7 @@ namespace CompendiumMapCreator.ViewModel
 						this.Project.Undo();
 						this.undoCommand?.RaiseCanExecuteChanged();
 						this.redoCommand?.RaiseCanExecuteChanged();
+						this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 					}
 					, _ => this.Project?.Edits.Count > 0);
 				}
@@ -133,6 +143,7 @@ namespace CompendiumMapCreator.ViewModel
 						this.Project.Redo();
 						this.undoCommand?.RaiseCanExecuteChanged();
 						this.redoCommand?.RaiseCanExecuteChanged();
+						this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 					}, _ => this.Project?.Edits.Count < this.Project?.Edits.Total);
 				}
 
@@ -169,6 +180,11 @@ namespace CompendiumMapCreator.ViewModel
 
 		public void LoadImage(object parameter)
 		{
+			if (this.Changing(parameter as Window))
+			{
+				return;
+			}
+
 			OpenFileDialog dialog = new OpenFileDialog
 			{
 				DefaultExt = ".png",
@@ -203,6 +219,7 @@ namespace CompendiumMapCreator.ViewModel
 			this.Project.AddEdit(new Add(element));
 			this.undoCommand?.RaiseCanExecuteChanged();
 			this.redoCommand?.RaiseCanExecuteChanged();
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 		}
 
 		public Element CreateElement(IconType type)
@@ -280,6 +297,9 @@ namespace CompendiumMapCreator.ViewModel
 			if (element != null)
 			{
 				this.Project.AddEdit(element, apply);
+				this.undoCommand?.RaiseCanExecuteChanged();
+				this.redoCommand?.RaiseCanExecuteChanged();
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 			}
 
 			this.dragging = null;
@@ -309,6 +329,25 @@ namespace CompendiumMapCreator.ViewModel
 			{
 				this.Project.Select(p, !Keyboard.IsKeyDown(Key.LeftCtrl));
 			}
+		}
+
+		public bool Changing(Window owner)
+		{
+			if (this.Project?.HasUnsaved() ?? false)
+			{
+				MessageBoxResult result = MessageBox.Show(owner, "Do you want to save changes?", "DDO Compendium Map Creator", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation);
+
+				if (result == MessageBoxResult.Yes)
+				{
+					this.SaveProjectCommand?.Execute(null);
+				}
+				else if (result == MessageBoxResult.Cancel)
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		private interface IDrag

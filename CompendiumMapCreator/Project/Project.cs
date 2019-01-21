@@ -228,6 +228,8 @@ namespace CompendiumMapCreator.Format
 							this.WriteElement(writer, item);
 						}
 					}
+
+					this.Edits.Saved = 0;
 				}
 				catch (Exception)
 				{
@@ -340,6 +342,11 @@ namespace CompendiumMapCreator.Format
 					info?.Dispose();
 				}
 			}
+		}
+
+		public bool HasUnsaved()
+		{
+			return this.Edits.Saved != 0;
 		}
 
 		private void Load(BinaryReader reader)

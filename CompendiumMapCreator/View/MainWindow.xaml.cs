@@ -281,5 +281,10 @@ namespace CompendiumMapCreator
 		private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 		}
+
+		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			e.Cancel = this.ViewModel.Changing(System.Windows.Window.GetWindow(this.Zoom));
+		}
 	}
 }
