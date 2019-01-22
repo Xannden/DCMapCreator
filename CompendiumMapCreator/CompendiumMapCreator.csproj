@@ -66,10 +66,12 @@
     <Compile Include="Data\Elements\AreaElement.cs" />
     <Compile Include="Data\Elements\CollapsableFloor.cs" />
     <Compile Include="Data\Elements\Trap.cs" />
+    <Compile Include="Data\IconFileAttribute.cs" />
     <Compile Include="Data\ImagePoint.cs" />
     <Compile Include="Data\Elements\Label.cs" />
     <Compile Include="Data\Elements\NumberedElement.cs" />
     <Compile Include="Data\Elements\Portal.cs" />
+    <Compile Include="Data\NameAttribute.cs" />
     <Compile Include="Data\WindowPoint.cs" />
     <Compile Include="Edits\Add.cs" />
     <Compile Include="Edits\ChangeLabel.cs" />

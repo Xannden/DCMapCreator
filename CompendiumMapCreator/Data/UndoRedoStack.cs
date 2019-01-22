@@ -23,11 +23,11 @@ namespace CompendiumMapCreator.Data
 
 		public int Total => this.data.Count;
 
+		public int Generation { get; private set; }
+
 		public int Count { get; private set; }
 
 		public bool IsReadOnly => false;
-
-		public int Saved { get; set; }
 
 		public T this[int index]
 		{
@@ -76,14 +76,12 @@ namespace CompendiumMapCreator.Data
 
 			this.data.Add(item);
 			this.Count++;
-			this.Saved++;
 		}
 
 		public void Clear()
 		{
 			this.data.Clear();
 			this.Count = 0;
-			this.Saved = 0;
 		}
 
 		public bool Contains(T item)
@@ -104,7 +102,6 @@ namespace CompendiumMapCreator.Data
 				T element = this.data[index];
 				this.data.RemoveAt(index);
 				this.Count--;
-				this.Saved--;
 
 				return true;
 			}
@@ -137,7 +134,6 @@ namespace CompendiumMapCreator.Data
 
 			this.data.Insert(index, item);
 			this.Count++;
-			this.Saved++;
 		}
 
 		public void RemoveAt(int index)
@@ -151,7 +147,6 @@ namespace CompendiumMapCreator.Data
 
 			this.data.RemoveAt(index);
 			this.Count--;
-			this.Saved--;
 		}
 
 		public void Undo(IList<Element> list)
@@ -159,7 +154,6 @@ namespace CompendiumMapCreator.Data
 			if (this.Count > 0)
 			{
 				this.Count--;
-				this.Saved--;
 
 				this.data[this.Count].Undo(list);
 			}
@@ -172,7 +166,6 @@ namespace CompendiumMapCreator.Data
 				this.data[this.Count].Apply(list);
 
 				this.Count++;
-				this.Saved++;
 			}
 		}
 
@@ -183,6 +176,11 @@ namespace CompendiumMapCreator.Data
 			for (int i = 0; i < diff; i++)
 			{
 				this.data.RemoveAt(this.data.Count - 1);
+			}
+
+			if (this.Count > 0)
+			{
+				this.Generation++;
 			}
 		}
 

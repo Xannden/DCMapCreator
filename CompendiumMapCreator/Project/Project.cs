@@ -17,6 +17,8 @@ namespace CompendiumMapCreator.Format
 {
 	public abstract class Project : INotifyPropertyChanged
 	{
+		private (int gen, int count) saved = (0, 0);
+
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public static Project Load()
@@ -60,6 +62,7 @@ namespace CompendiumMapCreator.Format
 								break;
 
 							case 2:
+							case 3:
 								project = new ProjectV2(dialog.FileName);
 								break;
 
@@ -217,7 +220,7 @@ namespace CompendiumMapCreator.Format
 					{
 						writer.Write(407893541);
 						writer.Write("DMC".ToCharArray());
-						writer.Write(2);
+						writer.Write(3);
 						writer.Write(this.Image.Data.Length);
 						writer.Write(this.Image.Data.GetBuffer());
 						writer.Write(this.Elements.Count);
@@ -229,7 +232,7 @@ namespace CompendiumMapCreator.Format
 						}
 					}
 
-					this.Edits.Saved = 0;
+					this.saved = (this.Edits.Generation, this.Edits.Count);
 				}
 				catch (Exception)
 				{
@@ -346,7 +349,7 @@ namespace CompendiumMapCreator.Format
 
 		public bool HasUnsaved()
 		{
-			return this.Edits.Saved != 0;
+			return this.saved.gen != this.Edits.Generation || this.saved.count != this.Edits.Count;
 		}
 
 		private void Load(BinaryReader reader)

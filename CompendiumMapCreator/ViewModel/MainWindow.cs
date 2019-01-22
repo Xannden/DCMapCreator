@@ -62,7 +62,7 @@ namespace CompendiumMapCreator.ViewModel
 
 		public bool AddLegend { get; set; } = true;
 
-		public string Title => $"DDO Compendium Map Creator{(string.IsNullOrEmpty(this.Project?.File) ? "" : $" - {(this.Project.HasUnsaved() ? this.Project?.File + "*" : this.Project?.File)}")}";
+		public string Title => $"DDO Compendium Map Creator{(string.IsNullOrEmpty(this.Project?.File) ? "" : " - " + (this.Project.HasUnsaved() ? this.Project?.File + "*" : this.Project?.File))}";
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

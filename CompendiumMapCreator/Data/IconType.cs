@@ -1,27 +1,85 @@
 ﻿using System;
+using System.Reflection;
+using CompendiumMapCreator.Data;
 
 namespace CompendiumMapCreator
 {
 	public enum IconType
 	{
+		[Name("Cursor")]
+		[IconFile("cursor.png")]
 		Cursor,
+
+		[Name("Normal Chest")]
+		[IconFile("normalChest.png")]
 		NormalChest,
+
+		[Name("Trapped Chest")]
+		[IconFile("trappedChest.png")]
 		TrappedChest,
+
+		[Name("Locked Chest")]
+		[IconFile("lockedChest.png")]
 		LockedChest,
+
+		[Name("Locked Door")]
+		[IconFile("lockedDoor.png")]
 		LockedDoor,
+
+		[Name("Lever/Valve/Rune")]
+		[IconFile("leverValve.png")]
 		LeverValveRune,
+
+		[Name("Control Box")]
+		[IconFile("controlBox.png")]
 		ControlBox,
+
+		[Name("All Collectibles")]
+		[IconFile("collectible.png")]
 		Collectible,
+
+		[Name("Lore Collectibles")]
+		[IconFile("book.png")]
 		Lore,
+
+		[Name("Natural Collectibles")]
+		[IconFile("paw.png")]
 		Natural,
+
+		[Name("Archane Collectibles")]
+		[IconFile("rune.png")]
 		Arcane,
+
+		[Name("Quest Item")]
+		[IconFile("questItem.png")]
 		QuestItem,
+
+		[Name("Quest NPC")]
+		[IconFile("questNPC.png")]
 		QuestNPC,
+
+		[Name("Secret Door")]
+		[IconFile("secretDoor.png")]
 		SecretDoor,
+
+		[Name("Quest Exit")]
+		[IconFile("questExit.png")]
 		QuestExit,
+
+		[Name("Portal")]
+		[IconFile("portal.png")]
 		Portal,
+
+		[Name("Label")]
+		[IconFile("label.png")]
 		Label,
+
+		[Name("Trap")]
+		[IconFile("trap.png")]
 		Trap,
+
+		[Name("Collapsible Floor")]
+		[IconFile("collapsibleFloor.png")]
 		CollapsibleFloor,
 	}
 
@@ -29,200 +87,83 @@ namespace CompendiumMapCreator
 	{
 		public static IconType FromDescription(this string s)
 		{
-			switch (s)
+			TypeInfo typeInfo = typeof(IconType).GetTypeInfo();
+
+			FieldInfo[] fields = typeInfo.GetFields();
+
+			for (int i = 0; i < fields.Length; i++)
 			{
-				case "Cursor":
-					return IconType.Cursor;
-
-				case "Normal Chest":
-					return IconType.NormalChest;
-
-				case "Trapped Chest":
-					return IconType.TrappedChest;
-
-				case "Locked Chest":
-					return IconType.LockedChest;
-
-				case "Locked Door":
-					return IconType.LockedDoor;
-
-				case "Lever/Valve/Rune":
-					return IconType.LeverValveRune;
-
-				case "Control Box":
-					return IconType.ControlBox;
-
-				case "All Collectibles":
-					return IconType.Collectible;
-
-				case "Lore Collectibles":
-					return IconType.Lore;
-
-				case "Natural Collectibles":
-					return IconType.Natural;
-
-				case "Arcane Collectibles":
-					return IconType.Arcane;
-
-				case "Quest Item":
-					return IconType.QuestItem;
-
-				case "Quest NPC":
-					return IconType.QuestNPC;
-
-				case "Secret Door":
-					return IconType.SecretDoor;
-
-				case "Quest Exit":
-					return IconType.QuestExit;
-
-				case "Waypoint/Portal":
-					return IconType.Portal;
-
-				case "Label":
-					return IconType.Label;
-
-				case "Trap":
-					return IconType.Trap;
-
-				case "Collapsible Floor":
-					return IconType.CollapsibleFloor;
-
-				default:
-					throw new ArgumentOutOfRangeException();
+				NameAttribute attribute = null;
+				if ((fields[i]?.TryGetCustomAttribute(out attribute) ?? false) && attribute.Name == s)
+				{
+					return (IconType)fields[i].GetValue(null);
+				}
 			}
+
+			throw new ArgumentOutOfRangeException(nameof(s));
 		}
 
-		public static string GetDescription(this IconType type)
+		public static string GetDescription(this IconType item)
 		{
-			switch (type)
+			TypeInfo typeInfo = typeof(IconType).GetTypeInfo();
+
+			FieldInfo field = typeInfo.GetField(item.ToString());
+
+			NameAttribute attribute = null;
+			if (field?.TryGetCustomAttribute(out attribute) ?? false)
 			{
-				case IconType.Cursor:
-					return "Cursor";
-
-				case IconType.NormalChest:
-					return "Normal Chest";
-
-				case IconType.TrappedChest:
-					return "Trapped Chest";
-
-				case IconType.LockedChest:
-					return "Locked Chest";
-
-				case IconType.LockedDoor:
-					return "Locked Door";
-
-				case IconType.LeverValveRune:
-					return "Lever/Valve/Rune";
-
-				case IconType.ControlBox:
-					return "Control Box";
-
-				case IconType.Collectible:
-					return "All Collectibles";
-
-				case IconType.Lore:
-					return "Lore Collectibles";
-
-				case IconType.Natural:
-					return "Natural Collectibles";
-
-				case IconType.Arcane:
-					return "Arcane Collectibles";
-
-				case IconType.QuestItem:
-					return "Quest Item";
-
-				case IconType.QuestNPC:
-					return "Quest NPC";
-
-				case IconType.SecretDoor:
-					return "Secret Door";
-
-				case IconType.QuestExit:
-					return "Quest Exit";
-
-				case IconType.Portal:
-					return "Waypoint/Portal";
-
-				case IconType.Label:
-					return "Label";
-
-				case IconType.Trap:
-					return "Trap";
-
-				case IconType.CollapsibleFloor:
-					return "Collapsible Floor";
-
-				default:
-					throw new ArgumentOutOfRangeException();
+				return attribute.Name;
 			}
+
+			throw new ArgumentOutOfRangeException(nameof(item));
 		}
 
-		public static string GetImageFile(this IconType type)
+		public static string GetImageFile(this IconType item)
 		{
-			switch (type)
+			TypeInfo typeInfo = typeof(IconType).GetTypeInfo();
+
+			FieldInfo field = typeInfo.GetField(item.ToString());
+
+			IconFileAttribute attribute = null;
+			if (field?.TryGetCustomAttribute(out attribute) ?? false)
 			{
-				case IconType.Cursor:
-					return "Icons/cursor.png";
-
-				case IconType.NormalChest:
-					return "Icons/normalChest.png";
-
-				case IconType.TrappedChest:
-					return "Icons/trappedChest.png";
-
-				case IconType.LockedChest:
-					return "Icons/lockedChest.png";
-
-				case IconType.LockedDoor:
-					return "Icons/lockedDoor.png";
-
-				case IconType.LeverValveRune:
-					return "Icons/leverValve.png";
-
-				case IconType.ControlBox:
-					return "Icons/controlBox.png";
-
-				case IconType.Collectible:
-					return "Icons/collectible.png";
-
-				case IconType.Lore:
-					return "Icons/book.png";
-
-				case IconType.Natural:
-					return "Icons/paw.png";
-
-				case IconType.Arcane:
-					return "Icons/rune.png";
-
-				case IconType.QuestItem:
-					return "Icons/questItem.png";
-
-				case IconType.QuestNPC:
-					return "Icons/questNPC.png";
-
-				case IconType.SecretDoor:
-					return "Icons/secretDoor.png";
-
-				case IconType.QuestExit:
-					return "Icons/questExit.png";
-
-				case IconType.Portal:
-					return "Icons/portal.png";
-
-				case IconType.Label:
-					return "Icons/label.png";
-
-				case IconType.Trap:
-					return "Icons/trap.png";
-
-				case IconType.CollapsibleFloor:
-					return "Icons/collapsibleFloor.png";
-
-				default:
-					throw new ArgumentOutOfRangeException();
+				return "Icons/" + attribute.FileName;
 			}
+
+			throw new ArgumentOutOfRangeException(nameof(item));
+		}
+	}
+
+	public static class AttributeExtensions
+	{
+		public static bool TryGetCustomAttribute<T>(this TypeInfo info, out T attribute)
+			where T : Attribute
+		{
+			T[] attributes = (T[])info.GetCustomAttributes<T>();
+
+			if (attributes.Length > 0)
+			{
+				attribute = attributes[0];
+				return true;
+			}
+
+			attribute = default(T);
+			return false;
+		}
+
+		public static bool TryGetCustomAttribute<T>(this MemberInfo info, out T attribute)
+			where T : Attribute
+		{
+			T[] attributes = (T[])info?.GetCustomAttributes<T>();
+
+			if (attributes?.Length > 0)
+			{
+				attribute = attributes[0];
+				return true;
+			}
+
+			attribute = default(T);
+			return false;
 		}
 	}
 }
