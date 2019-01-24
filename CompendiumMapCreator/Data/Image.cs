@@ -20,12 +20,17 @@ namespace CompendiumMapCreator
 			}
 			else
 			{
-				Image image = new Image(new Uri("pack://application:,,,/" + Assembly.GetExecutingAssembly().GetName().Name + ";component/" + fileName, UriKind.Absolute));
+				Image image = new Image(GetImageUri(fileName));
 
 				cache.Add(fileName, image);
 
 				return image;
 			}
+		}
+
+		public static Uri GetImageUri(string fileName)
+		{
+			return new Uri("pack://application:,,,/" + Assembly.GetExecutingAssembly().GetName().Name + ";component/" + fileName, UriKind.Absolute);
 		}
 
 		public MemoryStream Data { get; private set; }
@@ -42,26 +47,26 @@ namespace CompendiumMapCreator
 		{
 		}
 
-		public Image(Uri uri)
+		public Image(Uri uri, Rotation rotation = Rotation.Rotate0)
 		{
 			Stream stream = Application.GetResourceStream(uri).Stream;
 
 			byte[] data = new BinaryReader(stream).ReadBytes((int)stream.Length);
 
-			this.Load(new MemoryStream(data, 0, data.Length, false, true));
+			this.Load(new MemoryStream(data, 0, data.Length, false, true), rotation);
 		}
 
-		public Image(byte[] data)
+		public Image(byte[] data, Rotation rotation = Rotation.Rotate0)
 		{
-			this.Load(new MemoryStream(data, 0, data.Length, false, true));
+			this.Load(new MemoryStream(data, 0, data.Length, false, true), rotation);
 		}
 
-		public Image(MemoryStream stream)
+		public Image(MemoryStream stream, Rotation rotation = Rotation.Rotate0)
 		{
-			this.Load(stream);
+			this.Load(stream, rotation);
 		}
 
-		private void Load(MemoryStream stream)
+		private void Load(MemoryStream stream, Rotation rotation)
 		{
 			this.Data = stream;
 
@@ -69,11 +74,27 @@ namespace CompendiumMapCreator
 			this.BitmapImage.BeginInit();
 			this.BitmapImage.CacheOption = BitmapCacheOption.OnLoad;
 			this.BitmapImage.StreamSource = this.Data;
+			this.BitmapImage.Rotation = rotation;
 			this.BitmapImage.EndInit();
 
 			this.DrawingImage = (Bitmap)Bitmap.FromStream(this.Data);
 
 			this.DrawingImage.SetResolution(96, 96);
+
+			switch (rotation)
+			{
+				case Rotation.Rotate90:
+					this.DrawingImage.RotateFlip(RotateFlipType.Rotate90FlipNone);
+					break;
+
+				case Rotation.Rotate180:
+					this.DrawingImage.RotateFlip(RotateFlipType.Rotate180FlipNone);
+					break;
+
+				case Rotation.Rotate270:
+					this.DrawingImage.RotateFlip(RotateFlipType.Rotate270FlipNone);
+					break;
+			}
 		}
 
 		#region IDisposable Support

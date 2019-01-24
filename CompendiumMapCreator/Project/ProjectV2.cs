@@ -58,6 +58,14 @@ namespace CompendiumMapCreator.Format
 					}
 					break;
 
+				case IconType.Entrance:
+					{
+						Rotation rotation = (Rotation)reader.ReadInt32();
+
+						element = new Entrance(rotation);
+					}
+					break;
+
 				default:
 					element = new Element(type);
 					break;

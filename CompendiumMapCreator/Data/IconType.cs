@@ -81,6 +81,10 @@ namespace CompendiumMapCreator
 		[Name("Collapsible Floor")]
 		[IconFile("collapsibleFloor.png")]
 		CollapsibleFloor,
+
+		[Name("Entrance")]
+		[IconFile("entrance.png")]
+		Entrance,
 	}
 
 	public static class IconTypeExtensions

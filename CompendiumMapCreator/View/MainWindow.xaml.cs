@@ -59,7 +59,7 @@ namespace CompendiumMapCreator
 			this.copied = new List<Element>(this.ViewModel.Project.Selected);
 		}
 
-		private void Edit(object sender, EventArgs e)
+		private void Edit(object sender, RoutedEventArgs e)
 		{
 			this.edit.editWindow?.Close();
 
@@ -285,6 +285,26 @@ namespace CompendiumMapCreator
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			e.Cancel = this.ViewModel.Changing(System.Windows.Window.GetWindow(this.Zoom));
+		}
+
+		private void RotateClockwise(object sender, RoutedEventArgs e)
+		{
+			if (this.ViewModel.Project.Selected.Count != 1 || this.ViewModel.Project.Selected[0].Type != IconType.Entrance)
+			{
+				return;
+			}
+
+			((Entrance)this.ViewModel.Project.Selected[0]).Rotate_Clockwise();
+		}
+
+		private void RotateCounterClockwise(object sender, RoutedEventArgs e)
+		{
+			if (this.ViewModel.Project.Selected.Count != 1)
+			{
+				return;
+			}
+
+			((Entrance)this.ViewModel.Project.Selected[0]).Rotate_CounterClockwise();
 		}
 	}
 }

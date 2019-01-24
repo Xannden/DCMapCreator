@@ -2,14 +2,26 @@
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using CompendiumMapCreator.Data;
 
 namespace CompendiumMapCreator.Converter
 {
 	public class ElementToVisibilityConverter : IValueConverter
 	{
+		public Type ElementType { get; set; }
+
+		public bool AllowCopies { get; set; }
+
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-			=> (value is Label l && !l.IsCopy) ? Visibility.Visible : (object)Visibility.Collapsed;
+		{
+			if (value is Element e && (this.AllowCopies || !e.IsCopy) && value.GetType() == this.ElementType)
+			{
+				return Visibility.Visible;
+			}
+			else
+			{
+				return Visibility.Collapsed;
+			}
+		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
 	}

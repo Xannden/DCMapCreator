@@ -63,6 +63,7 @@ namespace CompendiumMapCreator.Format
 
 							case 2:
 							case 3:
+							case 4:
 								project = new ProjectV2(dialog.FileName);
 								break;
 
@@ -220,7 +221,7 @@ namespace CompendiumMapCreator.Format
 					{
 						writer.Write(407893541);
 						writer.Write("DMC".ToCharArray());
-						writer.Write(3);
+						writer.Write(4);
 						writer.Write(this.Image.Data.Length);
 						writer.Write(this.Image.Data.GetBuffer());
 						writer.Write(this.Elements.Count);
@@ -402,6 +403,10 @@ namespace CompendiumMapCreator.Format
 					writer.Write(a.AreaWidth);
 					writer.Write(a.AreaHeight);
 					break;
+
+				case Entrance e:
+					writer.Write((int)e.Rotation);
+					break;
 			}
 		}
 
@@ -411,7 +416,7 @@ namespace CompendiumMapCreator.Format
 
 			foreach (Element item in this.Elements)
 			{
-				if (item.Type != IconType.Label && !icons.Contains(item.Type))
+				if (item.Type != IconType.Label && item.Type != IconType.Entrance && !icons.Contains(item.Type))
 				{
 					icons.Add(item.Type);
 				}

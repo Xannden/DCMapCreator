@@ -20,7 +20,8 @@
 		<converter:EnumBooleanConverter x:Key="EnumBooleanConverter" />
 		<converter:EqualsToBrushConverter x:Key="EqualsToBrushConverter" IsFalse="Transparent" IsTrue="#7F87CEFA" />
 		<converter:AddConverter x:Key="AddOne" Value="2" />
-		<converter:ElementToVisibilityConverter x:Key="ElementToVisibility" />
+		<converter:ElementToVisibilityConverter x:Key="LabelVisibile" ElementType="{x:Type data:Label}" AllowCopies="False" />
+		<converter:ElementToVisibilityConverter x:Key="RotateVisibile" ElementType="{x:Type data:Entrance}" AllowCopies="True" />
 	</Window.Resources>
 
 	<Window.CommandBindings>
@@ -141,7 +142,6 @@
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
 									<Canvas Width="{Binding Width}" Height="{Binding Height}" ClipToBounds="False" Opacity="{Binding Opacity}">
-
 										<Canvas.RenderTransform>
 											<TranslateTransform X="{Binding  X}" Y="{Binding Y}" />
 										</Canvas.RenderTransform>
@@ -162,9 +162,11 @@
 											<Image Source="{Binding Image.BitmapImage}" Width="{Binding Width}" Height="{Binding Height}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True">
 												<Image.ContextMenu>
 													<ContextMenu>
-														<MenuItem Header="Edit" Visibility="{Binding Converter={StaticResource ElementToVisibility}}" Click="Edit" />
+														<MenuItem Header="Edit" Visibility="{Binding Converter={StaticResource LabelVisibile}}" Click="Edit" />
 														<MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy" />
 														<MenuItem Header="Delete" Command="{Binding  Source={x:Reference Window}, Path=DataContext.DeleteCommand}" InputGestureText="Del" />
+														<MenuItem Header="Rotate Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateClockwise" />
+														<MenuItem Header="Rotate Counter Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateCounterClockwise" />
 													</ContextMenu>
 												</Image.ContextMenu>
 											</Image>

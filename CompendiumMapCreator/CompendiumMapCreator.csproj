@@ -65,6 +65,7 @@
     <Compile Include="Converter\IconTypeToDescriptionConverter.cs" />
     <Compile Include="Data\Elements\AreaElement.cs" />
     <Compile Include="Data\Elements\CollapsableFloor.cs" />
+    <Compile Include="Data\Elements\Entrance.cs" />
     <Compile Include="Data\Elements\Trap.cs" />
     <Compile Include="Data\IconFileAttribute.cs" />
     <Compile Include="Data\ImagePoint.cs" />
