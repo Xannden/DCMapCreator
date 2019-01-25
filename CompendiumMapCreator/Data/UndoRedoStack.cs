@@ -197,21 +197,9 @@ namespace CompendiumMapCreator.Data
 				this.index = -1;
 			}
 
-			public object Current
-			{
-				get
-				{
-					return this.index < 0 ? null : this.data[this.index];
-				}
-			}
+			public object Current => this.index < 0 ? null : this.data[this.index];
 
-			T IEnumerator<T>.Current
-			{
-				get
-				{
-					return this.index < 0 ? default(T) : this.data[this.index];
-				}
-			}
+			T IEnumerator<T>.Current => this.index < 0 ? default(T) : this.data[this.index];
 
 			public void Dispose()
 			{

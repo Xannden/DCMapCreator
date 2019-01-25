@@ -283,28 +283,10 @@ namespace CompendiumMapCreator
 		}
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			e.Cancel = this.ViewModel.Changing(System.Windows.Window.GetWindow(this.Zoom));
-		}
+			=> e.Cancel = this.ViewModel.Changing(System.Windows.Window.GetWindow(this.Zoom));
 
-		private void RotateClockwise(object sender, RoutedEventArgs e)
-		{
-			if (this.ViewModel.Project.Selected.Count != 1 || this.ViewModel.Project.Selected[0].Type != IconType.Entrance)
-			{
-				return;
-			}
+		private void RotateClockwise(object sender, RoutedEventArgs e) => this.ViewModel.RotateClockwise();
 
-			((Entrance)this.ViewModel.Project.Selected[0]).Rotate_Clockwise();
-		}
-
-		private void RotateCounterClockwise(object sender, RoutedEventArgs e)
-		{
-			if (this.ViewModel.Project.Selected.Count != 1)
-			{
-				return;
-			}
-
-			((Entrance)this.ViewModel.Project.Selected[0]).Rotate_CounterClockwise();
-		}
+		private void RotateCounterClockwise(object sender, RoutedEventArgs e) => this.ViewModel.RotateCounterClockwise();
 	}
 }

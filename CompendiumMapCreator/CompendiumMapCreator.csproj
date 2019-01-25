@@ -88,6 +88,7 @@
     <Compile Include="Data\UndoRedoStack.cs" />
     <Compile Include="Edits\Move.cs" />
     <Compile Include="Edits\Remove.cs" />
+    <Compile Include="Edits\Rotate.cs" />
     <Compile Include="Project\Project.cs" />
     <Compile Include="Project\ProjectV2.cs" />
     <Compile Include="Project\ProjectV1.cs" />

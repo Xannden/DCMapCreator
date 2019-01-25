@@ -109,7 +109,7 @@ namespace CompendiumMapCreator.ViewModel
 			}
 		});
 
-		public RelayCommand ExportCommand => new RelayCommand((_) => this.Project.Export(this.AddLegend));
+		public RelayCommand ExportCommand => new RelayCommand((_) => this.Project?.Export(this.AddLegend));
 
 #pragma warning disable RCS1171 // Simplify lazy initialization.
 		public RelayCommand UndoCommand
@@ -351,6 +351,32 @@ namespace CompendiumMapCreator.ViewModel
 			}
 
 			return false;
+		}
+
+		public void RotateClockwise()
+		{
+			if (this.Project.Selected.Count != 1 || this.Project.Selected[0].Type != IconType.Entrance)
+			{
+				return;
+			}
+
+			this.Project.AddEdit(new Rotate((Entrance)this.Project.Selected[0], clockwise: true));
+			this.undoCommand?.RaiseCanExecuteChanged();
+			this.redoCommand?.RaiseCanExecuteChanged();
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
+		}
+
+		public void RotateCounterClockwise()
+		{
+			if (this.Project.Selected.Count != 1 || this.Project.Selected[0].Type != IconType.Entrance)
+			{
+				return;
+			}
+
+			this.Project.AddEdit(new Rotate((Entrance)this.Project.Selected[0], clockwise: false));
+			this.undoCommand?.RaiseCanExecuteChanged();
+			this.redoCommand?.RaiseCanExecuteChanged();
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 		}
 
 		private interface IDrag

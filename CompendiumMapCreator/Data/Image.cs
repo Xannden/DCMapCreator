@@ -29,9 +29,7 @@ namespace CompendiumMapCreator
 		}
 
 		public static Uri GetImageUri(string fileName)
-		{
-			return new Uri("pack://application:,,,/" + Assembly.GetExecutingAssembly().GetName().Name + ";component/" + fileName, UriKind.Absolute);
-		}
+			=> new Uri("pack://application:,,,/" + Assembly.GetExecutingAssembly().GetName().Name + ";component/" + fileName, UriKind.Absolute);
 
 		public MemoryStream Data { get; private set; }
 

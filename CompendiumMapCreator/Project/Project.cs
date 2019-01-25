@@ -242,116 +242,7 @@ namespace CompendiumMapCreator.Format
 			}
 		}
 
-		public void Export(bool addLegend)
-		{
-			if (this.Image == null)
-			{
-				return;
-			}
-
-			SaveFileDialog dialog = new SaveFileDialog
-			{
-				AddExtension = true,
-				DefaultExt = ".png",
-				Filter = "PNG (*.png)|*.png",
-				OverwritePrompt = true,
-				ValidateNames = true,
-			};
-
-			bool? result = dialog.ShowDialog();
-
-			if (result.HasValue && result == true)
-			{
-				using (Font font = new Font(new FontFamily(GenericFontFamilies.SansSerif), 8))
-				{
-					DImage legend = null;
-
-					if (addLegend)
-					{
-						legend = this.CreateLegend(font);
-					}
-
-					int width = this.Image.Width + (legend != null ? legend.Width + 3 : 0);
-
-					DImage info;
-					int height;
-
-					if (this.Image.Height > (legend?.Height ?? 0))
-					{
-						info = this.CreateInfoList(width, font);
-						height = this.Image.Height + (info == null ? 0 : info.Height + 3);
-					}
-					else
-					{
-						info = this.CreateInfoList(this.Image.Width, font);
-						height = Math.Max(legend.Height, this.Image.Height + (info == null ? 0 : info.Height + 3));
-					}
-
-					using (DImage image = new Bitmap(width, height, PixelFormat.Format32bppArgb))
-					{
-						using (Graphics g = Graphics.FromImage(image))
-						{
-							g.FillRectangle(Brushes.Black, 0, 0, image.Width, image.Height);
-
-							if (this.Image.Height > (legend?.Height ?? 0))
-							{
-								if (info != null)
-								{
-									g.DrawHorizontalLine(0, this.Image.Height + 1, image.Width, this.Image.Height + 1);
-								}
-
-								g.DrawVerticalLine(149, 0, 149, this.Image.Height);
-							}
-							else
-							{
-								g.DrawVerticalLine(149, 0, 149, image.Height);
-
-								if (info != null)
-								{
-									g.DrawHorizontalLine(150, this.Image.Height + 1, image.Width, this.Image.Height + 1);
-								}
-							}
-
-							int offset = legend != null ? 151 : 0;
-
-							g.DrawImage(this.Image.DrawingImage, offset, 0);
-
-							for (int i = 0; i < this.Elements.Count; i++)
-							{
-								g.DrawImage(this.Elements[i].Image.DrawingImage, this.Elements[i].X + offset, (float)this.Elements[i].Y);
-							}
-
-							if (info != null)
-							{
-								if (this.Image.Height > (legend?.Height ?? 0))
-								{
-									g.DrawImage(info, 0, this.Image.Height + 3);
-								}
-								else
-								{
-									g.DrawImage(info, offset, this.Image.Height + 3);
-								}
-							}
-
-							if (legend != null)
-							{
-								g.DrawImage(legend, 0, 0);
-							}
-						}
-
-						image.Save(dialog.FileName, ImageFormat.Png);
-					}
-
-					legend?.Dispose();
-					info?.Dispose();
-				}
-			}
-		}
-
-		public bool HasUnsaved()
-		{
-			return this.saved.gen != this.Edits.Generation || this.saved.count != this.Edits.Count;
-		}
+		public bool HasUnsaved() => this.saved.gen != this.Edits.Generation || this.saved.count != this.Edits.Count;
 
 		private void Load(BinaryReader reader)
 		{
@@ -410,6 +301,135 @@ namespace CompendiumMapCreator.Format
 			}
 		}
 
+		public void Export(bool addLegend)
+		{
+			if (this.Image == null)
+			{
+				return;
+			}
+
+			SaveFileDialog dialog = new SaveFileDialog
+			{
+				AddExtension = true,
+				DefaultExt = ".png",
+				Filter = "PNG (*.png)|*.png",
+				OverwritePrompt = true,
+				ValidateNames = true,
+			};
+
+			bool? result = dialog.ShowDialog();
+
+			if (result.HasValue && result == true)
+			{
+				using (Font font = new Font(new FontFamily(GenericFontFamilies.SansSerif), 8))
+				{
+					using (DImage legend = addLegend ? this.CreateLegend(font) : null)
+					{
+						((int x, int y) offset, Area imageArea) = this.GetImageAreaAndOffsets((legend?.Width + 3) ?? 0);
+						//int offset = (legend?.Width + 3) ?? 0;
+
+						Area fullArea = new Area(imageArea.Width + (legend != null ? legend.Width + 3 : 0), 0);
+
+						using (DImage info = this.CreateInfoList(font, fullArea, imageArea, legend?.Height ?? 0))
+						{
+							fullArea.Height = imageArea.Height > (legend?.Height ?? 0)
+								? imageArea.Height + (info == null ? 0 : info.Height + 3)
+								: Math.Max(legend?.Height ?? 0, imageArea.Height + (info == null ? 0 : info.Height + 3));
+
+							using (DImage image = new Bitmap(fullArea.Width, fullArea.Height, PixelFormat.Format32bppArgb))
+							{
+								using (Graphics g = Graphics.FromImage(image))
+								{
+									g.FillRectangle(Brushes.Black, 0, 0, fullArea.Width, fullArea.Height);
+
+									g.DrawBoarders(fullArea, imageArea.Height, legend?.Height ?? 0, info != null);
+
+									//offset += (imageArea.Width / 2) - (this.Image.Width / 2);
+									//int yOffset = (imageArea.Height / 2) - (this.Image.Height / 2);
+
+									g.DrawImage(this.Image.DrawingImage, offset.x, offset.y);
+
+									for (int i = 0; i < this.Elements.Count; i++)
+									{
+										g.DrawImage(this.Elements[i].Image.DrawingImage, this.Elements[i].X + offset.x, (float)this.Elements[i].Y + offset.y);
+									}
+
+									if (info != null)
+									{
+										if (imageArea.Height > (legend?.Height ?? 0))
+										{
+											g.DrawImage(info, 0, imageArea.Height + 3);
+										}
+										else
+										{
+											g.DrawImage(info, (legend?.Width + 3) ?? 0, imageArea.Height + 3);
+										}
+									}
+
+									if (legend != null)
+									{
+										g.DrawImage(legend, 0, 0);
+									}
+								}
+
+								image.Save(dialog.FileName, ImageFormat.Png);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		private ((int x, int y), Area) GetImageAreaAndOffsets(int legendWidth)
+		{
+#pragma warning disable IDE0042 // Deconstruct variable declaration
+			(int x, int y) min = (int.MaxValue, int.MaxValue);
+			(int x, int y) max = (int.MinValue, int.MinValue);
+#pragma warning restore IDE0042 // Deconstruct variable declaration
+
+			for (int i = 0; i < this.Elements.Count; i++)
+			{
+				min.x = Math.Min(min.x, this.Elements[i].X);
+				min.y = Math.Min(min.y, this.Elements[i].Y);
+				max.x = Math.Max(max.x, this.Elements[i].X + this.Elements[i].Width);
+				max.y = Math.Max(max.y, this.Elements[i].Y + this.Elements[i].Height);
+			}
+
+			Rectangle bounding = Rectangle.FromLTRB(min.x, min.y, max.x, max.y);
+			int width = this.Image.Width;
+			int height = this.Image.Height;
+			int xOffset = 0;
+			int yOffset = 0;
+
+			if (bounding.Left < 0)
+			{
+				int diff = -bounding.Left;
+
+				xOffset = diff;
+				width += diff;
+			}
+
+			if (bounding.Right > this.Image.Width)
+			{
+				width += bounding.Right - this.Image.Width;
+			}
+
+			if (bounding.Top < 0)
+			{
+				int diff = -bounding.Top;
+
+				yOffset = diff;
+				height += diff;
+			}
+
+			if (bounding.Bottom > this.Image.Height)
+			{
+				height += bounding.Bottom - this.Image.Height;
+			}
+
+			return ((legendWidth + xOffset, yOffset), new Area(width, height));
+		}
+
 		private DImage CreateLegend(Font font)
 		{
 			List<IconType> icons = new List<IconType>();
@@ -440,8 +460,10 @@ namespace CompendiumMapCreator.Format
 			return image;
 		}
 
-		private DImage CreateInfoList(int width, Font font)
+		private DImage CreateInfoList(Font font, Area fullArea, Area imageArea, int legendHeight)
 		{
+			int width = imageArea.Height > legendHeight ? fullArea.Width : imageArea.Width;
+
 			List<Label> labels = new List<Label>();
 
 			for (int i = 0; i < this.Elements.Count; i++)
@@ -517,6 +539,19 @@ namespace CompendiumMapCreator.Format
 		}
 	}
 
+	public class Area
+	{
+		public int Width { get; set; }
+
+		public int Height { get; set; }
+
+		public Area(int width, int height)
+		{
+			this.Width = width;
+			this.Height = height;
+		}
+	}
+
 	public static class Extensions
 	{
 		public static void DrawVerticalLine(this Graphics g, int x0, int y0, int x1, int y1)
@@ -541,6 +576,28 @@ namespace CompendiumMapCreator.Format
 			g.DrawString(type.GetDescription(), font, new SolidBrush(Color.White), 30, position);
 
 			position += 20;
+		}
+
+		public static void DrawBoarders(this Graphics g, Area fullArea, int imageHeight, int legendHeight, bool hasInfo)
+		{
+			if (imageHeight > legendHeight)
+			{
+				if (hasInfo)
+				{
+					g.DrawHorizontalLine(0, imageHeight + 1, fullArea.Width, imageHeight + 1);
+				}
+
+				g.DrawVerticalLine(148, 0, 148, imageHeight);
+			}
+			else
+			{
+				g.DrawVerticalLine(148, 0, 148, fullArea.Height);
+
+				if (hasInfo)
+				{
+					g.DrawHorizontalLine(149, imageHeight + 1, fullArea.Width, imageHeight + 1);
+				}
+			}
 		}
 	}
 }
