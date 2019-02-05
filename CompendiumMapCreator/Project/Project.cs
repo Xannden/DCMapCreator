@@ -417,7 +417,7 @@ namespace CompendiumMapCreator.Format
 				height += bounding.Bottom - this.Image.Height;
 			}
 
-			return ((legendWidth + xOffset, yOffset), new Area(width, height));
+			return ((legendWidth + xOffset + 5, yOffset + 5), new Area(width + 10, height + 10));
 		}
 
 		private DImage CreateLegend(Font font)
@@ -466,6 +466,15 @@ namespace CompendiumMapCreator.Format
 
 			if (labels.Count == 0)
 			{
+				if (imageArea.Height > legendHeight)
+				{
+					fullArea.Height = imageArea.Height;
+				}
+				else
+				{
+					fullArea.Height = Math.Max(legendHeight, imageArea.Height);
+				}
+
 				return null;
 			}
 
