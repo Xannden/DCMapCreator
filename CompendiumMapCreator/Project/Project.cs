@@ -322,58 +322,48 @@ namespace CompendiumMapCreator.Format
 			if (result.HasValue && result == true)
 			{
 				using (Font font = new Font(new FontFamily(GenericFontFamilies.SansSerif), 8))
+				using (DImage legend = addLegend ? this.CreateLegend(font) : null)
 				{
-					using (DImage legend = addLegend ? this.CreateLegend(font) : null)
+					((int x, int y) offset, Area imageArea) = this.GetImageAreaAndOffsets((legend?.Width + 3) ?? 0);
+
+					Area fullArea = new Area(imageArea.Width + (legend != null ? legend.Width + 3 : 0), 0);
+
+					using (DImage info = this.CreateInfoList(font, fullArea, imageArea, legend?.Height ?? 0))
 					{
-						((int x, int y) offset, Area imageArea) = this.GetImageAreaAndOffsets((legend?.Width + 3) ?? 0);
-						//int offset = (legend?.Width + 3) ?? 0;
-
-						Area fullArea = new Area(imageArea.Width + (legend != null ? legend.Width + 3 : 0), 0);
-
-						using (DImage info = this.CreateInfoList(font, fullArea, imageArea, legend?.Height ?? 0))
+						using (DImage image = new Bitmap(fullArea.Width, fullArea.Height, PixelFormat.Format32bppArgb))
 						{
-							fullArea.Height = imageArea.Height > (legend?.Height ?? 0)
-								? imageArea.Height + (info == null ? 0 : info.Height + 3)
-								: Math.Max(legend?.Height ?? 0, imageArea.Height + (info == null ? 0 : info.Height + 3));
-
-							using (DImage image = new Bitmap(fullArea.Width, fullArea.Height, PixelFormat.Format32bppArgb))
+							using (Graphics g = Graphics.FromImage(image))
 							{
-								using (Graphics g = Graphics.FromImage(image))
+								g.FillRectangle(Brushes.Black, 0, 0, fullArea.Width, fullArea.Height);
+
+								g.DrawBoarders(fullArea, imageArea.Height, legend?.Height ?? 0, info != null);
+
+								g.DrawImage(this.Image.DrawingImage, offset.x, offset.y);
+
+								for (int i = 0; i < this.Elements.Count; i++)
 								{
-									g.FillRectangle(Brushes.Black, 0, 0, fullArea.Width, fullArea.Height);
+									g.DrawImage(this.Elements[i].Image.DrawingImage, this.Elements[i].X + offset.x, (float)this.Elements[i].Y + offset.y);
+								}
 
-									g.DrawBoarders(fullArea, imageArea.Height, legend?.Height ?? 0, info != null);
-
-									//offset += (imageArea.Width / 2) - (this.Image.Width / 2);
-									//int yOffset = (imageArea.Height / 2) - (this.Image.Height / 2);
-
-									g.DrawImage(this.Image.DrawingImage, offset.x, offset.y);
-
-									for (int i = 0; i < this.Elements.Count; i++)
+								if (info != null)
+								{
+									if (imageArea.Height > (legend?.Height ?? 0))
 									{
-										g.DrawImage(this.Elements[i].Image.DrawingImage, this.Elements[i].X + offset.x, (float)this.Elements[i].Y + offset.y);
+										g.DrawImage(info, 0, imageArea.Height + 3);
 									}
-
-									if (info != null)
+									else
 									{
-										if (imageArea.Height > (legend?.Height ?? 0))
-										{
-											g.DrawImage(info, 0, imageArea.Height + 3);
-										}
-										else
-										{
-											g.DrawImage(info, (legend?.Width + 3) ?? 0, imageArea.Height + 3);
-										}
-									}
-
-									if (legend != null)
-									{
-										g.DrawImage(legend, 0, 0);
+										g.DrawImage(info, (legend?.Width + 3) ?? 0, imageArea.Height + 3);
 									}
 								}
 
-								image.Save(dialog.FileName, ImageFormat.Png);
+								if (legend != null)
+								{
+									g.DrawImage(legend, 0, 0);
+								}
 							}
+
+							image.Save(dialog.FileName, ImageFormat.Png);
 						}
 					}
 				}
@@ -533,6 +523,15 @@ namespace CompendiumMapCreator.Format
 						rowOffset += rowHeights[i / columns];
 					}
 				}
+			}
+
+			if (imageArea.Height > legendHeight)
+			{
+				fullArea.Height = imageArea.Height + (info == null ? 0 : info.Height + 3);
+			}
+			else
+			{
+				fullArea.Height = Math.Max(legendHeight, imageArea.Height + (info == null ? 0 : info.Height + 3));
 			}
 
 			return info;
