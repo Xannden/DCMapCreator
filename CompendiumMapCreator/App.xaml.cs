@@ -26,9 +26,14 @@ namespace CompendiumMapCreator
 		{
 			if (File.Exists("updater.exe") && this.NeedsUpdate())
 			{
-				Process.Start("updater.exe", "CompendiumMapCreator.exe DCMapCreator");
+				MessageBoxResult result = MessageBox.Show("There is an update available.\n\nDo you want to update?", "DDO Compendium Map Creator", MessageBoxButton.YesNo, MessageBoxImage.Information);
 
-				this.Shutdown();
+				if (result == MessageBoxResult.Yes)
+				{
+					Process.Start("updater.exe", "CompendiumMapCreator.exe DCMapCreator");
+
+					this.Shutdown();
+				}
 			}
 		}
 
