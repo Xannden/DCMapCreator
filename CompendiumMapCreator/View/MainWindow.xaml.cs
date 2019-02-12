@@ -95,6 +95,8 @@ namespace CompendiumMapCreator
 			{
 				this.ViewModel.Project.AddEdit(new ChangeLabel(this.edit.editing, this.edit.editWindow.Text));
 			}
+
+			this.edit.editWindow = null;
 		}
 
 		protected override void OnContextMenuOpening(ContextMenuEventArgs e)
@@ -205,11 +207,24 @@ namespace CompendiumMapCreator
 			}
 		}
 
-		public void Zoom_MouseLeftButtonUp(object sender, MouseButtonEventArgs e) => this.drag.MouseUp(e.GetPosition(this.Zoom).ToImage(this.Zoom));
+		public void Zoom_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+		{
+			if (this.edit.editWindow != null)
+			{
+				return;
+			}
+
+			this.drag.MouseUp(e.GetPosition(this.Zoom).ToImage(this.Zoom));
+		}
 
 		private void Zoom_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
-			((ZoomControl)sender).Focus();
+			if (this.edit.editWindow != null)
+			{
+				return;
+			}
+
+						((ZoomControl)sender).Focus();
 
 			this.drag.MouseDown(e.GetPosition(this.Zoom).AsWindow());
 		}

@@ -25,5 +25,13 @@ namespace CompendiumMapCreator.View
 		public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(EditWindow));
 
 		private void EditWindow_Loaded(object sender, RoutedEventArgs e) => this.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+
+		private void Window_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Escape)
+			{
+				this.Close();
+			}
+		}
 	}
 }
