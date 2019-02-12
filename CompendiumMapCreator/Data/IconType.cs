@@ -46,7 +46,7 @@ namespace CompendiumMapCreator
 		[IconFile("paw.png")]
 		Natural,
 
-		[Name("Archane Collectibles")]
+		[Name("Arcane Collectibles")]
 		[IconFile("rune.png")]
 		Arcane,
 
