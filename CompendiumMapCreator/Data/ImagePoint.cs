@@ -16,6 +16,8 @@
 
 		public static ImagePoint operator +(ImagePoint lhs, ImagePoint rhs) => new ImagePoint(lhs.X + rhs.X, lhs.Y + rhs.Y);
 
+		public static ImagePoint operator /(ImagePoint lhs, int rhs) => new ImagePoint(lhs.X / rhs, lhs.Y / rhs);
+
 		public WindowPoint ToWindow(ZoomControl zoom) => new WindowPoint((int)((this.X * zoom.Scale) + zoom.ViewportPositionX), (int)((this.Y * zoom.Scale) + zoom.ViewportPositionY));
 	}
 }

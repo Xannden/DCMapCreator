@@ -31,13 +31,12 @@ namespace CompendiumMapCreator.ViewModel
 		private Project _project;
 		private IconType selectedType;
 		private IDrag dragging;
-		private RelayCommand undoCommand;
-		private RelayCommand redoCommand;
-		private RelayCommand deleteCommand;
 		private string projectDir;
 		private string imageDir;
 
 		public Rectangle Selection => this.dragging?.Selection ?? new Rectangle(0, 0, 0, 0);
+
+		public Editing Editing { get; } = new Editing();
 
 		public MBrush SelectionFill
 		{
@@ -81,23 +80,15 @@ namespace CompendiumMapCreator.ViewModel
 			}
 		}
 
-		public DelegateCommand<IconType> SetType => new DelegateCommand<IconType>((value) =>
-		{
-			this.SelectedType = value;
-			this.Project.Selected.Clear();
-		});
-
-		public RelayCommand LoadImageCommand => new RelayCommand(this.LoadImage);
-
-		public RelayCommand SaveProjectCommand => new RelayCommand((_) =>
+		public void SaveProject()
 		{
 			this.Project?.Save(ref this.projectDir);
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
-		});
+		}
 
-		public RelayCommand LoadProjectCommand => new RelayCommand((p) =>
+		public void LoadProject(Window window)
 		{
-			if (this.Changing(p as Window))
+			if (this.Changing(window))
 			{
 				return;
 			}
@@ -110,80 +101,50 @@ namespace CompendiumMapCreator.ViewModel
 				this.SelectedType = IconType.Cursor;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 			}
-		});
-
-		public RelayCommand ExportCommand => new RelayCommand((_) => this.Project?.Export(this.AddLegend, ref this.imageDir));
-
-#pragma warning disable RCS1171 // Simplify lazy initialization.
-		public RelayCommand UndoCommand
-		{
-			get
-			{
-				if (this.undoCommand == null)
-				{
-					this.undoCommand = new RelayCommand(_ =>
-					{
-						this.Project.Undo();
-						this.undoCommand?.RaiseCanExecuteChanged();
-						this.redoCommand?.RaiseCanExecuteChanged();
-						this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
-					}
-					, _ => this.Project?.Edits.Count > 0);
-				}
-
-				return this.undoCommand;
-			}
 		}
 
-		public RelayCommand RedoCommand
+		public void Export()
 		{
-			get
-			{
-				if (this.redoCommand == null)
-				{
-					this.redoCommand = new RelayCommand(_ =>
-					{
-						this.Project.Redo();
-						this.undoCommand?.RaiseCanExecuteChanged();
-						this.redoCommand?.RaiseCanExecuteChanged();
-						this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
-					}, _ => this.Project?.Edits.Count < this.Project?.Edits.Total);
-				}
-
-				return this.redoCommand;
-			}
+			this.Project?.Export(this.AddLegend, ref this.imageDir);
 		}
 
-		public RelayCommand DeleteCommand
+		public void Undo()
 		{
-			get
-			{
-				if (this.deleteCommand == null)
-				{
-					this.deleteCommand = new RelayCommand(_ =>
-					{
-						if (this.Project.Selected.Count == 0)
-						{
-							return;
-						}
-
-						this.Project.AddEdit(new Remove(new List<Element>(this.Project.Selected)));
-						this.undoCommand?.RaiseCanExecuteChanged();
-						this.redoCommand?.RaiseCanExecuteChanged();
-						this.Project.Selected.Clear();
-					}, _ => this.Project?.Selected != null);
-				}
-
-				return this.deleteCommand;
-			}
+			this.Project.Undo();
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 		}
 
-		public RelayCommand DeselectCommand => new RelayCommand((_) => this.Project?.Selected.Clear());
-#pragma warning restore RCS1171 // Simplify lazy initialization.
-
-		public void LoadImage(object parameter)
+		public void Redo()
 		{
-			if (this.Changing(parameter as Window))
+			this.Project.Redo();
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
+		}
+
+		public void Delete()
+		{
+			if (this.Project.Selected.Count == 0)
+			{
+				return;
+			}
+
+			this.Project.AddEdit(new Remove(new List<Element>(this.Project.Selected)));
+			this.Project.Selected.Clear();
+		}
+
+		public void Deselect()
+		{
+			this.Project?.Selected.Clear();
+		}
+
+		public void SetType(IconType type)
+		{
+			this.SelectedType = type;
+			this.Project?.Selected.Clear();
+		}
+
+		public void LoadImage(Window window)
+		{
+			if (this.Changing(window))
 			{
 				return;
 			}
@@ -223,8 +184,6 @@ namespace CompendiumMapCreator.ViewModel
 			}
 
 			this.Project.AddEdit(new Add(element));
-			this.undoCommand?.RaiseCanExecuteChanged();
-			this.redoCommand?.RaiseCanExecuteChanged();
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 		}
 
@@ -306,8 +265,6 @@ namespace CompendiumMapCreator.ViewModel
 			if (element != null)
 			{
 				this.Project.AddEdit(element, apply);
-				this.undoCommand?.RaiseCanExecuteChanged();
-				this.redoCommand?.RaiseCanExecuteChanged();
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 			}
 
@@ -348,7 +305,7 @@ namespace CompendiumMapCreator.ViewModel
 
 				if (result == MessageBoxResult.Yes)
 				{
-					this.SaveProjectCommand?.Execute(null);
+					this.SaveProject();
 				}
 				else if (result == MessageBoxResult.Cancel)
 				{
@@ -367,8 +324,6 @@ namespace CompendiumMapCreator.ViewModel
 			}
 
 			this.Project.AddEdit(new Rotate((Entrance)this.Project.Selected[0], clockwise: true));
-			this.undoCommand?.RaiseCanExecuteChanged();
-			this.redoCommand?.RaiseCanExecuteChanged();
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 		}
 
@@ -380,9 +335,19 @@ namespace CompendiumMapCreator.ViewModel
 			}
 
 			this.Project.AddEdit(new Rotate((Entrance)this.Project.Selected[0], clockwise: false));
-			this.undoCommand?.RaiseCanExecuteChanged();
-			this.redoCommand?.RaiseCanExecuteChanged();
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
+		}
+
+		public void Edit(WindowPoint p)
+		{
+			//this.edit.editWindow?.Close();
+
+			if (this.Project?.Selected.Count != 1 || !(this.Project.Selected[0] is Label))
+			{
+				return;
+			}
+
+			this.Editing.Start(p, (Label)this.Project.Selected[0]);
 		}
 
 		private interface IDrag
@@ -536,5 +501,42 @@ namespace CompendiumMapCreator.ViewModel
 	public static class Extensions
 	{
 		public static MColor ToMediaColor(this System.Drawing.Color c) => MColor.FromArgb(c.A, c.R, c.G, c.B);
+	}
+
+	public class Editing : INotifyPropertyChanged
+	{
+		public Visibility Visibility { get; private set; } = Visibility.Collapsed;
+
+		public int X { get; private set; }
+
+		public int Y { get; private set; }
+
+		public Label Label { get; private set; }
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		public void Start(WindowPoint p, Label label)
+		{
+			this.Visibility = Visibility.Visible;
+			this.Label = label;
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Visibility)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Label)));
+
+			this.SetPosition(p.X, p.Y);
+		}
+
+		private void SetPosition(int x, int y)
+		{
+			this.X = x;
+			this.Y = y;
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.X)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Y)));
+		}
+
+		public void End()
+		{
+			this.Visibility = Visibility.Collapsed;
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Visibility)));
+		}
 	}
 }

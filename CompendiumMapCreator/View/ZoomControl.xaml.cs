@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,6 +31,7 @@ namespace CompendiumMapCreator
 
 				this.scale = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Scale)));
+				this.ScaleChanged?.Invoke(this, new EventArgs());
 			}
 		}
 
@@ -40,6 +42,7 @@ namespace CompendiumMapCreator
 			{
 				this.viewportPositionX = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ViewportPositionX)));
+				this.ViewportChanged?.Invoke(this, new EventArgs());
 			}
 		}
 
@@ -50,6 +53,7 @@ namespace CompendiumMapCreator
 			{
 				this.viewportPositionY = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ViewportPositionY)));
+				this.ViewportChanged?.Invoke(this, new EventArgs());
 			}
 		}
 
@@ -76,6 +80,10 @@ namespace CompendiumMapCreator
 		public static readonly DependencyProperty ChildHeightProperty = DependencyProperty.Register(nameof(ChildHeight), typeof(int), typeof(ZoomControl));
 
 		public event PropertyChangedEventHandler PropertyChanged;
+
+		public event EventHandler ScaleChanged;
+
+		public event EventHandler ViewportChanged;
 
 		public ZoomControl()
 		{

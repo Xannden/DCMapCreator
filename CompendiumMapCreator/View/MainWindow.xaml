@@ -9,7 +9,9 @@
 		xmlns:data="clr-namespace:CompendiumMapCreator.Data"
 		Closing="Window_Closing"
 		Name="Window"
-		PreviewMouseDown="Window_MouseDown"
+		PreviewMouseDown="Window_PreviewMouseDown"
+		MouseUp="Window_MouseUp"
+		KeyDown="Window_KeyDown"
 		mc:Ignorable="d"
 		Title="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Height="730" Width="1024">
 	<Window.DataContext>
@@ -24,68 +26,26 @@
 		<converter:ElementToVisibilityConverter x:Key="RotateVisibile" ElementType="{x:Type data:Entrance}" AllowCopies="True" />
 	</Window.Resources>
 
-	<Window.CommandBindings>
-		<CommandBinding Command="Copy" Executed="Copy" />
-		<CommandBinding Command="Paste" Executed="Paste" />
-	</Window.CommandBindings>
-
-	<Window.InputBindings>
-		<KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding LoadImageCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
-		<KeyBinding Key="E" Modifiers="Ctrl" Command="{Binding ExportCommand}" />
-
-		<KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
-		<KeyBinding Key="Y" Modifiers="Ctrl" Command="{Binding RedoCommand}" />
-
-		<KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
-
-		<KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SaveProjectCommand}" />
-		<KeyBinding Key="L" Modifiers="Ctrl" Command="{Binding LoadProjectCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
-
-		<KeyBinding Command="Copy" Key="C" Modifiers="Ctrl" />
-		<KeyBinding Command="Paste" Key="V" Modifiers="Ctrl" />
-		<KeyBinding Key="D" Modifiers="Ctrl" Command="{Binding DeselectCommand}" />
-
-		<KeyBinding Key="D1" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.Cursor}" />
-		<KeyBinding Key="D2" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.NormalChest}" />
-		<KeyBinding Key="D3" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.TrappedChest}" />
-		<KeyBinding Key="D4" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.LockedChest}" />
-		<KeyBinding Key="D5" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.LockedDoor}" />
-		<KeyBinding Key="D6" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.LeverValveRune}" />
-		<KeyBinding Key="D7" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.ControlBox}" />
-		<KeyBinding Key="D8" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.Collectible}" />
-		<KeyBinding Key="D9" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.Lore}" />
-		<KeyBinding Key="D0" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.Natural}" />
-		<KeyBinding Key="OemMinus" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.Arcane}" />
-		<KeyBinding Key="OemPlus" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.QuestItem}" />
-		<KeyBinding Key="D1" Modifiers="Shift" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.QuestNPC}" />
-		<KeyBinding Key="D2" Modifiers="Shift" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.SecretDoor}" />
-		<KeyBinding Key="D3" Modifiers="Shift" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.QuestExit}" />
-		<KeyBinding Key="D4" Modifiers="Shift" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.Portal}" />
-		<KeyBinding Key="D5" Modifiers="Shift" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.Label}" />
-		<KeyBinding Key="D6" Modifiers="Shift" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.Trap}" />
-		<KeyBinding Key="D7" Modifiers="Shift" Command="{Binding SetType}" CommandParameter="{x:Static local:IconType.CollapsibleFloor}" />
-	</Window.InputBindings>
-
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="160" />
 			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
+			<RowDefinition Height="20" />
+			<RowDefinition Height="60" />
 			<RowDefinition />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
 		<Menu Grid.Row="0" Grid.ColumnSpan="2" Height="20" Focusable="False">
 			<MenuItem Header="_File" Focusable="False">
-				<MenuItem Header="Save Project" InputGestureText="Ctrl+S" Command="{Binding SaveProjectCommand}" Focusable="False" />
-				<MenuItem Header="Load Project" InputGestureText="Ctrl+L" Command="{Binding LoadProjectCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" Focusable="False" />
+				<MenuItem Header="Save Project" InputGestureText="Ctrl+S" Click="SaveProject_Click" Focusable="False" />
+				<MenuItem Header="Load Project" InputGestureText="Ctrl+L" Click="LoadProject_Click" Focusable="False" />
 			</MenuItem>
 			<MenuItem Header="_Edit" Focusable="False">
-				<MenuItem Header="Undo" InputGestureText="Ctrl+Z" Command="{Binding UndoCommand}" Focusable="False" />
-				<MenuItem Header="Redo" InputGestureText="Ctrl+Y" Command="{Binding RedoCommand}" Focusable="False" />
+				<MenuItem Header="Undo" InputGestureText="Ctrl+Z" Click="Undo_Click" Focusable="False" />
+				<MenuItem Header="Redo" InputGestureText="Ctrl+Y" Click="Redo_Click" Focusable="False" />
 			</MenuItem>
 			<MenuItem Header="_Options" Focusable="False">
 				<MenuItem Header="Add Legend" IsCheckable="True" IsChecked="{Binding AddLegend}" Focusable="False" />
@@ -96,7 +56,7 @@
 			</MenuItem>
 		</Menu>
 
-		<Button Grid.Row="1" Height="40" Content="New" Margin="10" Focusable="False" Command="{Binding LoadImageCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" />
+		<Button Grid.Row="1" Height="40" Content="New" Margin="10" Focusable="False" Click="LoadImage_Click" />
 
 		<ListBox Name="Selection" Grid.Row="2" ItemsSource="{Binding Types}" SelectedItem="{Binding SelectedType}" Height="Auto" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
 			<ListBox.Resources>
@@ -118,20 +78,19 @@
 			</ListBox.ItemTemplate>
 		</ListBox>
 
-		<Button Grid.Row="3" Height="40" Margin="10" Content="Export Image" Focusable="False" Command="{Binding ExportCommand}" />
+		<Button Grid.Row="3" Height="40" Margin="10" Content="Export Image" Focusable="False" Click="Export_Click" />
 
 		<Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" BorderThickness="1,0,0,0" BorderBrush="Black"  ClipToBounds="True">
-			<local:ZoomControl Focusable="True" x:Name="Zoom" Background="Black" ChildWidth="{Binding Project.Image.Width}" ChildHeight="{Binding Project.Image.Height}" PreviewKeyDown="Zoom_KeyDown" PreviewKeyUp="Zoom_KeyUp"  MouseLeftButtonUp="Zoom_MouseLeftButtonUp" MouseLeftButtonDown="Zoom_MouseLeftButtonDown" MouseRightButtonDown="Zoom_MouseRightButtonDown"  MouseMove="Zoom_MouseMove">
+			<local:ZoomControl Focusable="True" x:Name="Zoom" Background="Black" ChildWidth="{Binding Project.Image.Width}" ChildHeight="{Binding Project.Image.Height}" PreviewKeyDown="Zoom_KeyDown" PreviewKeyUp="Zoom_KeyUp"  MouseLeftButtonUp="Zoom_MouseLeftButtonUp" MouseLeftButtonDown="Zoom_MouseLeftButtonDown" MouseRightButtonDown="Zoom_MouseRightButtonDown"  MouseMove="Zoom_MouseMove" ScaleChanged="Zoom_ScaleChanged" ViewportChanged="Zoom_ViewportChanged">
 				<local:ZoomControl.Child>
-					<Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext}">
+					<Grid HorizontalAlignment="Left" VerticalAlignment="Top" DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext}">
 						<Grid.ContextMenu>
 							<ContextMenu>
 								<MenuItem Header="Paste" Click="Paste" InputGestureText="Ctrl+V" />
 							</ContextMenu>
 						</Grid.ContextMenu>
-						<Canvas>
-							<Image  Width="{Binding Project.Image.Width}" Height="{Binding Project.Image.Height}" Source="{Binding Project.Image.BitmapImage}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" />
-						</Canvas>
+
+						<Image Width="{Binding Project.Image.Width}" Height="{Binding Project.Image.Height}" Source="{Binding Project.Image.BitmapImage}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" />
 
 						<ItemsControl Focusable="False" ItemsSource="{Binding Project.Elements}" SnapsToDevicePixels="True">
 							<ItemsControl.ItemsPanel>
@@ -164,7 +123,7 @@
 													<ContextMenu>
 														<MenuItem Header="Edit" Visibility="{Binding Converter={StaticResource LabelVisibile}}" Click="Edit" />
 														<MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy" />
-														<MenuItem Header="Delete" Command="{Binding  Source={x:Reference Window}, Path=DataContext.DeleteCommand}" InputGestureText="Del" />
+														<MenuItem Header="Delete" Click="Delete_Click" InputGestureText="Del" />
 														<MenuItem Header="Rotate Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateClockwise" />
 														<MenuItem Header="Rotate Counter Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateCounterClockwise" />
 													</ContextMenu>
@@ -183,5 +142,8 @@
 				</local:ZoomControl.Child>
 			</local:ZoomControl>
 		</Border>
+		<Canvas>
+			<TextBox Name="EditWindow" Canvas.Top="{Binding Editing.Y}" Canvas.Left="{Binding Editing.X}" Visibility="{Binding Editing.Visibility}" Text="{Binding Editing.Label.Text}" TextWrapping="WrapWithOverflow"  Height="50" Width="200" SnapsToDevicePixels="True" />
+		</Canvas>
 	</Grid>
 </Window>

@@ -87,5 +87,10 @@ namespace CompendiumMapCreator
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public bool Contains(ImagePoint point) => this.X <= point.X && (this.X + this.Width) > point.X && this.Y <= point.Y && (this.Y + this.Height) > point.Y;
+
+		public ImagePoint Position()
+		{
+			return new ImagePoint(this.X, this.Y);
+		}
 	}
 }

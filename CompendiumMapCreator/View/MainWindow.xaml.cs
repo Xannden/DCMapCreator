@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using CompendiumMapCreator.Data;
-using CompendiumMapCreator.Edits;
 using CompendiumMapCreator.View;
 
 namespace CompendiumMapCreator
@@ -17,11 +15,9 @@ namespace CompendiumMapCreator
 		private ImagePoint origin;
 		private ImagePoint change = new ImagePoint(0, 0);
 		private IList<Element> copied;
-
 		private bool moving;
-
 		private readonly DragHelper drag;
-		private readonly EditHelper edit = new EditHelper();
+		private bool justClosed;
 
 		public MainWindow()
 		{
@@ -40,7 +36,7 @@ namespace CompendiumMapCreator
 
 		public ViewModel.MainWindow ViewModel => (ViewModel.MainWindow)this.DataContext;
 
-		private void Paste(object sender, EventArgs e)
+		private void Paste()
 		{
 			if (this.copied != null)
 			{
@@ -50,7 +46,7 @@ namespace CompendiumMapCreator
 			}
 		}
 
-		private void Copy(object sender, EventArgs e)
+		private void Copy()
 		{
 			if (this.ViewModel.Project == null)
 			{
@@ -61,52 +57,44 @@ namespace CompendiumMapCreator
 
 		private void Edit(object sender, RoutedEventArgs e)
 		{
-			this.edit.editWindow?.Close();
-
 			if (this.ViewModel.Project.Selected.Count != 1)
 			{
 				return;
 			}
 
-			this.edit.editing = this.ViewModel.Project.Selected[0] as Data.Label;
+			Element element = this.ViewModel.Project.Selected[0];
 
-			this.edit.editWindow = new EditWindow
-			{
-				Text = this.edit.editing.Text,
-				ShowInTaskbar = false,
-				Owner = this,
-			};
-
-			this.edit.editWindow.Closing += this.EditWindow_Closing;
-
-			Point screen = this.PointToScreen(this.edit.contextMenuPosition);
-
-			this.edit.editWindow.Left = screen.X;
-			this.edit.editWindow.Top = screen.Y;
-
-			this.edit.editWindow.Show();
-
-			this.edit.editWindow.Focus();
+			this.ViewModel.Edit((element.Position() + new ImagePoint(element.Width / 2, element.Height / 2)).ToWindow(this.Zoom) + new WindowPoint(160, 20));
 		}
 
 		private void EditWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			if (this.edit.editing.Text != this.edit.editWindow.Text)
-			{
-				this.ViewModel.Project.AddEdit(new ChangeLabel(this.edit.editing, this.edit.editWindow.Text));
-			}
+			//if (this.edit.editing.Text != this.edit.editWindow.Text)
+			//{
+			//	this.ViewModel.Project.AddEdit(new ChangeLabel(this.edit.editing, this.edit.editWindow.Text));
+			//}
 
-			this.edit.editWindow = null;
+			//this.edit.editWindow = null;
 		}
 
-		protected override void OnContextMenuOpening(ContextMenuEventArgs e)
+		private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
 		{
-			this.edit.contextMenuPosition = Mouse.GetPosition(this);
+			if (this.ViewModel.Editing.Visibility == Visibility.Visible)
+			{
+				Point p = e.GetPosition(this.EditWindow);
 
-			base.OnContextMenuOpening(e);
+				if (p.X < 0 || p.Y < 0 || p.X > 200 || p.Y > 50)
+				{
+					this.ViewModel.Editing.End();
+					this.justClosed = true;
+				}
+			}
 		}
 
-		private void Window_MouseDown(object sender, MouseButtonEventArgs e) => this.edit.editWindow?.Close();
+		private void Window_MouseUp(object sender, MouseButtonEventArgs e)
+		{
+			this.justClosed = false;
+		}
 
 		private void ShowShortcuts(object sender, RoutedEventArgs e) => new ShortcutsWindow() { Owner = this }.Show();
 
@@ -209,22 +197,17 @@ namespace CompendiumMapCreator
 
 		public void Zoom_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
 		{
-			if (this.edit.editWindow != null)
-			{
-				return;
-			}
-
 			this.drag.MouseUp(e.GetPosition(this.Zoom).ToImage(this.Zoom));
 		}
 
 		private void Zoom_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
-			if (this.edit.editWindow != null)
+			if (this.justClosed)
 			{
 				return;
 			}
 
-						((ZoomControl)sender).Focus();
+			((ZoomControl)sender).Focus();
 
 			this.drag.MouseDown(e.GetPosition(this.Zoom).AsWindow());
 		}
@@ -232,6 +215,165 @@ namespace CompendiumMapCreator
 		private void Zoom_MouseMove(object sender, MouseEventArgs e) => this.drag.MouseMove(e.GetPosition(this.Zoom).ToImage(this.Zoom), e.GetPosition(this.Zoom).AsWindow(), e.LeftButton);
 
 		private void Zoom_MouseRightButtonDown(object sender, MouseButtonEventArgs e) => this.ViewModel?.Project?.Select(e.GetPosition(this.Zoom).ToImage(this.Zoom));
+
+		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+			=> e.Cancel = this.ViewModel.Changing(System.Windows.Window.GetWindow(this.Zoom));
+
+		private void RotateClockwise(object sender, RoutedEventArgs e) => this.ViewModel.RotateClockwise();
+
+		private void RotateCounterClockwise(object sender, RoutedEventArgs e) => this.ViewModel.RotateCounterClockwise();
+
+		private void Window_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (this.ViewModel.Editing.Visibility != Visibility.Collapsed)
+			{
+				if (e.Key == Key.Escape)
+				{
+					this.ViewModel.Editing.End();
+				}
+
+				return;
+			}
+
+			if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) != 0)
+			{
+				switch (e.Key)
+				{
+					//Load Image
+					case Key.N:
+						this.ViewModel.LoadImage(this.Window);
+						break;
+					//Export
+					case Key.E:
+						this.ViewModel.Export();
+						break;
+					//Undo
+					case Key.Z:
+						this.ViewModel.Undo();
+						break;
+					//Redo
+					case Key.Y:
+						this.ViewModel.Redo();
+						break;
+					//Save project
+					case Key.S:
+						this.ViewModel.SaveProject();
+						break;
+					//Load project
+					case Key.L:
+						this.ViewModel.LoadProject(this.Window);
+						break;
+					//Copy
+					case Key.C:
+						this.Copy();
+						break;
+					//Paste
+					case Key.V:
+						this.Paste();
+						break;
+					//Deselect
+					case Key.D:
+						this.ViewModel.Deselect();
+						break;
+				}
+			}
+			else if ((e.KeyboardDevice.Modifiers & ModifierKeys.Shift) != 0)
+			{
+				switch (e.Key)
+				{
+					//QuestNPC
+					case Key.D1:
+						this.ViewModel.SetType(IconType.QuestNPC);
+						break;
+					//SecretDoor
+					case Key.D2:
+						this.ViewModel.SetType(IconType.SecretDoor);
+						break;
+					//QuestExit
+					case Key.D3:
+						this.ViewModel.SetType(IconType.QuestExit);
+						break;
+					//Portal
+					case Key.D4:
+						this.ViewModel.SetType(IconType.Portal);
+						break;
+					//Label
+					case Key.D5:
+						this.ViewModel.SetType(IconType.Label);
+						break;
+					//Trap
+					case Key.D6:
+						this.ViewModel.SetType(IconType.Trap);
+						break;
+					//CollapsibleFloor
+					case Key.D7:
+						this.ViewModel.SetType(IconType.CollapsibleFloor);
+						break;
+					//Entrance
+					case Key.D8:
+						this.ViewModel.SetType(IconType.Entrance);
+						break;
+				}
+			}
+			else
+			{
+				switch (e.Key)
+				{
+					//Cursor
+					case Key.D1:
+						this.ViewModel.SetType(IconType.Cursor);
+						break;
+					//NormalChest
+					case Key.D2:
+						this.ViewModel.SetType(IconType.NormalChest);
+						break;
+					//TrappedChest
+					case Key.D3:
+						this.ViewModel.SetType(IconType.TrappedChest);
+						break;
+					//LockedChest
+					case Key.D4:
+						this.ViewModel.SetType(IconType.LockedChest);
+						break;
+					//LockedDoor
+					case Key.D5:
+						this.ViewModel.SetType(IconType.LockedDoor);
+						break;
+					//LeverValveRune
+					case Key.D6:
+						this.ViewModel.SetType(IconType.LeverValveRune);
+						break;
+					//ControlBox
+					case Key.D7:
+						this.ViewModel.SetType(IconType.ControlBox);
+						break;
+					//Collectible
+					case Key.D8:
+						this.ViewModel.SetType(IconType.Collectible);
+						break;
+					//Lore
+					case Key.D9:
+						this.ViewModel.SetType(IconType.Lore);
+						break;
+					//Natural
+					case Key.D0:
+						this.ViewModel.SetType(IconType.Natural);
+						break;
+					//Arcane
+					case Key.OemMinus:
+						this.ViewModel.SetType(IconType.Arcane);
+						break;
+					//QuestItem
+					case Key.OemPlus:
+						this.ViewModel.SetType(IconType.QuestItem);
+						break;
+					//Delete
+					case Key.Delete:
+						this.ViewModel.Delete();
+						break;
+				}
+			}
+		}
 
 		private class DragHelper
 		{
@@ -286,22 +428,59 @@ namespace CompendiumMapCreator
 			}
 		}
 
-		private class EditHelper
+		private void Paste(object sender, RoutedEventArgs e)
 		{
-			public EditWindow editWindow;
-			public Data.Label editing;
-			public Point contextMenuPosition;
+			this.Paste();
 		}
 
-		private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		private void Copy(object sender, RoutedEventArgs e)
 		{
+			this.Copy();
 		}
 
-		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-			=> e.Cancel = this.ViewModel.Changing(System.Windows.Window.GetWindow(this.Zoom));
+		private void SaveProject_Click(object sender, RoutedEventArgs e)
+		{
+			this.ViewModel.SaveProject();
+		}
 
-		private void RotateClockwise(object sender, RoutedEventArgs e) => this.ViewModel.RotateClockwise();
+		private void LoadProject_Click(object sender, RoutedEventArgs e)
+		{
+			this.ViewModel.LoadProject(this.Window);
+		}
 
-		private void RotateCounterClockwise(object sender, RoutedEventArgs e) => this.ViewModel.RotateCounterClockwise();
+		private void Undo_Click(object sender, RoutedEventArgs e)
+		{
+			this.ViewModel.Undo();
+		}
+
+		private void Redo_Click(object sender, RoutedEventArgs e)
+		{
+			this.ViewModel.Redo();
+		}
+
+		private void LoadImage_Click(object sender, RoutedEventArgs e)
+		{
+			this.ViewModel.LoadImage(this.Window);
+		}
+
+		private void Export_Click(object sender, RoutedEventArgs e)
+		{
+			this.ViewModel.Export();
+		}
+
+		private void Delete_Click(object sender, RoutedEventArgs e)
+		{
+			this.ViewModel.Delete();
+		}
+
+		private void Zoom_ScaleChanged(object sender, EventArgs e)
+		{
+			this.ViewModel.Editing.End();
+		}
+
+		private void Zoom_ViewportChanged(object sender, EventArgs e)
+		{
+			this.ViewModel.Editing.End();
+		}
 	}
 }
