@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -33,6 +34,8 @@ namespace CompendiumMapCreator.ViewModel
 		private RelayCommand undoCommand;
 		private RelayCommand redoCommand;
 		private RelayCommand deleteCommand;
+		private string projectDir;
+		private string imageDir;
 
 		public Rectangle Selection => this.dragging?.Selection ?? new Rectangle(0, 0, 0, 0);
 
@@ -88,7 +91,7 @@ namespace CompendiumMapCreator.ViewModel
 
 		public RelayCommand SaveProjectCommand => new RelayCommand((_) =>
 		{
-			this.Project.Save();
+			this.Project?.Save(ref this.projectDir);
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 		});
 
@@ -99,7 +102,7 @@ namespace CompendiumMapCreator.ViewModel
 				return;
 			}
 
-			Project result = Project.Load();
+			Project result = Project.Load(ref this.projectDir);
 			if (result != null)
 			{
 				this.Project = result;
@@ -109,7 +112,7 @@ namespace CompendiumMapCreator.ViewModel
 			}
 		});
 
-		public RelayCommand ExportCommand => new RelayCommand((_) => this.Project?.Export(this.AddLegend));
+		public RelayCommand ExportCommand => new RelayCommand((_) => this.Project?.Export(this.AddLegend, ref this.imageDir));
 
 #pragma warning disable RCS1171 // Simplify lazy initialization.
 		public RelayCommand UndoCommand
@@ -189,12 +192,15 @@ namespace CompendiumMapCreator.ViewModel
 			{
 				DefaultExt = ".png",
 				Filter = "Image Files (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg|All files (*.*)|*.*",
+				InitialDirectory = this.imageDir,
 			};
 
 			bool? result = dialog.ShowDialog();
 
-			if (result.HasValue && result == true)
+			if (result.GetValueOrDefault())
 			{
+				this.imageDir = Path.GetDirectoryName(dialog.FileName);
+
 				try
 				{
 					this.Project = Project.FromImage(new Image(dialog.FileName));

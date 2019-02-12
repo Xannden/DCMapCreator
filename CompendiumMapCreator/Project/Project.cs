@@ -21,7 +21,7 @@ namespace CompendiumMapCreator.Format
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public static Project Load()
+		public static Project Load(ref string initialDirectory)
 		{
 			OpenFileDialog dialog = new OpenFileDialog
 			{
@@ -29,10 +29,17 @@ namespace CompendiumMapCreator.Format
 				Filter = "Project (*.dmc)|*.dmc",
 			};
 
+			if (!string.IsNullOrEmpty(initialDirectory))
+			{
+				dialog.InitialDirectory = initialDirectory;
+			}
+
 			bool? result = dialog.ShowDialog();
 
-			if (result.HasValue && result == true)
+			if (result.GetValueOrDefault())
 			{
+				initialDirectory = Path.GetDirectoryName(dialog.FileName);
+
 				try
 				{
 					using (BinaryReader reader = new BinaryReader(System.IO.File.OpenRead(dialog.FileName)))
@@ -182,10 +189,15 @@ namespace CompendiumMapCreator.Format
 				}
 			}
 
+			for (int i = 0; i < this.Selected.Count; i++)
+			{
+				this.Selected[i].Opacity = 1;
+			}
+
 			this.Selected.Clear();
 		}
 
-		public void Save()
+		public void Save(ref string initialDirectory)
 		{
 			if (this.Image == null)
 			{
@@ -205,11 +217,17 @@ namespace CompendiumMapCreator.Format
 					ValidateNames = true,
 				};
 
+				if (!string.IsNullOrEmpty(initialDirectory))
+				{
+					dialog.InitialDirectory = initialDirectory;
+				}
+
 				result = dialog.ShowDialog() ?? false;
 
 				if (result)
 				{
 					this.File = dialog.FileName;
+					initialDirectory = Path.GetDirectoryName(dialog.FileName);
 				}
 			}
 
@@ -301,7 +319,7 @@ namespace CompendiumMapCreator.Format
 			}
 		}
 
-		public void Export(bool addLegend)
+		public void Export(bool addLegend, ref string initialDirectory)
 		{
 			if (this.Image == null)
 			{
@@ -317,10 +335,17 @@ namespace CompendiumMapCreator.Format
 				ValidateNames = true,
 			};
 
+			if (!string.IsNullOrEmpty(initialDirectory))
+			{
+				dialog.InitialDirectory = initialDirectory;
+			}
+
 			bool? result = dialog.ShowDialog();
 
 			if (result.HasValue && result == true)
 			{
+				initialDirectory = Path.GetDirectoryName(dialog.FileName);
+
 				using (Font font = new Font(new FontFamily(GenericFontFamilies.SansSerif), 8))
 				using (DImage legend = addLegend ? this.CreateLegend(font) : null)
 				{

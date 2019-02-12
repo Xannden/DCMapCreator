@@ -216,7 +216,7 @@ namespace CompendiumMapCreator
 
 		private void Zoom_MouseMove(object sender, MouseEventArgs e) => this.drag.MouseMove(e.GetPosition(this.Zoom).ToImage(this.Zoom), e.GetPosition(this.Zoom).AsWindow(), e.LeftButton);
 
-		private void Zoom_MouseRightButtonDown(object sender, MouseButtonEventArgs e) => this.ViewModel.Project.Select(e.GetPosition(this.Zoom).ToImage(this.Zoom));
+		private void Zoom_MouseRightButtonDown(object sender, MouseButtonEventArgs e) => this.ViewModel?.Project?.Select(e.GetPosition(this.Zoom).ToImage(this.Zoom));
 
 		private class DragHelper
 		{
