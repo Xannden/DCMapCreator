@@ -457,6 +457,8 @@ namespace CompendiumMapCreator.Format
 				}
 			}
 
+			icons.Sort();
+
 			DImage image = new Bitmap(147, 20 + (icons.Count * 20), PixelFormat.Format32bppArgb);
 
 			using (Graphics g = Graphics.FromImage(image))
