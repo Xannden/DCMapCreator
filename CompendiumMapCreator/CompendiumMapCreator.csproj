@@ -33,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\..\..\c#\Yoware\CompendiumPageCreator\CompendiumPageCreator\CompendiumPageCreator.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
@@ -77,6 +78,7 @@
     <Compile Include="Data\WindowPoint.cs" />
     <Compile Include="Edits\Add.cs" />
     <Compile Include="Edits\ChangeLabel.cs" />
+    <Compile Include="Edits\ChangeMap.cs" />
     <Compile Include="Edits\Copy.cs" />
     <Compile Include="Edits\Edit.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />

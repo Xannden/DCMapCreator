@@ -18,6 +18,7 @@ namespace CompendiumMapCreator.Format
 	public abstract class Project : INotifyPropertyChanged
 	{
 		private (int gen, int count) saved = (0, 0);
+		private Image _image;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
@@ -115,7 +116,12 @@ namespace CompendiumMapCreator.Format
 
 		public Image Image
 		{
-			get; protected set;
+			get => this._image;
+			set
+			{
+				this._image = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Image)));
+			}
 		}
 
 		public ObservableCollection<Element> Elements

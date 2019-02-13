@@ -6,8 +6,8 @@
 			 mc:Ignorable="d"
 			 d:DesignHeight="450" d:DesignWidth="800" Name="UC">
 
-	<Grid Name="Grid" Background="Black" MouseWheel="Grid_MouseWheel" MouseLeftButtonDown="Grid_MouseLeftButtonDown" MouseLeftButtonUp="Grid_MouseLeftButtonUp" MouseMove="Grid_MouseMove">
-		<ContentControl Name="CC" Content="{Binding ElementName=UC, Path=Child}" Focusable="False">
+	<Grid Name="Grid" Background="Black" MouseWheel="Grid_MouseWheel" MouseLeftButtonDown="Grid_MouseLeftButtonDown" MouseLeftButtonUp="Grid_MouseLeftButtonUp" MouseMove="Grid_MouseMove" ClipToBounds="False">
+		<ContentControl Name="CC" Content="{Binding ElementName=UC, Path=Child}" Focusable="False" ClipToBounds="False">
 			<ContentControl.RenderTransform>
 				<TransformGroup>
 					<ScaleTransform ScaleX="{Binding ElementName=UC, Path=Scale}" ScaleY="{Binding ElementName=UC, Path=Scale}" />

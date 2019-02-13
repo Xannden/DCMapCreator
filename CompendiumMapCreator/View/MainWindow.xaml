@@ -46,6 +46,7 @@
 			<MenuItem Header="_Edit" Focusable="False">
 				<MenuItem Header="Undo" InputGestureText="Ctrl+Z" Click="Undo_Click" Focusable="False" />
 				<MenuItem Header="Redo" InputGestureText="Ctrl+Y" Click="Redo_Click" Focusable="False" />
+				<MenuItem Header="Change Map" Click="ChangeMap_Click" Focusable="False" />
 			</MenuItem>
 			<MenuItem Header="_Options" Focusable="False">
 				<MenuItem Header="Add Legend" IsCheckable="True" IsChecked="{Binding AddLegend}" Focusable="False" />
@@ -83,14 +84,17 @@
 		<Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" BorderThickness="1,0,0,0" BorderBrush="Black"  ClipToBounds="True">
 			<local:ZoomControl Focusable="True" x:Name="Zoom" Background="Black" ChildWidth="{Binding Project.Image.Width}" ChildHeight="{Binding Project.Image.Height}" PreviewKeyDown="Zoom_KeyDown" PreviewKeyUp="Zoom_KeyUp"  MouseLeftButtonUp="Zoom_MouseLeftButtonUp" MouseLeftButtonDown="Zoom_MouseLeftButtonDown" MouseRightButtonDown="Zoom_MouseRightButtonDown"  MouseMove="Zoom_MouseMove" ScaleChanged="Zoom_ScaleChanged" ViewportChanged="Zoom_ViewportChanged">
 				<local:ZoomControl.Child>
-					<Grid HorizontalAlignment="Left" VerticalAlignment="Top" DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext}">
+					<Grid ClipToBounds="False" HorizontalAlignment="Left" VerticalAlignment="Top" DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext}">
 						<Grid.ContextMenu>
 							<ContextMenu>
 								<MenuItem Header="Paste" Click="Paste" InputGestureText="Ctrl+V" />
 							</ContextMenu>
 						</Grid.ContextMenu>
 
-						<Image Width="{Binding Project.Image.Width}" Height="{Binding Project.Image.Height}" Source="{Binding Project.Image.BitmapImage}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" />
+						<!-- This is in a canvas so that it does not get clipped to the size of the window -->
+						<Canvas>
+							<Image Width="{Binding Project.Image.Width}" Height="{Binding Project.Image.Height}" Source="{Binding Project.Image.BitmapImage}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" />
+						</Canvas>
 
 						<ItemsControl Focusable="False" ItemsSource="{Binding Project.Elements}" SnapsToDevicePixels="True">
 							<ItemsControl.ItemsPanel>
@@ -142,6 +146,7 @@
 				</local:ZoomControl.Child>
 			</local:ZoomControl>
 		</Border>
+
 		<Canvas>
 			<TextBox Name="EditWindow" Canvas.Top="{Binding Editing.Y}" Canvas.Left="{Binding Editing.X}" Visibility="{Binding Editing.Visibility}" Text="{Binding Editing.Label.Text}" TextWrapping="WrapWithOverflow"  Height="50" Width="200" SnapsToDevicePixels="True" />
 		</Canvas>

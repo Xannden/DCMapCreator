@@ -176,6 +176,34 @@ namespace CompendiumMapCreator.ViewModel
 			}
 		}
 
+		public void ChangeImage()
+		{
+			OpenFileDialog dialog = new OpenFileDialog
+			{
+				DefaultExt = ".png",
+				Filter = "Image Files (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg|All files (*.*)|*.*",
+				InitialDirectory = this.imageDir,
+			};
+
+			bool? result = dialog.ShowDialog();
+
+			if (result.GetValueOrDefault())
+			{
+				this.imageDir = Path.GetDirectoryName(dialog.FileName);
+
+				try
+				{
+					this.Project.AddEdit(new ChangeMap(this.Project, new Image(dialog.FileName)));
+
+					this.SelectedType = IconType.Cursor;
+				}
+				catch (Exception)
+				{
+					MessageBox.Show("Unable to load image.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				}
+			}
+		}
+
 		public void AddElement(Element element)
 		{
 			if (this.Project?.Image == null)

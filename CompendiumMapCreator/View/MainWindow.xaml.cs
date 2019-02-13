@@ -482,5 +482,10 @@ namespace CompendiumMapCreator
 		{
 			this.ViewModel.Editing.End();
 		}
+
+		private void ChangeMap_Click(object sender, RoutedEventArgs e)
+		{
+			this.ViewModel.ChangeImage();
+		}
 	}
 }
