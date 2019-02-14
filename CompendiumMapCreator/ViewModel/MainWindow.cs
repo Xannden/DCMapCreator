@@ -18,21 +18,21 @@ namespace CompendiumMapCreator.ViewModel
 {
 	public class MainWindow : INotifyPropertyChanged
 	{
-		public Project Project
-		{
-			get => this._project;
-			set
-			{
-				this._project = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Project)));
-			}
-		}
-
-		private Project _project;
+		private Project project;
 		private IconType selectedType;
 		private IDrag dragging;
 		private string projectDir;
 		private string imageDir;
+
+		public Project Project
+		{
+			get => this.project;
+			set
+			{
+				this.project = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Project)));
+			}
+		}
 
 		public Rectangle Selection => this.dragging?.Selection ?? new Rectangle(0, 0, 0, 0);
 
@@ -110,25 +110,25 @@ namespace CompendiumMapCreator.ViewModel
 
 		public void Undo()
 		{
-			this.Project.Undo();
+			this.Project?.Undo();
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 		}
 
 		public void Redo()
 		{
-			this.Project.Redo();
+			this.Project?.Redo();
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 		}
 
 		public void Delete()
 		{
-			if (this.Project.Selected.Count == 0)
+			if (this.Project?.Selected.Count == 0)
 			{
 				return;
 			}
 
-			this.Project.AddEdit(new Remove(new List<Element>(this.Project.Selected)));
-			this.Project.Selected.Clear();
+			this.Project?.AddEdit(new Remove(new List<Element>(this.Project.Selected)));
+			this.Project?.Selected.Clear();
 		}
 
 		public void Deselect()
@@ -178,6 +178,11 @@ namespace CompendiumMapCreator.ViewModel
 
 		public void ChangeImage()
 		{
+			if (this.Project == null)
+			{
+				return;
+			}
+
 			OpenFileDialog dialog = new OpenFileDialog
 			{
 				DefaultExt = ".png",
@@ -368,8 +373,6 @@ namespace CompendiumMapCreator.ViewModel
 
 		public void Edit(WindowPoint p)
 		{
-			//this.edit.editWindow?.Close();
-
 			if (this.Project?.Selected.Count != 1 || !(this.Project.Selected[0] is Label))
 			{
 				return;
