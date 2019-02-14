@@ -17,6 +17,8 @@ namespace CompendiumMapCreator.Format
 {
 	public abstract class Project : INotifyPropertyChanged
 	{
+		private const int Version = 5;
+
 		private (int gen, int count) saved = (0, 0);
 		private Image _image;
 
@@ -73,6 +75,15 @@ namespace CompendiumMapCreator.Format
 							case 3:
 							case 4:
 								project = new ProjectV2(dialog.FileName);
+								break;
+
+							case 5:
+								string title = reader.ReadString();
+
+								project = new ProjectV2(dialog.FileName)
+								{
+									Title = title
+								};
 								break;
 
 							default:
@@ -243,11 +254,13 @@ namespace CompendiumMapCreator.Format
 			{
 				try
 				{
-					using (BinaryWriter writer = new BinaryWriter(System.IO.File.Create(this.File)))
+					using (MemoryStream stream = new MemoryStream())
+					using (BinaryWriter writer = new BinaryWriter(stream))
 					{
 						writer.Write(407893541);
 						writer.Write("DMC".ToCharArray());
-						writer.Write(4);
+						writer.Write(Version);
+						writer.Write(this.Title ?? string.Empty);
 						writer.Write(this.Image.Data.Length);
 						writer.Write(this.Image.Data.GetBuffer());
 						writer.Write(this.Elements.Count);
@@ -257,6 +270,8 @@ namespace CompendiumMapCreator.Format
 							writer.Write((int)item.Type);
 							this.WriteElement(writer, item);
 						}
+
+						System.IO.File.WriteAllBytes(this.File, stream.ToArray());
 					}
 
 					this.saved = (this.Edits.Generation, this.Edits.Count);
@@ -575,7 +590,7 @@ namespace CompendiumMapCreator.Format
 
 		public Position Legend { get; private set; }
 
-		public Position Map { get; private set; }
+		public Position Map { get; }
 
 		public Position Info { get; private set; }
 
@@ -659,7 +674,7 @@ namespace CompendiumMapCreator.Format
 
 		public int Height()
 		{
-			int height = (this.Title?.Height ?? 0);
+			int height = this.Title?.Height ?? 0;
 
 			if (this.Legend?.Height > this.Map.Height + (this.Info?.Height ?? 0))
 			{

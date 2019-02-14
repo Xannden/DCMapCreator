@@ -444,7 +444,7 @@ namespace CompendiumMapCreator
 
 			if (result.GetValueOrDefault())
 			{
-				this.ViewModel.Project.Title = window.MapTitle;
+				this.ViewModel.SetTitle(window.MapTitle);
 			}
 		}
 

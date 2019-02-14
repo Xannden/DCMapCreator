@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace CompendiumMapCreator.View
 {
@@ -18,8 +19,6 @@ namespace CompendiumMapCreator.View
 
 			this.MapTitle = title;
 			this.DataContext = this;
-
-			this.Box.Focus();
 		}
 
 		private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -34,6 +33,14 @@ namespace CompendiumMapCreator.View
 			this.DialogResult = true;
 
 			this.Close();
+		}
+
+		protected override void OnActivated(EventArgs e)
+		{
+			this.Box.Focus();
+			this.Box.SelectAll();
+
+			base.OnActivated(e);
 		}
 	}
 }

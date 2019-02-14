@@ -55,8 +55,10 @@ namespace CompendiumMapCreator
 		[DataContract]
 		internal class Temp
 		{
+#pragma warning disable CS0649
 			[DataMember]
-			internal string tag_name;
+			internal string tag_name = null;
+#pragma warning restore CS0649
 		}
 	}
 }

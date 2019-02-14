@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -64,7 +65,32 @@ namespace CompendiumMapCreator.ViewModel
 
 		public bool AddLegend { get; set; } = true;
 
-		public string Title => $"DDO Compendium Map Creator{(string.IsNullOrEmpty(this.Project?.File) ? "" : " - " + (this.Project.HasUnsaved() ? this.Project?.File + "*" : this.Project?.File))}";
+		public string Title
+		{
+			get
+			{
+				StringBuilder builder = new StringBuilder("DDO Compendium Map Creator");
+
+				if (!string.IsNullOrEmpty(this.Project?.File))
+				{
+					builder.Append(" - ");
+					builder.Append(this.Project.File);
+				}
+
+				if (!string.IsNullOrEmpty(this.Project?.Title))
+				{
+					builder.Append(" - ");
+					builder.Append(this.Project.Title);
+				}
+
+				if (this.Project?.HasUnsaved() ?? false)
+				{
+					builder.Append("*");
+				}
+
+				return builder.ToString();
+			}
+		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
@@ -376,6 +402,12 @@ namespace CompendiumMapCreator.ViewModel
 			}
 
 			this.Editing.Start(p, (Label)this.Project.Selected[0]);
+		}
+
+		public void SetTitle(string title)
+		{
+			this.Project.Title = title;
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 		}
 
 		private interface IDrag
