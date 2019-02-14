@@ -7,6 +7,7 @@
 		xmlns:converter="clr-namespace:CompendiumMapCreator.Converter"
 		xmlns:vm="clr-namespace:CompendiumMapCreator.ViewModel"
 		xmlns:data="clr-namespace:CompendiumMapCreator.Data"
+		xmlns:Controls="clr-namespace:CompendiumMapCreator.Controls"
 		Closing="Window_Closing"
 		Name="Window"
 		PreviewMouseDown="Window_PreviewMouseDown"
@@ -81,71 +82,67 @@
 
 		<Button Grid.Row="3" Height="40" Margin="10" Content="Export Image" Focusable="False" Click="Export_Click" />
 
-		<Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" BorderThickness="1,0,0,0" BorderBrush="Black"  ClipToBounds="True">
-			<local:ZoomControl Focusable="True" x:Name="Zoom" Background="Black" ChildWidth="{Binding Project.Image.Width}" ChildHeight="{Binding Project.Image.Height}" PreviewKeyDown="Zoom_KeyDown" PreviewKeyUp="Zoom_KeyUp"  MouseLeftButtonUp="Zoom_MouseLeftButtonUp" MouseLeftButtonDown="Zoom_MouseLeftButtonDown" MouseRightButtonDown="Zoom_MouseRightButtonDown"  MouseMove="Zoom_MouseMove" ScaleChanged="Zoom_ScaleChanged" ViewportChanged="Zoom_ViewportChanged">
-				<local:ZoomControl.Child>
-					<Grid ClipToBounds="False" HorizontalAlignment="Left" VerticalAlignment="Top" DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext}">
-						<Grid.ContextMenu>
-							<ContextMenu>
-								<MenuItem Header="Paste" Click="Paste" InputGestureText="Ctrl+V" />
-							</ContextMenu>
-						</Grid.ContextMenu>
+		<Controls:ZoomControl x:Name="Zoom" Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" BorderThickness="1,0,0,0" Focusable="True" Background="Black" ChildWidth="{Binding Project.Image.Width}" ChildHeight="{Binding Project.Image.Height}" PreviewKeyDown="Zoom_KeyDown" PreviewKeyUp="Zoom_KeyUp"  MouseLeftButtonUp="Zoom_MouseLeftButtonUp" MouseLeftButtonDown="Zoom_MouseLeftButtonDown" MouseRightButtonDown="Zoom_MouseRightButtonDown"  MouseMove="Zoom_MouseMove" ScaleChanged="Zoom_ScaleChanged" ViewportChanged="Zoom_ViewportChanged">
+			<Grid ClipToBounds="False" HorizontalAlignment="Left" VerticalAlignment="Top">
+				<Grid.ContextMenu>
+					<ContextMenu>
+						<MenuItem Header="Paste" Click="Paste" InputGestureText="Ctrl+V" />
+					</ContextMenu>
+				</Grid.ContextMenu>
 
-						<!-- This is in a canvas so that it does not get clipped to the size of the window -->
-						<Canvas>
-							<Image Width="{Binding Project.Image.Width}" Height="{Binding Project.Image.Height}" Source="{Binding Project.Image.BitmapImage}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" />
-						</Canvas>
+				<!-- This is in a canvas so that it does not get clipped to the size of the window -->
+				<Canvas>
+					<Image Width="{Binding Project.Image.Width}" Height="{Binding Project.Image.Height}" Source="{Binding Project.Image.BitmapImage}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" />
+				</Canvas>
 
-						<ItemsControl Focusable="False" ItemsSource="{Binding Project.Elements}" SnapsToDevicePixels="True">
-							<ItemsControl.ItemsPanel>
-								<ItemsPanelTemplate>
-									<Canvas />
-								</ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>
-							<ItemsControl.ItemTemplate>
-								<DataTemplate>
-									<Canvas Width="{Binding Width}" Height="{Binding Height}" ClipToBounds="False" Opacity="{Binding Opacity}">
-										<Canvas.RenderTransform>
-											<TranslateTransform X="{Binding  X}" Y="{Binding Y}" />
-										</Canvas.RenderTransform>
+				<ItemsControl Focusable="False" ItemsSource="{Binding Project.Elements}" SnapsToDevicePixels="True">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<Canvas />
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Canvas Width="{Binding Width}" Height="{Binding Height}" ClipToBounds="False" Opacity="{Binding Opacity}">
+								<Canvas.RenderTransform>
+									<TranslateTransform X="{Binding  X}" Y="{Binding Y}" />
+								</Canvas.RenderTransform>
 
-										<Border Width="{Binding Width, Converter={StaticResource AddOne}}" Height="{Binding Height, Converter={StaticResource AddOne }}" BorderThickness="1">
+								<Border Width="{Binding Width, Converter={StaticResource AddOne}}" Height="{Binding Height, Converter={StaticResource AddOne }}" BorderThickness="1">
 
-											<Border.BorderBrush>
-												<MultiBinding Converter="{StaticResource EqualsToBrushConverter}">
-													<Binding Path="DataContext.Project.Selected" RelativeSource="{RelativeSource AncestorType=Window}" />
-													<Binding Path="." />
-												</MultiBinding>
-											</Border.BorderBrush>
+									<Border.BorderBrush>
+										<MultiBinding Converter="{StaticResource EqualsToBrushConverter}">
+											<Binding Path="DataContext.Project.Selected" RelativeSource="{RelativeSource AncestorType=Window}" />
+											<Binding Path="." />
+										</MultiBinding>
+									</Border.BorderBrush>
 
-											<Border.RenderTransform>
-												<TranslateTransform X="-1" Y="-1" />
-											</Border.RenderTransform>
+									<Border.RenderTransform>
+										<TranslateTransform X="-1" Y="-1" />
+									</Border.RenderTransform>
 
-											<Image Source="{Binding Image.BitmapImage}" Width="{Binding Width}" Height="{Binding Height}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True">
-												<Image.ContextMenu>
-													<ContextMenu>
-														<MenuItem Header="Edit" Visibility="{Binding Converter={StaticResource LabelVisibile}}" Click="Edit" />
-														<MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy" />
-														<MenuItem Header="Delete" Click="Delete_Click" InputGestureText="Del" />
-														<MenuItem Header="Rotate Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateClockwise" />
-														<MenuItem Header="Rotate Counter Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateCounterClockwise" />
-													</ContextMenu>
-												</Image.ContextMenu>
-											</Image>
-										</Border>
-									</Canvas>
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
-						</ItemsControl>
+									<Image Source="{Binding Image.BitmapImage}" Width="{Binding Width}" Height="{Binding Height}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True">
+										<Image.ContextMenu>
+											<ContextMenu>
+												<MenuItem Header="Edit" Visibility="{Binding Converter={StaticResource LabelVisibile}}" Click="Edit" />
+												<MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy" />
+												<MenuItem Header="Delete" Click="Delete_Click" InputGestureText="Del" />
+												<MenuItem Header="Rotate Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateClockwise" />
+												<MenuItem Header="Rotate Counter Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateCounterClockwise" />
+											</ContextMenu>
+										</Image.ContextMenu>
+									</Image>
+								</Border>
+							</Canvas>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
 
-						<Canvas>
-							<Rectangle Canvas.Top="{Binding Selection.Y}" Canvas.Left="{Binding Selection.X}" Width="{Binding Selection.Width}" Height="{Binding Selection.Height}" SnapsToDevicePixels="True" StrokeThickness="1" Fill="{Binding SelectionFill}" Stroke="{Binding SelectionStroke}" />
-						</Canvas>
-					</Grid>
-				</local:ZoomControl.Child>
-			</local:ZoomControl>
-		</Border>
+				<Canvas>
+					<Rectangle Canvas.Top="{Binding Selection.Y}" Canvas.Left="{Binding Selection.X}" Width="{Binding Selection.Width}" Height="{Binding Selection.Height}" SnapsToDevicePixels="True" StrokeThickness="1" Fill="{Binding SelectionFill}" Stroke="{Binding SelectionStroke}" />
+				</Canvas>
+			</Grid>
+		</Controls:ZoomControl>
 
 		<Canvas>
 			<TextBox Name="EditWindow" Canvas.Top="{Binding Editing.Y}" Canvas.Left="{Binding Editing.X}" Visibility="{Binding Editing.Visibility}" Text="{Binding Editing.Label.Text}" TextWrapping="WrapWithOverflow"  Height="50" Width="200" SnapsToDevicePixels="True" />

@@ -1,0 +1,26 @@
+<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="clr-namespace:CompendiumMapCreator.Controls">
+
+	<Style TargetType="{x:Type local:ZoomControl}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type local:ZoomControl}">
+					<Border Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}">
+						<ContentPresenter Content="{TemplateBinding Content}">
+							<ContentPresenter.RenderTransform>
+								<TransformGroup>
+									<ScaleTransform ScaleX="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay, Path=Scale}" ScaleY="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay, Path=Scale}" />
+									<TranslateTransform  X="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay, Path=ViewportPositionX}" Y="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay, Path=ViewportPositionY}" />
+								</TransformGroup>
+							</ContentPresenter.RenderTransform>
+						</ContentPresenter>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+</ResourceDictionary>

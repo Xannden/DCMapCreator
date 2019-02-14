@@ -1,4 +1,6 @@
-﻿namespace CompendiumMapCreator.Data
+﻿using CompendiumMapCreator.Controls;
+
+namespace CompendiumMapCreator.Data
 {
 	public struct ImagePoint
 	{

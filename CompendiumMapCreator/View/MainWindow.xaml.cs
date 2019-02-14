@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
+using CompendiumMapCreator.Controls;
 using CompendiumMapCreator.Data;
 using CompendiumMapCreator.View;
 

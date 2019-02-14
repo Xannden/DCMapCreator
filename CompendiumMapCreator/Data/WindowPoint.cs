@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using CompendiumMapCreator.Controls;
 
 namespace CompendiumMapCreator.Data
 {
