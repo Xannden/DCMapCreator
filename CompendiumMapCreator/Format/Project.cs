@@ -17,7 +17,7 @@ namespace CompendiumMapCreator.Format
 {
 	public abstract class Project : INotifyPropertyChanged
 	{
-		private const int Version = 5;
+		private const int Version = 6;
 
 		private (int gen, int count) saved = (0, 0);
 		private Image _image;
@@ -86,6 +86,10 @@ namespace CompendiumMapCreator.Format
 								};
 								break;
 
+							case 6:
+								project = new ProjectV3(dialog.FileName, reader.ReadString());
+								break;
+
 							default:
 								throw new InvalidDataException();
 						}
@@ -104,7 +108,7 @@ namespace CompendiumMapCreator.Format
 			return null;
 		}
 
-		public static Project FromImage(Image image) => new ProjectV2(image);
+		public static Project FromImage(Image image) => new ProjectV3(image);
 
 		protected Project(Image image)
 		{
@@ -299,20 +303,13 @@ namespace CompendiumMapCreator.Format
 			{
 				int value = reader.ReadInt32();
 
-				IconType[] values = Enum.GetValues(typeof(IconType)) as IconType[];
-
-				if (value > (int)values[values.Length - 1])
-				{
-					throw new InvalidDataException();
-				}
-
-				IconType type = (IconType)value;
-
-				this.Elements.Add(this.ReadElement(reader, type));
+				this.Elements.Add(this.ReadElement(reader, this.ReadType(value)));
 			}
 		}
 
 		protected abstract Element ReadElement(BinaryReader reader, IconType type);
+
+		protected abstract IconType ReadType(int value);
 
 		private void WriteElement(BinaryWriter writer, Element element)
 		{
@@ -323,21 +320,37 @@ namespace CompendiumMapCreator.Format
 			switch (element)
 			{
 				case Label l:
+					long start = writer.BaseStream.Position;
+					writer.Write(0);
 					writer.Write(l.Number);
 					writer.Write(l.Text);
+
+					long end = writer.BaseStream.Position;
+					writer.Seek(-(int)(end - start), SeekOrigin.Current);
+
+					writer.Write((int)(end - start));
+
+					writer.Seek((int)(end - start - 4), SeekOrigin.Current);
 					break;
 
 				case Portal p:
+					writer.Write(sizeof(int));
 					writer.Write(p.Number);
 					break;
 
 				case AreaElement a:
+					writer.Write(sizeof(int) + sizeof(int));
 					writer.Write(a.AreaWidth);
 					writer.Write(a.AreaHeight);
 					break;
 
 				case Entrance e:
+					writer.Write(sizeof(int));
 					writer.Write((int)e.Rotation);
+					break;
+
+				default:
+					writer.Write(0);
 					break;
 			}
 		}

@@ -77,5 +77,74 @@ namespace CompendiumMapCreator.Format
 
 			return element;
 		}
+
+		protected override IconType ReadType(int value)
+		{
+			switch (value)
+			{
+				case 0:
+					return IconType.Cursor;
+
+				case 1:
+					return IconType.NormalChest;
+
+				case 2:
+					return IconType.TrappedChest;
+
+				case 3:
+					return IconType.LockedChest;
+
+				case 4:
+					return IconType.LockedDoor;
+
+				case 5:
+					return IconType.LeverValveRune;
+
+				case 6:
+					return IconType.ControlBox;
+
+				case 7:
+					return IconType.Collectible;
+
+				case 8:
+					return IconType.Lore;
+
+				case 9:
+					return IconType.Natural;
+
+				case 10:
+					return IconType.Arcane;
+
+				case 11:
+					return IconType.QuestItem;
+
+				case 12:
+					return IconType.QuestNPC;
+
+				case 13:
+					return IconType.SecretDoor;
+
+				case 14:
+					return IconType.QuestExit;
+
+				case 15:
+					return IconType.Portal;
+
+				case 16:
+					return IconType.Label;
+
+				case 17:
+					return IconType.Trap;
+
+				case 18:
+					return IconType.CollapsibleFloor;
+
+				case 19:
+					return IconType.Entrance;
+
+				default:
+					throw new InvalidDataException();
+			}
+		}
 	}
 }

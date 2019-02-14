@@ -8,83 +8,83 @@ namespace CompendiumMapCreator
 	{
 		[Name("Cursor")]
 		[IconFile("cursor.png")]
-		Cursor,
+		Cursor = 0,
 
 		[Name("Normal Chest")]
 		[IconFile("normalChest.png")]
-		NormalChest,
+		NormalChest = 10,
 
 		[Name("Trapped Chest")]
 		[IconFile("trappedChest.png")]
-		TrappedChest,
+		TrappedChest = 20,
 
 		[Name("Locked Chest")]
 		[IconFile("lockedChest.png")]
-		LockedChest,
+		LockedChest = 30,
 
 		[Name("Locked Door")]
 		[IconFile("lockedDoor.png")]
-		LockedDoor,
+		LockedDoor = 40,
 
 		[Name("Lever/Valve/Rune")]
 		[IconFile("leverValve.png")]
-		LeverValveRune,
+		LeverValveRune = 50,
 
 		[Name("Control Box")]
 		[IconFile("controlBox.png")]
-		ControlBox,
+		ControlBox = 60,
 
 		[Name("All Collectibles")]
 		[IconFile("collectible.png")]
-		Collectible,
+		Collectible = 70,
 
 		[Name("Lore Collectibles")]
 		[IconFile("book.png")]
-		Lore,
+		Lore = 80,
 
 		[Name("Natural Collectibles")]
 		[IconFile("paw.png")]
-		Natural,
+		Natural = 90,
 
 		[Name("Arcane Collectibles")]
 		[IconFile("rune.png")]
-		Arcane,
+		Arcane = 100,
 
 		[Name("Quest Item")]
 		[IconFile("questItem.png")]
-		QuestItem,
+		QuestItem = 110,
 
 		[Name("Quest NPC")]
 		[IconFile("questNPC.png")]
-		QuestNPC,
+		QuestNPC = 120,
 
 		[Name("Secret Door")]
 		[IconFile("secretDoor.png")]
-		SecretDoor,
+		SecretDoor = 130,
 
 		[Name("Quest Exit")]
 		[IconFile("questExit.png")]
-		QuestExit,
+		QuestExit = 140,
 
 		[Name("Portal")]
 		[IconFile("portal.png")]
-		Portal,
+		Portal = 150,
 
 		[Name("Label")]
 		[IconFile("label.png")]
-		Label,
+		Label = 160,
 
 		[Name("Trap")]
 		[IconFile("trap.png")]
-		Trap,
+		Trap = 170,
 
 		[Name("Collapsible Floor")]
 		[IconFile("collapsibleFloor.png")]
-		CollapsibleFloor,
+		CollapsibleFloor = 180,
 
 		[Name("Entrance")]
 		[IconFile("entrance.png")]
-		Entrance,
+		Entrance = 190,
 	}
 
 	public static class IconTypeExtensions
