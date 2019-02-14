@@ -364,9 +364,21 @@ namespace CompendiumMapCreator.Format
 					using (DImage image = new Bitmap(layout.Width(), layout.Height(), PixelFormat.Format32bppArgb))
 					using (Graphics g = Graphics.FromImage(image))
 					{
-						g.FillRectangle(Brushes.Green, 0, 0, layout.Width(), layout.Height());
+						g.FillRectangle(Brushes.Black, 0, 0, layout.Width(), layout.Height());
 
 						g.DrawBoarders(layout);
+
+						if (!string.IsNullOrEmpty(this.Title))
+						{
+							using (Font titleFont = new Font(new FontFamily(GenericFontFamilies.SansSerif), 15))
+							{
+								int width = (int)g.MeasureString(this.Title, titleFont).Width;
+
+								int x = (layout.Title.Width / 2) - (width / 2);
+
+								g.DrawString(this.Title, titleFont, Brushes.White, x, 0);
+							}
+						}
 
 						g.DrawImage(map, layout.Map.X, layout.Map.Y);
 
@@ -584,7 +596,7 @@ namespace CompendiumMapCreator.Format
 			{
 				X = 0,
 				Y = 0,
-				Height = 10,
+				Height = 28,
 				Width = this.Map.Width,
 			};
 		}
@@ -701,9 +713,14 @@ namespace CompendiumMapCreator.Format
 
 		public static void DrawBoarders(this Graphics g, Layout layout)
 		{
+			if (layout.Title != null)
+			{
+				g.DrawHorizontalLine(layout.Title.Height - 2, layout.Title.X, layout.Title.Width);
+			}
+
 			if (layout.Legend.Height > layout.Map.Height)
 			{
-				g.DrawVerticalLine(layout.Legend.Width - 2, layout.Legend.Y, layout.Height());
+				g.DrawVerticalLine(layout.Legend.Width - 2, layout.Legend.Y - 1, layout.Height());
 
 				if (layout.Info != null)
 				{
@@ -717,7 +734,7 @@ namespace CompendiumMapCreator.Format
 					g.DrawHorizontalLine(layout.Info.Y - 2, layout.Info.X, layout.Width());
 				}
 
-				g.DrawVerticalLine(layout.Legend.Width - 2, layout.Legend.Y, layout.Map.Height);
+				g.DrawVerticalLine(layout.Legend.Width - 2, layout.Legend.Y - 1, layout.Map.Height);
 			}
 		}
 	}

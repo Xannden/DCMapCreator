@@ -18,6 +18,8 @@ namespace CompendiumMapCreator.View
 
 			this.MapTitle = title;
 			this.DataContext = this;
+
+			this.Box.Focus();
 		}
 
 		private void Cancel_Click(object sender, RoutedEventArgs e)

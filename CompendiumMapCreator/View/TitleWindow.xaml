@@ -19,15 +19,15 @@
 
 		<TextBlock Grid.Row="0" Text="Title" HorizontalAlignment="Center" FontSize="20" />
 
-		<TextBox Grid.Row="1" Margin="5,0,5,0" Text="{Binding MapTitle}" />
+		<TextBox Name="Box" Grid.Row="1" Margin="5,0,5,0" Text="{Binding MapTitle}" />
 
 		<Grid Grid.Row="2">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition />
 				<ColumnDefinition />
 			</Grid.ColumnDefinitions>
-			<Button Grid.Column="0" Margin="5" Content="Save" Click="Save_Click" />
-			<Button Grid.Column="1" Margin="5" Content="Cancel" Click="Cancel_Click" />
+			<Button Grid.Column="0" Margin="5" Content="Save" Click="Save_Click" IsDefault="True" />
+			<Button Grid.Column="1" Margin="5" Content="Cancel" Click="Cancel_Click" IsCancel="True" />
 		</Grid>
 	</Grid>
 </Window>
