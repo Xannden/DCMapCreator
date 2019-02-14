@@ -252,32 +252,29 @@ namespace CompendiumMapCreator.ViewModel
 
 			if (!Keyboard.IsKeyDown(Key.Space))
 			{
-				if (this.SelectedType == IconType.Cursor)
-				{
-					if (!this.Project.Selected.Any(e => e.Contains(p)))
-					{
-						this.Project.Select(p);
-					}
-
-#pragma warning disable IDE0045 // Convert to conditional expression
-					if (this.Project.Selected.Count != 0)
-					{
-						this.dragging = new DragMove(new List<Element>(this.Project.Selected), p);
-					}
-					else
-					{
-						this.dragging = new DragSelect(p);
-					}
-
-#pragma warning restore IDE0045 // Convert to conditional expression
-				}
-				else if (this.SelectedType == IconType.Trap)
+				if (this.SelectedType == IconType.Trap)
 				{
 					this.dragging = new DragTrap(p);
 				}
 				else if (this.SelectedType == IconType.CollapsibleFloor)
 				{
 					this.dragging = new DragCollapsibleFloor(p);
+				}
+				else
+				{
+					if (!this.Project.Selected.Any(e => e.Contains(p)))
+					{
+						this.Project.Select(p);
+					}
+
+					if (this.Project.Selected.Count != 0)
+					{
+						this.dragging = new DragMove(new List<Element>(this.Project.Selected), p);
+					}
+					else if (this.SelectedType == IconType.Cursor)
+					{
+						this.dragging = new DragSelect(p);
+					}
 				}
 
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.SelectionStroke)));
