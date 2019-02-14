@@ -355,102 +355,59 @@ namespace CompendiumMapCreator.Format
 				initialDirectory = Path.GetDirectoryName(dialog.FileName);
 
 				using (Font font = new Font(new FontFamily(GenericFontFamilies.SansSerif), 8))
+				using (DImage map = this.CreateMap())
 				using (DImage legend = addLegend ? this.CreateLegend(font) : null)
 				{
-					((int x, int y) offset, Area imageArea) = this.GetImageAreaAndOffsets((legend?.Width + 3) ?? 0);
+					Layout layout = this.GetLayout(map, legend);
 
-					Area fullArea = new Area(imageArea.Width + (legend != null ? legend.Width + 3 : 0), 0);
-
-					using (DImage info = this.CreateInfoList(font, fullArea, imageArea, legend?.Height ?? 0))
+					using (DImage info = this.CreateInfoList(font, layout.Info))
+					using (DImage image = new Bitmap(layout.Width(), layout.Height(), PixelFormat.Format32bppArgb))
+					using (Graphics g = Graphics.FromImage(image))
 					{
-						using (DImage image = new Bitmap(fullArea.Width, fullArea.Height, PixelFormat.Format32bppArgb))
+						g.FillRectangle(Brushes.Green, 0, 0, layout.Width(), layout.Height());
+
+						g.DrawBoarders(layout);
+
+						g.DrawImage(map, layout.Map.X, layout.Map.Y);
+
+						if (info != null)
 						{
-							using (Graphics g = Graphics.FromImage(image))
-							{
-								g.FillRectangle(Brushes.Black, 0, 0, fullArea.Width, fullArea.Height);
-
-								g.DrawBoarders(fullArea, imageArea.Height, legend?.Height ?? 0, info != null);
-
-								g.DrawImage(this.Image.DrawingImage, offset.x, offset.y);
-
-								for (int i = 0; i < this.Elements.Count; i++)
-								{
-									g.DrawImage(this.Elements[i].Image.DrawingImage, this.Elements[i].X + offset.x, (float)this.Elements[i].Y + offset.y);
-								}
-
-								if (info != null)
-								{
-									if (imageArea.Height > (legend?.Height ?? 0))
-									{
-										g.DrawImage(info, 0, imageArea.Height + 3);
-									}
-									else
-									{
-										g.DrawImage(info, (legend?.Width + 3) ?? 0, imageArea.Height + 3);
-									}
-								}
-
-								if (legend != null)
-								{
-									g.DrawImage(legend, 0, 0);
-								}
-							}
-
-							image.Save(dialog.FileName, ImageFormat.Png);
+							g.DrawImage(info, layout.Info.X, layout.Info.Y);
 						}
+
+						if (legend != null)
+						{
+							g.DrawImage(legend, layout.Legend.X, layout.Legend.Y);
+						}
+
+						image.Save(dialog.FileName, ImageFormat.Png);
 					}
 				}
 			}
 		}
 
-		private ((int x, int y), Area) GetImageAreaAndOffsets(int legendWidth)
+		private Layout GetLayout(DImage map, DImage legend)
 		{
-#pragma warning disable IDE0042 // Deconstruct variable declaration
-			(int x, int y) min = (int.MaxValue, int.MaxValue);
-			(int x, int y) max = (int.MinValue, int.MinValue);
-#pragma warning restore IDE0042 // Deconstruct variable declaration
+			Layout layout = new Layout(map);
 
-			for (int i = 0; i < this.Elements.Count; i++)
+			if (!string.IsNullOrEmpty(this.Title))
 			{
-				min.x = Math.Min(min.x, this.Elements[i].X);
-				min.y = Math.Min(min.y, this.Elements[i].Y);
-				max.x = Math.Max(max.x, this.Elements[i].X + this.Elements[i].Width);
-				max.y = Math.Max(max.y, this.Elements[i].Y + this.Elements[i].Height);
+				layout.AddTitle();
 			}
 
-			Rectangle bounding = Rectangle.FromLTRB(min.x, min.y, max.x, max.y);
-			int width = this.Image.Width;
-			int height = this.Image.Height;
-			int xOffset = 0;
-			int yOffset = 0;
-
-			if (bounding.Left < 0)
+			if (legend != null)
 			{
-				int diff = -bounding.Left;
-
-				xOffset = diff;
-				width += diff;
+				layout.AddLegend(legend.Height);
 			}
 
-			if (bounding.Right > this.Image.Width)
+			if (this.Elements.Any(e => e is Label l && !string.IsNullOrEmpty(l.Text)))
 			{
-				width += bounding.Right - this.Image.Width;
+				layout.AddInfo();
 			}
 
-			if (bounding.Top < 0)
-			{
-				int diff = -bounding.Top;
+			layout.Finish();
 
-				yOffset = diff;
-				height += diff;
-			}
-
-			if (bounding.Bottom > this.Image.Height)
-			{
-				height += bounding.Bottom - this.Image.Height;
-			}
-
-			return ((legendWidth + xOffset + 5, yOffset + 5), new Area(width + 10, height + 10));
+			return layout;
 		}
 
 		private DImage CreateLegend(Font font)
@@ -471,6 +428,7 @@ namespace CompendiumMapCreator.Format
 
 			using (Graphics g = Graphics.FromImage(image))
 			{
+				g.FillRectangle(Brushes.Black, 0, 0, image.Width, image.Height);
 				g.DrawImage(Image.GetImageFromResources("Icons/entrance.png").DrawingImage, 10, 0);
 				g.DrawString("Dungeon Entrance", font, new SolidBrush(Color.White), 30, 0);
 
@@ -485,10 +443,8 @@ namespace CompendiumMapCreator.Format
 			return image;
 		}
 
-		private DImage CreateInfoList(Font font, Area fullArea, Area imageArea, int legendHeight)
+		private DImage CreateInfoList(Font font, Position p)
 		{
-			int width = imageArea.Height > legendHeight ? fullArea.Width : imageArea.Width;
-
 			List<Label> labels = new List<Label>();
 
 			for (int i = 0; i < this.Elements.Count; i++)
@@ -501,21 +457,12 @@ namespace CompendiumMapCreator.Format
 
 			if (labels.Count == 0)
 			{
-				if (imageArea.Height > legendHeight)
-				{
-					fullArea.Height = imageArea.Height;
-				}
-				else
-				{
-					fullArea.Height = Math.Max(legendHeight, imageArea.Height);
-				}
-
 				return null;
 			}
 
 			labels.Sort((lhs, rhs) => lhs.Number.CompareTo(rhs.Number));
 
-			int columns = width / 200;
+			int columns = p.Width / 200;
 
 			if (columns > labels.Count)
 			{
@@ -526,7 +473,7 @@ namespace CompendiumMapCreator.Format
 
 			int rows = (int)Math.Ceiling(labels.Count / (float)columns);
 
-			float columnWidth = width / (float)columns;
+			float columnWidth = p.Width / (float)columns;
 
 			int[] rowHeights = new int[rows];
 
@@ -546,10 +493,12 @@ namespace CompendiumMapCreator.Format
 				}
 			}
 
-			DImage info = new Bitmap(width, rowHeights.Sum());
+			DImage info = new Bitmap(p.Width, rowHeights.Sum());
 
 			using (Graphics g = Graphics.FromImage(info))
 			{
+				g.FillRectangle(Brushes.Black, 0, 0, info.Width, info.Height);
+
 				float rowOffset = 0;
 
 				for (int i = 0; i < labels.Count; i++)
@@ -569,46 +518,175 @@ namespace CompendiumMapCreator.Format
 				}
 			}
 
-			if (imageArea.Height > legendHeight)
-			{
-				fullArea.Height = imageArea.Height + (info == null ? 0 : info.Height + 3);
-			}
-			else
-			{
-				fullArea.Height = Math.Max(legendHeight, imageArea.Height + (info == null ? 0 : info.Height + 3));
-			}
+			p.Height = info.Height;
 
 			return info;
 		}
+
+		private DImage CreateMap()
+		{
+			(int x, int y) min = (0, 0);
+			(int x, int y) max = (this.Image.Width, this.Image.Height);
+
+			for (int i = 0; i < this.Elements.Count; i++)
+			{
+				min.x = Math.Min(min.x, this.Elements[i].X);
+				min.y = Math.Min(min.y, this.Elements[i].Y);
+				max.x = Math.Max(max.x, this.Elements[i].X + this.Elements[i].Width);
+				max.y = Math.Max(max.y, this.Elements[i].Y + this.Elements[i].Height);
+			}
+
+			Rectangle bounding = Rectangle.FromLTRB(min.x, min.y, max.x, max.y);
+
+			Bitmap image = new Bitmap(bounding.Width + 10, bounding.Height + 10);
+
+			using (Graphics g = Graphics.FromImage(image))
+			{
+				int xOffset = Math.Abs(min.x) + 5;
+				int yOffset = Math.Abs(min.y) + 5;
+
+				g.DrawImage(this.Image.DrawingImage, xOffset, yOffset);
+
+				for (int i = 0; i < this.Elements.Count; i++)
+				{
+					g.DrawImage(this.Elements[i].Image.DrawingImage, this.Elements[i].X + xOffset, this.Elements[i].Y + yOffset);
+				}
+			}
+
+			return image;
+		}
 	}
 
-	public class Area
+	public class Layout
 	{
+		public Position Title { get; private set; }
+
+		public Position Legend { get; private set; }
+
+		public Position Map { get; private set; }
+
+		public Position Info { get; private set; }
+
+		public Layout(DImage map)
+		{
+			this.Map = new Position()
+			{
+				X = 0,
+				Y = 0,
+				Width = map.Width,
+				Height = map.Height,
+			};
+		}
+
+		public void AddTitle()
+		{
+			this.Title = new Position()
+			{
+				X = 0,
+				Y = 0,
+				Height = 10,
+				Width = this.Map.Width,
+			};
+		}
+
+		public void AddLegend(int legendHeight)
+		{
+			this.Legend = new Position()
+			{
+				X = 0,
+				Y = 0,
+				Width = 150,
+				Height = legendHeight,
+			};
+		}
+
+		public void AddInfo()
+		{
+			this.Info = new Position();
+		}
+
+		public void Finish()
+		{
+			if (this.Title != null)
+			{
+				if (this.Legend != null)
+				{
+					this.Legend.Y = this.Title.Height;
+					this.Title.Width += this.Legend.Width;
+				}
+
+				this.Map.Y = this.Title.Height;
+			}
+
+			if (this.Legend != null)
+			{
+				this.Map.X = this.Legend.Width;
+			}
+
+			if (this.Info != null)
+			{
+				if ((this.Legend?.Height ?? 0) > this.Map.Height)
+				{
+					this.Info.X = this.Legend.Width;
+					this.Info.Width = this.Map.Width;
+				}
+				else
+				{
+					this.Info.X = 0;
+					this.Info.Width = this.Map.Width + (this.Legend?.Width ?? 0);
+				}
+
+				this.Info.Y = this.Map.Y + this.Map.Height + 3;
+			}
+		}
+
+		public int Width()
+		{
+			return (this.Legend?.Width ?? 0) + this.Map.Width;
+		}
+
+		public int Height()
+		{
+			int height = (this.Title?.Height ?? 0);
+
+			if (this.Legend?.Height > this.Map.Height + (this.Info?.Height ?? 0))
+			{
+				height += this.Legend.Height;
+			}
+			else
+			{
+				height += this.Map.Height + (this.Info?.Height ?? 0);
+			}
+
+			return height;
+		}
+	}
+
+	public class Position
+	{
+		public int X { get; set; }
+
+		public int Y { get; set; }
+
 		public int Width { get; set; }
 
 		public int Height { get; set; }
-
-		public Area(int width, int height)
-		{
-			this.Width = width;
-			this.Height = height;
-		}
 	}
 
 	public static class Extensions
 	{
-		public static void DrawVerticalLine(this Graphics g, int x0, int y0, int x1, int y1)
+		public static void DrawVerticalLine(this Graphics g, int x, int y0, int y1)
 		{
-			g.DrawLine(new Pen(Color.Gray, 1f), x0 - 1, y0, x1 - 1, y1);
-			g.DrawLine(new Pen(Color.White, 1f), x0, y0, x1, y1);
-			g.DrawLine(new Pen(Color.Gray, 1f), x0 + 1, y0, x1 + 1, y1);
+			g.DrawLine(new Pen(Color.Gray, 1f), x - 1, y0, x - 1, y1);
+			g.DrawLine(new Pen(Color.White, 1f), x, y0, x, y1);
+			g.DrawLine(new Pen(Color.Gray, 1f), x + 1, y0, x + 1, y1);
 		}
 
-		public static void DrawHorizontalLine(this Graphics g, int x0, int y0, int x1, int y1)
+		public static void DrawHorizontalLine(this Graphics g, int y, int x0, int x1)
 		{
-			g.DrawLine(new Pen(Color.Gray, 1f), x0, y0 - 1, x1, y1 - 1);
-			g.DrawLine(new Pen(Color.White, 1f), x0, y0, x1, y1);
-			g.DrawLine(new Pen(Color.Gray, 1f), x0, y0 + 1, x1, y1 + 1);
+			g.DrawLine(new Pen(Color.Gray, 1f), x0, y - 1, x1, y - 1);
+			g.DrawLine(new Pen(Color.White, 1f), x0, y, x1, y);
+			g.DrawLine(new Pen(Color.Gray, 1f), x0, y + 1, x1, y + 1);
 		}
 
 		public static void DrawLegendLine(this Graphics g, Font font, IconType type, ref int position)
@@ -621,25 +699,25 @@ namespace CompendiumMapCreator.Format
 			position += 20;
 		}
 
-		public static void DrawBoarders(this Graphics g, Area fullArea, int imageHeight, int legendHeight, bool hasInfo)
+		public static void DrawBoarders(this Graphics g, Layout layout)
 		{
-			if (imageHeight > legendHeight)
+			if (layout.Legend.Height > layout.Map.Height)
 			{
-				if (hasInfo)
-				{
-					g.DrawHorizontalLine(0, imageHeight + 1, fullArea.Width, imageHeight + 1);
-				}
+				g.DrawVerticalLine(layout.Legend.Width - 2, layout.Legend.Y, layout.Height());
 
-				g.DrawVerticalLine(148, 0, 148, imageHeight);
+				if (layout.Info != null)
+				{
+					g.DrawHorizontalLine(layout.Info.Y - 2, layout.Info.X - 1, layout.Width());
+				}
 			}
 			else
 			{
-				g.DrawVerticalLine(148, 0, 148, fullArea.Height);
-
-				if (hasInfo)
+				if (layout.Info != null)
 				{
-					g.DrawHorizontalLine(149, imageHeight + 1, fullArea.Width, imageHeight + 1);
+					g.DrawHorizontalLine(layout.Info.Y - 2, layout.Info.X, layout.Width());
 				}
+
+				g.DrawVerticalLine(layout.Legend.Width - 2, layout.Legend.Y, layout.Map.Height);
 			}
 		}
 	}
