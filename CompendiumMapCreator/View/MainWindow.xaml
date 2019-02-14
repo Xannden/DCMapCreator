@@ -50,6 +50,7 @@
 				<MenuItem Header="Change Map" Click="ChangeMap_Click" Focusable="False" />
 			</MenuItem>
 			<MenuItem Header="_Options" Focusable="False">
+				<MenuItem Header="Set Title" Click="AddTitle_Click" Focusable="False" />
 				<MenuItem Header="Add Legend" IsCheckable="True" IsChecked="{Binding AddLegend}" Focusable="False" />
 			</MenuItem>
 			<MenuItem Header="_Help" Focusable="False">
@@ -60,7 +61,7 @@
 
 		<Button Grid.Row="1" Height="40" Content="New" Margin="10" Focusable="False" Click="LoadImage_Click" />
 
-		<ListBox Name="Selection" Grid.Row="2" ItemsSource="{Binding Types}" SelectedItem="{Binding SelectedType}" Height="Auto" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+		<ListBox Grid.Row="2" ItemsSource="{Binding Types}" SelectedItem="{Binding SelectedType}" Height="Auto" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
 			<ListBox.Resources>
 				<converter:IconTypeToImageSourceConverter x:Key="IconTypeToImage" />
 				<converter:IconTypeToDescriptionConverter x:Key="IconTypeToDescription" />
@@ -145,7 +146,7 @@
 		</Controls:ZoomControl>
 
 		<Canvas>
-			<TextBox Name="EditWindow" Canvas.Top="{Binding Editing.Y}" Canvas.Left="{Binding Editing.X}" Visibility="{Binding Editing.Visibility}" Text="{Binding Editing.Label.Text}" TextWrapping="WrapWithOverflow"  Height="50" Width="200" SnapsToDevicePixels="True" />
+			<TextBox Name="EditWindow" Canvas.Top="{Binding Editing.Y}" Canvas.Left="{Binding Editing.X}" Visibility="{Binding Editing.Visibility}" Text="{Binding Editing.Label.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow"  Height="50" Width="200" SnapsToDevicePixels="True" />
 		</Canvas>
 	</Grid>
 </Window>

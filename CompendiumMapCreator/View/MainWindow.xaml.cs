@@ -66,16 +66,8 @@ namespace CompendiumMapCreator
 			Element element = this.ViewModel.Project.Selected[0];
 
 			this.ViewModel.Edit((element.Position() + new ImagePoint(element.Width / 2, element.Height / 2)).ToWindow(this.Zoom) + new WindowPoint(160, 20));
-		}
 
-		private void EditWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			//if (this.edit.editing.Text != this.edit.editWindow.Text)
-			//{
-			//	this.ViewModel.Project.AddEdit(new ChangeLabel(this.edit.editing, this.edit.editWindow.Text));
-			//}
-
-			//this.edit.editWindow = null;
+			this.EditWindow.Focus();
 		}
 
 		private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -196,7 +188,7 @@ namespace CompendiumMapCreator
 			}
 		}
 
-		public void Zoom_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+		private void Zoom_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
 		{
 			this.drag.MouseUp(e.GetPosition(this.Zoom).ToImage(this.Zoom));
 		}
@@ -376,59 +368,6 @@ namespace CompendiumMapCreator
 			}
 		}
 
-		private class DragHelper
-		{
-			private readonly ViewModel.MainWindow viewModel;
-			private bool dragging;
-			private bool mouseDown;
-			private WindowPoint start;
-
-			public DragHelper(ViewModel.MainWindow viewModel)
-			{
-				this.viewModel = viewModel;
-			}
-
-			public void MouseDown(WindowPoint p)
-			{
-				this.mouseDown = true;
-				this.start = p;
-			}
-
-			public void MouseMove(ImagePoint p, WindowPoint wp, MouseButtonState state)
-			{
-				WindowPoint diff = this.start - wp;
-
-				if (this.mouseDown && state == MouseButtonState.Released)
-				{
-					this.MouseUp(p);
-				}
-				else if (this.dragging)
-				{
-					this.viewModel.DragUpdate(p);
-				}
-				else if (this.mouseDown && (Math.Abs(diff.X) > 3 || Math.Abs(diff.Y) > 3))
-				{
-					this.dragging = true;
-					this.viewModel.DragStart(p);
-				}
-			}
-
-			public void MouseUp(ImagePoint mousePosition)
-			{
-				if (this.dragging)
-				{
-					this.viewModel.DragEnd();
-				}
-				else if (this.mouseDown)
-				{
-					this.viewModel.Click(mousePosition);
-				}
-
-				this.dragging = false;
-				this.mouseDown = false;
-			}
-		}
-
 		private void Paste(object sender, RoutedEventArgs e)
 		{
 			this.Paste();
@@ -487,6 +426,79 @@ namespace CompendiumMapCreator
 		private void ChangeMap_Click(object sender, RoutedEventArgs e)
 		{
 			this.ViewModel.ChangeImage();
+		}
+
+		private void AddTitle_Click(object sender, RoutedEventArgs e)
+		{
+			if (this.ViewModel.Project == null)
+			{
+				return;
+			}
+
+			TitleWindow window = new TitleWindow(this.ViewModel.Project.Title)
+			{
+				Owner = this,
+			};
+
+			bool? result = window.ShowDialog();
+
+			if (result.GetValueOrDefault())
+			{
+				this.ViewModel.Project.Title = window.MapTitle;
+			}
+		}
+
+		private class DragHelper
+		{
+			private readonly ViewModel.MainWindow viewModel;
+			private bool dragging;
+			private bool mouseDown;
+			private WindowPoint start;
+
+			public DragHelper(ViewModel.MainWindow viewModel)
+			{
+				this.viewModel = viewModel;
+			}
+
+			public void MouseDown(WindowPoint p)
+			{
+				this.mouseDown = true;
+				this.start = p;
+			}
+
+			public void MouseMove(ImagePoint p, WindowPoint wp, MouseButtonState state)
+			{
+				WindowPoint diff = this.start - wp;
+
+				if (this.mouseDown && state == MouseButtonState.Released)
+				{
+					this.MouseUp(p);
+				}
+				else if (this.dragging)
+				{
+					this.viewModel.DragUpdate(p);
+				}
+				else if (this.mouseDown && (Math.Abs(diff.X) > 3 || Math.Abs(diff.Y) > 3))
+				{
+					this.dragging = true;
+					this.viewModel.DragStart(p);
+				}
+			}
+
+			public void MouseUp(ImagePoint mousePosition)
+			{
+				if (this.dragging)
+				{
+					this.viewModel.DragEnd();
+				}
+				else if (this.mouseDown)
+				{
+					this.viewModel.Click(mousePosition);
+				}
+
+				this.dragging = false;
+				this.mouseDown = false;
+			}
 		}
 	}
 }

@@ -105,6 +105,9 @@
     <Compile Include="View\ShortcutsWindow.xaml.cs">
       <DependentUpon>ShortcutsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\TitleWindow.xaml.cs">
+      <DependentUpon>TitleWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -124,6 +127,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="View\ShortcutsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\TitleWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

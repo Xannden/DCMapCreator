@@ -133,6 +133,8 @@ namespace CompendiumMapCreator.Format
 
 		public ObservableCollection<Element> Selected { get; } = new ObservableCollection<Element>();
 
+		public string Title { get; set; }
+
 		public void AddEdit(Edit edit, bool apply = true)
 		{
 			if (apply)
