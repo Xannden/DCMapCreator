@@ -146,7 +146,7 @@
 		</Controls:ZoomControl>
 
 		<Canvas>
-			<TextBox Name="EditWindow" Canvas.Top="{Binding Editing.Y}" Canvas.Left="{Binding Editing.X}" Visibility="{Binding Editing.Visibility}" Text="{Binding Editing.Label.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow"  Height="50" Width="200" SnapsToDevicePixels="True" />
+			<TextBox Name="EditWindow" Canvas.Top="{Binding Editing.Y}" Canvas.Left="{Binding Editing.X}" Visibility="{Binding Editing.Visibility}" Text="{Binding Editing.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow"  Height="50" Width="200" SnapsToDevicePixels="True" />
 		</Canvas>
 	</Grid>
 </Window>
