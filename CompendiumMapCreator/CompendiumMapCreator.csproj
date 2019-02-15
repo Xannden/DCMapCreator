@@ -93,6 +93,7 @@
     <Compile Include="Edits\Move.cs" />
     <Compile Include="Edits\Remove.cs" />
     <Compile Include="Edits\Rotate.cs" />
+    <Compile Include="Format\Layout.cs" />
     <Compile Include="Format\Project.cs" />
     <Compile Include="Format\ProjectV2.cs" />
     <Compile Include="Format\ProjectV1.cs" />

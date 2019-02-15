@@ -17,7 +17,7 @@ namespace CompendiumMapCreator.Format
 {
 	public abstract class Project : INotifyPropertyChanged
 	{
-		private const int Version = 6;
+		private const int Version = 5;
 
 		private (int gen, int count) saved = (0, 0);
 		private Image _image;
@@ -78,15 +78,6 @@ namespace CompendiumMapCreator.Format
 								break;
 
 							case 5:
-								string title = reader.ReadString();
-
-								project = new ProjectV2(dialog.FileName)
-								{
-									Title = title
-								};
-								break;
-
-							case 6:
 								project = new ProjectV3(dialog.FileName, reader.ReadString());
 								break;
 
@@ -386,9 +377,9 @@ namespace CompendiumMapCreator.Format
 				using (DImage map = this.CreateMap())
 				using (DImage legend = addLegend ? this.CreateLegend(font) : null)
 				{
-					Layout layout = this.GetLayout(map, legend);
+					Layout layout = this.GetLayout(font, map, legend);
 
-					using (DImage info = this.CreateInfoList(font, layout.Info))
+					using (DImage info = this.CreateInfoList(font, layout))
 					using (DImage image = new Bitmap(layout.Width(), layout.Height(), PixelFormat.Format32bppArgb))
 					using (Graphics g = Graphics.FromImage(image))
 					{
@@ -400,11 +391,12 @@ namespace CompendiumMapCreator.Format
 						{
 							using (Font titleFont = new Font(new FontFamily(GenericFontFamilies.SansSerif), 15))
 							{
-								int width = (int)g.MeasureString(this.Title, titleFont).Width;
+								StringFormat format = new StringFormat()
+								{
+									Alignment = StringAlignment.Center,
+								};
 
-								int x = (layout.Title.Width / 2) - (width / 2);
-
-								g.DrawString(this.Title, titleFont, Brushes.White, x, 0);
+								g.DrawString(this.Title, titleFont, Brushes.White, layout.Title.ToRectF(), format);
 							}
 						}
 
@@ -426,7 +418,7 @@ namespace CompendiumMapCreator.Format
 			}
 		}
 
-		private Layout GetLayout(DImage map, DImage legend)
+		private Layout GetLayout(Font font, DImage map, DImage legend)
 		{
 			Layout layout = new Layout(map);
 
@@ -445,7 +437,7 @@ namespace CompendiumMapCreator.Format
 				layout.AddInfo();
 			}
 
-			layout.Finish();
+			layout.Finish(this.Elements, font);
 
 			return layout;
 		}
@@ -468,7 +460,6 @@ namespace CompendiumMapCreator.Format
 
 			using (Graphics g = Graphics.FromImage(image))
 			{
-				g.FillRectangle(Brushes.Black, 0, 0, image.Width, image.Height);
 				g.DrawImage(Image.GetImageFromResources("Icons/entrance.png").DrawingImage, 10, 0);
 				g.DrawString("Dungeon Entrance", font, new SolidBrush(Color.White), 30, 0);
 
@@ -483,82 +474,29 @@ namespace CompendiumMapCreator.Format
 			return image;
 		}
 
-		private DImage CreateInfoList(Font font, Position p)
+		private DImage CreateInfoList(Font font, Layout layout)
 		{
-			List<Label> labels = new List<Label>();
+			List<Label> labels = this.Elements.GetLabels();
 
-			for (int i = 0; i < this.Elements.Count; i++)
-			{
-				if (this.Elements[i] is Label l && !string.IsNullOrEmpty(l.Text))
-				{
-					labels.Add(l);
-				}
-			}
-
-			if (labels.Count == 0)
-			{
-				return null;
-			}
-
-			labels.Sort((lhs, rhs) => lhs.Number.CompareTo(rhs.Number));
-
-			int columns = p.Width / 200;
-
-			if (columns > labels.Count)
-			{
-				columns = labels.Count;
-			}
-
-			columns = Math.Max(columns, 1);
-
-			int rows = (int)Math.Ceiling(labels.Count / (float)columns);
-
-			float columnWidth = p.Width / (float)columns;
-
-			int[] rowHeights = new int[rows];
-
-			StringFormat format = new StringFormat()
-			{
-				FormatFlags = StringFormatFlags.LineLimit,
-				Trimming = StringTrimming.None,
-			};
-
-			using (Graphics g = Graphics.FromImage(new Bitmap(10, 10)))
-			{
-				for (int i = 0; i < labels.Count; i++)
-				{
-					SizeF size = g.MeasureString(labels[i].Text, font, new SizeF(columnWidth - 16, 1000), format);
-
-					rowHeights[i / columns] = Math.Max(Math.Max((int)Math.Ceiling(size.Height), rowHeights[i / columns]), 20);
-				}
-			}
-
-			DImage info = new Bitmap(p.Width, rowHeights.Sum());
+			DImage info = new Bitmap(layout.Info.Width, layout.Info.Height);
 
 			using (Graphics g = Graphics.FromImage(info))
 			{
-				g.FillRectangle(Brushes.Black, 0, 0, info.Width, info.Height);
-
-				float rowOffset = 0;
+				StringFormat format = new StringFormat()
+				{
+					FormatFlags = StringFormatFlags.LineLimit,
+					Trimming = StringTrimming.None,
+				};
 
 				for (int i = 0; i < labels.Count; i++)
 				{
-					float columnOffset = i % columns * columnWidth;
-
 					Image icon = labels[i].Image;
 
-					g.DrawImage(icon.DrawingImage, (int)columnOffset + (9 - (icon.Width / 2)), rowOffset + (7 - (icon.Height / 2)));
+					g.DrawImage(icon.DrawingImage, layout.Labels[i].X + (9 - (icon.Width / 2)), layout.Labels[i].Y + (7 - (icon.Height / 2)));
 
-					g.DrawString(labels[i].Text, font, Brushes.White, new RectangleF(columnOffset + 16, rowOffset, columnWidth - 16, rowHeights[i / columns]), format);
-
-					if ((i + 1) % columns == 0)
-					{
-						rowOffset += rowHeights[i / columns];
-					}
+					g.DrawString(labels[i].Text, font, Brushes.White, layout.Labels[i].ToRectF(xOffset: 16, widthOffset: -16), format);
 				}
 			}
-
-			p.Height = info.Height;
 
 			return info;
 		}
@@ -595,122 +533,6 @@ namespace CompendiumMapCreator.Format
 
 			return image;
 		}
-	}
-
-	public class Layout
-	{
-		public Position Title { get; private set; }
-
-		public Position Legend { get; private set; }
-
-		public Position Map { get; }
-
-		public Position Info { get; private set; }
-
-		public Layout(DImage map)
-		{
-			this.Map = new Position()
-			{
-				X = 0,
-				Y = 0,
-				Width = map.Width,
-				Height = map.Height,
-			};
-		}
-
-		public void AddTitle()
-		{
-			this.Title = new Position()
-			{
-				X = 0,
-				Y = 0,
-				Height = 28,
-				Width = this.Map.Width,
-			};
-		}
-
-		public void AddLegend(int legendHeight)
-		{
-			this.Legend = new Position()
-			{
-				X = 0,
-				Y = 0,
-				Width = 150,
-				Height = legendHeight,
-			};
-		}
-
-		public void AddInfo()
-		{
-			this.Info = new Position();
-		}
-
-		public void Finish()
-		{
-			if (this.Title != null)
-			{
-				if (this.Legend != null)
-				{
-					this.Legend.Y = this.Title.Height;
-					this.Title.Width += this.Legend.Width;
-				}
-
-				this.Map.Y = this.Title.Height;
-			}
-
-			if (this.Legend != null)
-			{
-				this.Map.X = this.Legend.Width;
-			}
-
-			if (this.Info != null)
-			{
-				if ((this.Legend?.Height ?? 0) > this.Map.Height)
-				{
-					this.Info.X = this.Legend.Width;
-					this.Info.Width = this.Map.Width;
-				}
-				else
-				{
-					this.Info.X = 0;
-					this.Info.Width = this.Map.Width + (this.Legend?.Width ?? 0);
-				}
-
-				this.Info.Y = this.Map.Y + this.Map.Height + 3;
-			}
-		}
-
-		public int Width()
-		{
-			return (this.Legend?.Width ?? 0) + this.Map.Width;
-		}
-
-		public int Height()
-		{
-			int height = this.Title?.Height ?? 0;
-
-			if (this.Legend?.Height > this.Map.Height + (this.Info?.Height ?? 0))
-			{
-				height += this.Legend.Height;
-			}
-			else
-			{
-				height += this.Map.Height + (this.Info?.Height ?? 0);
-			}
-
-			return height;
-		}
-	}
-
-	public class Position
-	{
-		public int X { get; set; }
-
-		public int Y { get; set; }
-
-		public int Width { get; set; }
-
-		public int Height { get; set; }
 	}
 
 	public static class Extensions
@@ -764,6 +586,28 @@ namespace CompendiumMapCreator.Format
 
 				g.DrawVerticalLine(layout.Legend.Width - 2, layout.Legend.Y - 1, layout.Map.Height);
 			}
+		}
+
+		public static List<Label> GetLabels(this IList<Element> elements)
+		{
+			List<Label> labels = new List<Label>();
+
+			for (int i = 0; i < elements.Count; i++)
+			{
+				if (elements[i] is Label l && !string.IsNullOrEmpty(l.Text))
+				{
+					labels.Add(l);
+				}
+			}
+
+			if (labels.Count == 0)
+			{
+				return null;
+			}
+
+			labels.Sort((lhs, rhs) => lhs.Number.CompareTo(rhs.Number));
+
+			return labels;
 		}
 	}
 }
