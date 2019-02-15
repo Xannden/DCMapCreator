@@ -21,6 +21,7 @@ namespace CompendiumMapCreator.Format
 
 		private (int gen, int count) saved = (0, 0);
 		private Image _image;
+		private string title;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
@@ -139,7 +140,15 @@ namespace CompendiumMapCreator.Format
 
 		public ObservableCollection<Element> Selected { get; } = new ObservableCollection<Element>();
 
-		public string Title { get; set; }
+		public string Title
+		{
+			get => this.title;
+			set
+			{
+				this.title = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
+			}
+		}
 
 		public void AddEdit(Edit edit, bool apply = true)
 		{

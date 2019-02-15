@@ -32,6 +32,15 @@ namespace CompendiumMapCreator.ViewModel
 			{
 				this.project = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Project)));
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
+
+				this.project.PropertyChanged += (sender, e) =>
+				{
+					if (e.PropertyName == "File" || e.PropertyName == "Title")
+					{
+						this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
+					}
+				};
 			}
 		}
 
@@ -133,7 +142,6 @@ namespace CompendiumMapCreator.ViewModel
 				this.Project = result;
 				this.Project.Edits.Clear();
 				this.SelectedType = IconType.Cursor;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 			}
 		}
 
@@ -199,7 +207,6 @@ namespace CompendiumMapCreator.ViewModel
 				try
 				{
 					this.Project = Project.FromImage(new Image(dialog.FileName));
-					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 
 					this.SelectedType = IconType.Cursor;
 				}
@@ -415,7 +422,11 @@ namespace CompendiumMapCreator.ViewModel
 		public void SetTitle(string title)
 		{
 			this.Project.Title = title;
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
+		}
+
+		internal void SendPropertyChanged(string name)
+		{
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 		}
 
 		private interface IDrag
