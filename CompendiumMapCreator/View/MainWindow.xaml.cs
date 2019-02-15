@@ -218,17 +218,22 @@ namespace CompendiumMapCreator
 
 		private void Window_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (this.ViewModel.Editing.Visibility != Visibility.Collapsed)
+			if (this.ViewModel.Editing.Visibility != Visibility.Collapsed && e.Key == Key.Escape)
 			{
-				if (e.Key == Key.Escape)
-				{
-					this.ViewModel.Editing.End();
-				}
-
-				return;
+				this.ViewModel.Editing.End();
 			}
 
-			if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) != 0)
+			if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) != 0 && (e.KeyboardDevice.Modifiers & ModifierKeys.Shift) != 0)
+			{
+				switch (e.Key)
+				{
+					//Save project as
+					case Key.S:
+						this.ViewModel.SaveProject(forcePrompt: true);
+						break;
+				}
+			}
+			else if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) != 0)
 			{
 				switch (e.Key)
 				{
@@ -270,7 +275,7 @@ namespace CompendiumMapCreator
 						break;
 				}
 			}
-			else if ((e.KeyboardDevice.Modifiers & ModifierKeys.Shift) != 0)
+			else if ((e.KeyboardDevice.Modifiers & ModifierKeys.Shift) != 0 && this.ViewModel.Editing.Visibility == Visibility.Collapsed)
 			{
 				switch (e.Key)
 				{
@@ -308,7 +313,7 @@ namespace CompendiumMapCreator
 						break;
 				}
 			}
-			else
+			else if (this.ViewModel.Editing.Visibility == Visibility.Collapsed)
 			{
 				switch (e.Key)
 				{
@@ -360,6 +365,12 @@ namespace CompendiumMapCreator
 					case Key.OemPlus:
 						this.ViewModel.SetType(IconType.QuestItem);
 						break;
+				}
+			}
+			else
+			{
+				switch (e.Key)
+				{
 					//Delete
 					case Key.Delete:
 						this.ViewModel.Delete();
@@ -381,6 +392,11 @@ namespace CompendiumMapCreator
 		private void SaveProject_Click(object sender, RoutedEventArgs e)
 		{
 			this.ViewModel.SaveProject();
+		}
+
+		private void SaveProjectAs_Click(object sender, RoutedEventArgs e)
+		{
+			this.ViewModel.SaveProject(forcePrompt: true);
 		}
 
 		private void LoadProject_Click(object sender, RoutedEventArgs e)

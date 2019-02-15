@@ -123,9 +123,9 @@ namespace CompendiumMapCreator.ViewModel
 			};
 		}
 
-		public void SaveProject()
+		public void SaveProject(bool forcePrompt = false)
 		{
-			this.Project?.Save(ref this.projectDir);
+			this.Project?.Save(ref this.projectDir, forcePrompt);
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 		}
 

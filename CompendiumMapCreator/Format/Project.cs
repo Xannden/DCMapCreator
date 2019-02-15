@@ -220,7 +220,7 @@ namespace CompendiumMapCreator.Format
 			this.Selected.Clear();
 		}
 
-		public void Save(ref string initialDirectory)
+		public void Save(ref string initialDirectory, bool forcePrompt)
 		{
 			if (this.Image == null)
 			{
@@ -229,7 +229,7 @@ namespace CompendiumMapCreator.Format
 
 			bool result = this.File != null;
 
-			if (string.IsNullOrEmpty(this.File))
+			if (forcePrompt || string.IsNullOrEmpty(this.File))
 			{
 				SaveFileDialog dialog = new SaveFileDialog
 				{

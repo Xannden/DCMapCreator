@@ -42,6 +42,7 @@
 		<Menu Grid.Row="0" Grid.ColumnSpan="2" Height="20" Focusable="False">
 			<MenuItem Header="_File" Focusable="False">
 				<MenuItem Header="Save Project" InputGestureText="Ctrl+S" Click="SaveProject_Click" Focusable="False" />
+				<MenuItem Header="Save Project As" InputGestureText="Ctrl+Shift+S" Click="SaveProjectAs_Click" Focusable="False" />
 				<MenuItem Header="Load Project" InputGestureText="Ctrl+L" Click="LoadProject_Click" Focusable="False" />
 			</MenuItem>
 			<MenuItem Header="_Edit" Focusable="False">
