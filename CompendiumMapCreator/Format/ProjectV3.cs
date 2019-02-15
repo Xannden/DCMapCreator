@@ -14,8 +14,13 @@ namespace CompendiumMapCreator.Format
 			this.Title = title;
 		}
 
-		protected override Element ReadElement(BinaryReader reader, IconType type)
+		protected override Element ReadElement(BinaryReader reader, IconType? type)
 		{
+			if (type == null)
+			{
+				return null;
+			}
+
 			int x = reader.ReadInt32();
 			int y = reader.ReadInt32();
 			bool isCopy = reader.ReadBoolean();
@@ -70,9 +75,9 @@ namespace CompendiumMapCreator.Format
 					break;
 
 				default:
-					//reader.BaseStream.Seek(length, SeekOrigin.Current);
+					reader.BaseStream.Seek(length, SeekOrigin.Current);
 
-					element = new Element(type);
+					element = new Element(type.Value);
 					break;
 			}
 
@@ -83,7 +88,7 @@ namespace CompendiumMapCreator.Format
 			return element;
 		}
 
-		protected override IconType ReadType(int value)
+		protected override IconType? ReadType(int value)
 		{
 			switch (value)
 			{
@@ -101,6 +106,9 @@ namespace CompendiumMapCreator.Format
 
 				case 40:
 					return IconType.LockedDoor;
+
+				case 41:
+					return IconType.BlockedDoor;
 
 				case 50:
 					return IconType.LeverValveRune;
@@ -122,6 +130,9 @@ namespace CompendiumMapCreator.Format
 
 				case 110:
 					return IconType.QuestItem;
+
+				case 111:
+					return IconType.UseQuestItem;
 
 				case 120:
 					return IconType.QuestNPC;
@@ -148,7 +159,7 @@ namespace CompendiumMapCreator.Format
 					return IconType.Entrance;
 
 				default:
-					throw new InvalidDataException();
+					return null;
 			}
 		}
 	}

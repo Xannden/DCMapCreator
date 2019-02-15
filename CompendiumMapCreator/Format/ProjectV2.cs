@@ -13,7 +13,7 @@ namespace CompendiumMapCreator.Format
 		{
 		}
 
-		protected override Element ReadElement(BinaryReader reader, IconType type)
+		protected override Element ReadElement(BinaryReader reader, IconType? type)
 		{
 			int x = reader.ReadInt32();
 			int y = reader.ReadInt32();
@@ -21,7 +21,7 @@ namespace CompendiumMapCreator.Format
 
 			Element element;
 
-			switch (type)
+			switch (type.Value)
 			{
 				case IconType.Label:
 					{
@@ -67,7 +67,7 @@ namespace CompendiumMapCreator.Format
 					break;
 
 				default:
-					element = new Element(type);
+					element = new Element(type.Value);
 					break;
 			}
 
@@ -78,7 +78,7 @@ namespace CompendiumMapCreator.Format
 			return element;
 		}
 
-		protected override IconType ReadType(int value)
+		protected override IconType? ReadType(int value)
 		{
 			switch (value)
 			{

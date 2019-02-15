@@ -303,13 +303,18 @@ namespace CompendiumMapCreator.Format
 			{
 				int value = reader.ReadInt32();
 
-				this.Elements.Add(this.ReadElement(reader, this.ReadType(value)));
+				Element e = this.ReadElement(reader, this.ReadType(value));
+
+				if (e != null)
+				{
+					this.Elements.Add(e);
+				}
 			}
 		}
 
-		protected abstract Element ReadElement(BinaryReader reader, IconType type);
+		protected abstract Element ReadElement(BinaryReader reader, IconType? type);
 
-		protected abstract IconType ReadType(int value);
+		protected abstract IconType? ReadType(int value);
 
 		private void WriteElement(BinaryWriter writer, Element element)
 		{

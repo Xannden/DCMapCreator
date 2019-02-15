@@ -80,22 +80,24 @@ namespace CompendiumMapCreator.ViewModel
 			{
 				StringBuilder builder = new StringBuilder("DDO Compendium Map Creator");
 
-				if (!string.IsNullOrEmpty(this.Project?.File))
-				{
-					builder.Append(" - ");
-					builder.Append(this.Project.File);
-				}
-
 				if (!string.IsNullOrEmpty(this.Project?.Title))
 				{
 					builder.Append(" - ");
 					builder.Append(this.Project.Title);
 				}
 
-				if (this.Project?.HasUnsaved() ?? false)
+				if (!string.IsNullOrEmpty(this.Project?.File))
 				{
-					builder.Append("*");
+					builder.Append(" - ");
+					builder.Append(this.Project.File);
+
+					if (this.Project?.HasUnsaved() ?? false)
+					{
+						builder.Append("*");
+					}
 				}
+
+
 
 				return builder.ToString();
 			}
@@ -120,6 +122,7 @@ namespace CompendiumMapCreator.ViewModel
 			this.Editing.Closing += (text, label) =>
 			{
 				this.Project?.AddEdit(new ChangeLabel(label, text));
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 			};
 		}
 
@@ -422,11 +425,6 @@ namespace CompendiumMapCreator.ViewModel
 		public void SetTitle(string title)
 		{
 			this.Project.Title = title;
-		}
-
-		internal void SendPropertyChanged(string name)
-		{
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 		}
 
 		private interface IDrag

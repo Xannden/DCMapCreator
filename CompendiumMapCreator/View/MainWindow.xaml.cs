@@ -230,7 +230,7 @@ namespace CompendiumMapCreator
 					//Save project as
 					case Key.S:
 						this.ViewModel.SaveProject(forcePrompt: true);
-						break;
+						return;
 				}
 			}
 			else if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) != 0)
@@ -240,39 +240,39 @@ namespace CompendiumMapCreator
 					//Load Image
 					case Key.N:
 						this.ViewModel.LoadImage(this.Window);
-						break;
+						return;
 					//Export
 					case Key.E:
 						this.ViewModel.Export();
-						break;
+						return;
 					//Undo
 					case Key.Z:
 						this.ViewModel.Undo();
-						break;
+						return;
 					//Redo
 					case Key.Y:
 						this.ViewModel.Redo();
-						break;
+						return;
 					//Save project
 					case Key.S:
 						this.ViewModel.SaveProject();
-						break;
+						return;
 					//Load project
 					case Key.L:
 						this.ViewModel.LoadProject(this.Window);
-						break;
+						return;
 					//Copy
 					case Key.C:
 						this.Copy();
-						break;
+						return;
 					//Paste
 					case Key.V:
 						this.Paste();
-						break;
+						return;
 					//Deselect
 					case Key.D:
 						this.ViewModel.Deselect();
-						break;
+						return;
 				}
 			}
 			else if ((e.KeyboardDevice.Modifiers & ModifierKeys.Shift) != 0 && this.ViewModel.Editing.Visibility == Visibility.Collapsed)
@@ -282,35 +282,35 @@ namespace CompendiumMapCreator
 					//QuestNPC
 					case Key.D1:
 						this.ViewModel.SetType(IconType.QuestNPC);
-						break;
+						return;
 					//SecretDoor
 					case Key.D2:
 						this.ViewModel.SetType(IconType.SecretDoor);
-						break;
+						return;
 					//QuestExit
 					case Key.D3:
 						this.ViewModel.SetType(IconType.QuestExit);
-						break;
+						return;
 					//Portal
 					case Key.D4:
 						this.ViewModel.SetType(IconType.Portal);
-						break;
+						return;
 					//Label
 					case Key.D5:
 						this.ViewModel.SetType(IconType.Label);
-						break;
+						return;
 					//Trap
 					case Key.D6:
 						this.ViewModel.SetType(IconType.Trap);
-						break;
+						return;
 					//CollapsibleFloor
 					case Key.D7:
 						this.ViewModel.SetType(IconType.CollapsibleFloor);
-						break;
+						return;
 					//Entrance
 					case Key.D8:
 						this.ViewModel.SetType(IconType.Entrance);
-						break;
+						return;
 				}
 			}
 			else if (this.ViewModel.Editing.Visibility == Visibility.Collapsed)
@@ -320,62 +320,60 @@ namespace CompendiumMapCreator
 					//Cursor
 					case Key.D1:
 						this.ViewModel.SetType(IconType.Cursor);
-						break;
+						return;
 					//NormalChest
 					case Key.D2:
 						this.ViewModel.SetType(IconType.NormalChest);
-						break;
+						return;
 					//TrappedChest
 					case Key.D3:
 						this.ViewModel.SetType(IconType.TrappedChest);
-						break;
+						return;
 					//LockedChest
 					case Key.D4:
 						this.ViewModel.SetType(IconType.LockedChest);
-						break;
+						return;
 					//LockedDoor
 					case Key.D5:
 						this.ViewModel.SetType(IconType.LockedDoor);
-						break;
+						return;
 					//LeverValveRune
 					case Key.D6:
 						this.ViewModel.SetType(IconType.LeverValveRune);
-						break;
+						return;
 					//ControlBox
 					case Key.D7:
 						this.ViewModel.SetType(IconType.ControlBox);
-						break;
+						return;
 					//Collectible
 					case Key.D8:
 						this.ViewModel.SetType(IconType.Collectible);
-						break;
+						return;
 					//Lore
 					case Key.D9:
 						this.ViewModel.SetType(IconType.Lore);
-						break;
+						return;
 					//Natural
 					case Key.D0:
 						this.ViewModel.SetType(IconType.Natural);
-						break;
+						return;
 					//Arcane
 					case Key.OemMinus:
 						this.ViewModel.SetType(IconType.Arcane);
-						break;
+						return;
 					//QuestItem
 					case Key.OemPlus:
 						this.ViewModel.SetType(IconType.QuestItem);
-						break;
+						return;
 				}
 			}
-			else
+
+			switch (e.Key)
 			{
-				switch (e.Key)
-				{
-					//Delete
-					case Key.Delete:
-						this.ViewModel.Delete();
-						break;
-				}
+				//Delete
+				case Key.Delete:
+					this.ViewModel.Delete();
+					break;
 			}
 		}
 

@@ -26,6 +26,10 @@ namespace CompendiumMapCreator
 		[IconFile("lockedDoor.png")]
 		LockedDoor = 40,
 
+		[Name("Blocked Door")]
+		[IconFile("blockedDoor.png")]
+		BlockedDoor = 41,
+
 		[Name("Lever/Valve/Rune")]
 		[IconFile("leverValve.png")]
 		LeverValveRune = 50,
@@ -53,6 +57,10 @@ namespace CompendiumMapCreator
 		[Name("Quest Item")]
 		[IconFile("questItem.png")]
 		QuestItem = 110,
+
+		[Name("Quest Item Use")]
+		[IconFile("questItemUse.png")]
+		UseQuestItem = 111,
 
 		[Name("Quest NPC")]
 		[IconFile("questNPC.png")]
