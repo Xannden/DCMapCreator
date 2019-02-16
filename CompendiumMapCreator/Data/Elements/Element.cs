@@ -84,6 +84,8 @@ namespace CompendiumMapCreator
 			get; set;
 		}
 
+		public virtual string ToolTip => string.Empty;
+
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public bool Contains(ImagePoint point) => this.X <= point.X && (this.X + this.Width) > point.X && this.Y <= point.Y && (this.Y + this.Height) > point.Y;
@@ -91,6 +93,11 @@ namespace CompendiumMapCreator
 		public ImagePoint Position()
 		{
 			return new ImagePoint(this.X, this.Y);
+		}
+
+		protected void OnPropertyChanged(string name)
+		{
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 		}
 	}
 }

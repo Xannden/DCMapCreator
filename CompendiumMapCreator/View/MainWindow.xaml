@@ -123,7 +123,7 @@
 										<TranslateTransform X="-1" Y="-1" />
 									</Border.RenderTransform>
 
-									<Image Source="{Binding Image.BitmapImage}" Width="{Binding Width}" Height="{Binding Height}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True">
+									<Image Source="{Binding Image.BitmapImage}" Width="{Binding Width}" Height="{Binding Height}" ToolTip="{Binding ToolTip}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True">
 										<Image.ContextMenu>
 											<ContextMenu>
 												<MenuItem Header="Edit" Visibility="{Binding Converter={StaticResource LabelVisibile}}" Click="Edit" />
