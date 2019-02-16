@@ -66,10 +66,12 @@
 			<ListBox.Resources>
 				<converter:IconTypeToImageSourceConverter x:Key="IconTypeToImage" />
 				<converter:IconTypeToDescriptionConverter x:Key="IconTypeToDescription" />
+				<converter:IconTypeToToolTipConverter x:Key="IconTypeToToolTip" />
 			</ListBox.Resources>
 			<ListBox.ItemContainerStyle>
 				<Style TargetType="ListBoxItem">
 					<Setter Property="IsTabStop" Value="False" />
+					<Setter Property="ToolBar.ToolTip" Value="{Binding ., Converter={StaticResource IconTypeToToolTip}}" />
 				</Style>
 			</ListBox.ItemContainerStyle>
 			<ListBox.ItemTemplate>

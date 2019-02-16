@@ -38,20 +38,24 @@ namespace CompendiumMapCreator
 		[IconFile("controlBox.png")]
 		ControlBox = 60,
 
-		[Name("All Collectibles")]
+		[Name("Any Collectibles")]
 		[IconFile("collectible.png")]
+		[ToolTip("Adventurer's Pack, Rubble")]
 		Collectible = 70,
 
 		[Name("Lore Collectibles")]
 		[IconFile("book.png")]
+		[ToolTip("Some Bookshelf, Some Cabinet")]
 		Lore = 80,
 
 		[Name("Natural Collectibles")]
 		[IconFile("paw.png")]
+		[ToolTip("Bones, Fungus, Moss, Mushroom, Some Crude Altar")]
 		Natural = 90,
 
 		[Name("Arcane Collectibles")]
 		[IconFile("rune.png")]
+		[ToolTip("Alchemy Table, Scroll Rack, Some Bookshelf, Some Cabinet, Some Crude Altar")]
 		Arcane = 100,
 
 		[Name("Quest Item")]
@@ -147,6 +151,21 @@ namespace CompendiumMapCreator
 			}
 
 			throw new ArgumentOutOfRangeException(nameof(item));
+		}
+
+		public static string GetToolTip(this IconType item)
+		{
+			TypeInfo typeInfo = typeof(IconType).GetTypeInfo();
+
+			FieldInfo field = typeInfo.GetField(item.ToString());
+
+			ToolTipAttribute attribute = null;
+			if (field?.TryGetCustomAttribute(out attribute) ?? false)
+			{
+				return attribute.ToolTip;
+			}
+
+			return null;
 		}
 	}
 

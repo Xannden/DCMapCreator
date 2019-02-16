@@ -84,7 +84,7 @@ namespace CompendiumMapCreator
 			get; set;
 		}
 
-		public virtual string ToolTip => string.Empty;
+		public virtual string ToolTip => null;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

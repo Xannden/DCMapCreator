@@ -66,6 +66,7 @@
     <Compile Include="Controls\Zoom.cs" />
     <Compile Include="Converter\ElementToVisibilityConverter.cs" />
     <Compile Include="Converter\IconTypeToDescriptionConverter.cs" />
+    <Compile Include="Converter\IconTypeToToolTipConverter.cs" />
     <Compile Include="Data\Elements\AreaElement.cs" />
     <Compile Include="Data\Elements\CollapsableFloor.cs" />
     <Compile Include="Data\Elements\Entrance.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Data\Elements\NumberedElement.cs" />
     <Compile Include="Data\Elements\Portal.cs" />
     <Compile Include="Data\NameAttribute.cs" />
+    <Compile Include="Data\ToolTipAttribute.cs" />
     <Compile Include="Data\WindowPoint.cs" />
     <Compile Include="Edits\Add.cs" />
     <Compile Include="Edits\ChangeLabel.cs" />
