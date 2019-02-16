@@ -58,7 +58,7 @@ namespace CompendiumMapCreator
 		[IconFile("questItem.png")]
 		QuestItem = 110,
 
-		[Name("Quest Item Use")]
+		[Name("Quest Item Used Here")]
 		[IconFile("questItemUse.png")]
 		UseQuestItem = 111,
 
@@ -89,6 +89,10 @@ namespace CompendiumMapCreator
 		[Name("Collapsible Floor")]
 		[IconFile("collapsibleFloor.png")]
 		CollapsibleFloor = 180,
+
+		[Name("Drop")]
+		[IconFile("drop.png")]
+		Drop = 181,
 
 		[Name("Entrance")]
 		[IconFile("entrance.png")]

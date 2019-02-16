@@ -97,8 +97,6 @@ namespace CompendiumMapCreator.ViewModel
 					}
 				}
 
-
-
 				return builder.ToString();
 			}
 		}

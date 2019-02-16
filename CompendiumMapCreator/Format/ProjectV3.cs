@@ -155,6 +155,9 @@ namespace CompendiumMapCreator.Format
 				case 180:
 					return IconType.CollapsibleFloor;
 
+				case 181:
+					return IconType.Drop;
+
 				case 190:
 					return IconType.Entrance;
 
