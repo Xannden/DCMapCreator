@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using CompendiumMapCreator.Controls;
 
 namespace CompendiumMapCreator.Data
@@ -21,7 +22,7 @@ namespace CompendiumMapCreator.Data
 			this.Y = y;
 		}
 
-		public ImagePoint ToImage(double scale, int x, int y) => new ImagePoint((int)((this.X - x) / scale), (int)((this.Y - y) / scale));
+		public ImagePoint ToImage(double scale, int x, int y) => new ImagePoint((int)Math.Floor((this.X - x) / scale), (int)Math.Floor((this.Y - y) / scale));
 
 		public ImagePoint ToImage(ZoomControl zoom) => this.ToImage(zoom.Scale, zoom.ViewportPositionX, zoom.ViewportPositionY);
 

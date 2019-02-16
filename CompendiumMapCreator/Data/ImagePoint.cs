@@ -1,4 +1,5 @@
-﻿using CompendiumMapCreator.Controls;
+﻿using System;
+using CompendiumMapCreator.Controls;
 
 namespace CompendiumMapCreator.Data
 {
@@ -20,6 +21,6 @@ namespace CompendiumMapCreator.Data
 
 		public static ImagePoint operator /(ImagePoint lhs, int rhs) => new ImagePoint(lhs.X / rhs, lhs.Y / rhs);
 
-		public WindowPoint ToWindow(ZoomControl zoom) => new WindowPoint((int)((this.X * zoom.Scale) + zoom.ViewportPositionX), (int)((this.Y * zoom.Scale) + zoom.ViewportPositionY));
+		public WindowPoint ToWindow(ZoomControl zoom) => new WindowPoint((int)Math.Floor((this.X * zoom.Scale) + zoom.ViewportPositionX), (int)Math.Floor((this.Y * zoom.Scale) + zoom.ViewportPositionY));
 	}
 }

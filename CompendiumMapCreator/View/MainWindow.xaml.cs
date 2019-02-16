@@ -205,7 +205,7 @@ namespace CompendiumMapCreator
 			this.drag.MouseDown(e.GetPosition(this.Zoom).AsWindow());
 		}
 
-		private void Zoom_MouseMove(object sender, MouseEventArgs e) => this.drag.MouseMove(e.GetPosition(this.Zoom).ToImage(this.Zoom), e.GetPosition(this.Zoom).AsWindow(), e.LeftButton);
+		private void Zoom_MouseMove(object sender, MouseEventArgs e) => this.drag.MouseMove(e.GetPosition(this.Zoom).ToImage(this.Zoom), e.GetPosition(this.Zoom).AsWindow(), e.LeftButton, this.Zoom);
 
 		private void Zoom_MouseRightButtonDown(object sender, MouseButtonEventArgs e) => this.ViewModel?.Project?.Select(e.GetPosition(this.Zoom).ToImage(this.Zoom));
 
@@ -480,7 +480,7 @@ namespace CompendiumMapCreator
 				this.start = p;
 			}
 
-			public void MouseMove(ImagePoint p, WindowPoint wp, MouseButtonState state)
+			public void MouseMove(ImagePoint p, WindowPoint wp, MouseButtonState state, ZoomControl zoom)
 			{
 				WindowPoint diff = this.start - wp;
 
@@ -495,7 +495,7 @@ namespace CompendiumMapCreator
 				else if (this.mouseDown && (Math.Abs(diff.X) > 3 || Math.Abs(diff.Y) > 3))
 				{
 					this.dragging = true;
-					this.viewModel.DragStart(p);
+					this.viewModel.DragStart(this.start.ToImage(zoom));
 				}
 			}
 
