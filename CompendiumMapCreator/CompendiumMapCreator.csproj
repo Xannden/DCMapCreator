@@ -95,7 +95,12 @@
     <Compile Include="Edits\Move.cs" />
     <Compile Include="Edits\Remove.cs" />
     <Compile Include="Edits\Rotate.cs" />
-    <Compile Include="Format\Layout.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Format\Export\IDrawable.cs" />
+    <Compile Include="Format\Export\InfoList.cs" />
+    <Compile Include="Format\Export\Legend.cs" />
+    <Compile Include="Format\Export\Map.cs" />
+    <Compile Include="Format\Export\Title.cs" />
     <Compile Include="Format\Project.cs" />
     <Compile Include="Format\ProjectV2.cs" />
     <Compile Include="Format\ProjectV1.cs" />

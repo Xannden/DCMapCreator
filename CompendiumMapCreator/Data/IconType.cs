@@ -167,6 +167,11 @@ namespace CompendiumMapCreator
 
 			return null;
 		}
+
+		public static Image GetImage(this IconType item)
+		{
+			return Image.GetImageFromResources(item.GetImageFile());
+		}
 	}
 
 	public static class AttributeExtensions
