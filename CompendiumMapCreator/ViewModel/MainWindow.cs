@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -30,17 +31,18 @@ namespace CompendiumMapCreator.ViewModel
 			get => this.project;
 			set
 			{
+				if (this.project != null)
+				{
+					this.project.PropertyChanged -= this.ProjectChanged;
+					this.project.Edits.CollectionChanged -= this.ProjectEditsChanged;
+				}
+
 				this.project = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Project)));
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 
-				this.project.PropertyChanged += (sender, e) =>
-				{
-					if (e.PropertyName == "File" || e.PropertyName == "Title")
-					{
-						this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
-					}
-				};
+				this.project.PropertyChanged += this.ProjectChanged;
+				this.project.Edits.CollectionChanged += this.ProjectEditsChanged;
 			}
 		}
 
@@ -117,11 +119,7 @@ namespace CompendiumMapCreator.ViewModel
 
 		public MainWindow()
 		{
-			this.Editing.Closing += (text, label) =>
-			{
-				this.Project?.AddEdit(new ChangeLabel(label, text));
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
-			};
+			this.Editing.Closing += (text, label) => this.Project?.AddEdit(new ChangeLabel(label, text));
 		}
 
 		public void SaveProject(bool forcePrompt = false)
@@ -154,13 +152,11 @@ namespace CompendiumMapCreator.ViewModel
 		public void Undo()
 		{
 			this.Project?.Undo();
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 		}
 
 		public void Redo()
 		{
 			this.Project?.Redo();
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 		}
 
 		public void Delete()
@@ -337,7 +333,6 @@ namespace CompendiumMapCreator.ViewModel
 			if (element != null)
 			{
 				this.Project.AddEdit(element, apply);
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 			}
 
 			this.dragging = null;
@@ -396,7 +391,6 @@ namespace CompendiumMapCreator.ViewModel
 			}
 
 			this.Project.AddEdit(new Rotate((Entrance)this.Project.Selected[0], clockwise: true));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 		}
 
 		public void RotateCounterClockwise()
@@ -407,7 +401,6 @@ namespace CompendiumMapCreator.ViewModel
 			}
 
 			this.Project.AddEdit(new Rotate((Entrance)this.Project.Selected[0], clockwise: false));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 		}
 
 		public void Edit(WindowPoint p)
@@ -425,217 +418,17 @@ namespace CompendiumMapCreator.ViewModel
 			this.Project.Title = title;
 		}
 
-		private interface IDrag
+		private void ProjectChanged(object sender, PropertyChangedEventArgs e)
 		{
-			void Update(int x, int y, Project project);
-
-			(bool apply, Edit) End();
-
-			MColor Color { get; }
-
-			Rectangle Selection { get; }
+			if (e.PropertyName == "File" || e.PropertyName == "Title")
+			{
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
+			}
 		}
 
-		private class DragMove : IDrag
+		private void ProjectEditsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			private (int X, int Y) Change { get; set; }
-
-			private IList<Element> Elements { get; }
-
-			private ImagePoint Start { get; }
-
-			private ImagePoint[] Offsets { get; }
-
-			public DragMove(IList<Element> elements, ImagePoint start)
-			{
-				this.Elements = elements;
-				this.Start = start;
-				this.Offsets = this.Elements.Select(e => start - new ImagePoint(e.X, e.Y)).ToArray();
-
-				for (int i = 0; i < this.Elements.Count; i++)
-				{
-					this.Elements[i].Opacity = 0.25;
-				}
-			}
-
-			public void Update(int x, int y, Project project)
-			{
-				for (int i = 0; i < this.Elements.Count; i++)
-				{
-					this.Elements[i].X = x - this.Offsets[i].X;
-					this.Elements[i].Y = y - this.Offsets[i].Y;
-				}
-
-				this.Change = (x - this.Start.X, y - this.Start.Y);
-			}
-
-			public (bool apply, Edit) End()
-			{
-				Edit result = null;
-
-				(int xChanged, int yChanged) = this.Change;
-
-				if (xChanged != 0 || yChanged != 0)
-				{
-					result = new Move(xChanged, yChanged, this.Elements);
-				}
-
-				for (int i = 0; i < this.Elements.Count; i++)
-				{
-					this.Elements[i].Opacity = 1;
-				}
-
-				return (false, result);
-			}
-
-			public MColor Color => MColor.FromRgb(0, 0, 0);
-
-			public Rectangle Selection => Rectangle.Empty;
-		}
-
-		private class DragSelect : IDrag
-		{
-			private ImagePoint start;
-
-			public Rectangle Selection { get; private set; }
-
-			public MColor Color => MColor.FromRgb(0, 120, 215);
-
-			public DragSelect(ImagePoint start)
-			{
-				this.start = start;
-			}
-
-			public void Update(int x, int y, Project project)
-			{
-				this.Selection = Rectangle.FromLTRB(Math.Min(this.start.X, x), Math.Min(this.start.Y, y), Math.Max(this.start.X, x) + 1, Math.Max(this.start.Y, y) + 1);
-
-				for (int i = 0; i < project.Selected.Count; i++)
-				{
-					if (!this.Selection.IntersectsWith(new Rectangle(project.Selected[i].X, project.Selected[i].Y, project.Selected[i].Width, project.Selected[i].Height)))
-					{
-						project.Selected.Remove(project.Selected[i]);
-						i--;
-					}
-				}
-
-				for (int i = 0; i < project.Elements.Count; i++)
-				{
-					if (project.Selected.Contains(project.Elements[i]))
-					{
-						continue;
-					}
-
-					if (this.Selection.IntersectsWith(new Rectangle(project.Elements[i].X, project.Elements[i].Y, project.Elements[i].Width, project.Elements[i].Height)))
-					{
-						project.Selected.Add(project.Elements[i]);
-					}
-				}
-			}
-
-			public (bool apply, Edit) End() => (false, null);
-		}
-
-		private class DragTrap : IDrag
-		{
-			private ImagePoint start;
-
-			public Rectangle Selection { get; private set; }
-
-			public MColor Color => Trap.DrawingColor.ToMediaColor();
-
-			public DragTrap(ImagePoint start)
-			{
-				this.start = start;
-			}
-
-			public void Update(int x, int y, Project project) => this.Selection = Rectangle.FromLTRB(Math.Min(this.start.X, x), Math.Min(this.start.Y, y), Math.Max(this.start.X, x) + 1, Math.Max(this.start.Y, y) + 1);
-
-			public (bool apply, Edit) End() => (true, new Add(new Trap(this.Selection.Width, this.Selection.Height) { X = this.Selection.Left, Y = this.Selection.Top }));
-		}
-
-		private class DragCollapsibleFloor : IDrag
-		{
-			private ImagePoint start;
-
-			public Rectangle Selection { get; private set; }
-
-			public MColor Color => CollapsibleFloor.DrawingColor.ToMediaColor();
-
-			public DragCollapsibleFloor(ImagePoint start)
-			{
-				this.start = start;
-			}
-
-			public void Update(int x, int y, Project project) => this.Selection = Rectangle.FromLTRB(Math.Min(this.start.X, x), Math.Min(this.start.Y, y), Math.Max(this.start.X, x) + 1, Math.Max(this.start.Y, y) + 1);
-
-			public (bool apply, Edit) End() => (true, new Add(new CollapsibleFloor(this.Selection.Width, this.Selection.Height) { X = this.Selection.Left, Y = this.Selection.Top }));
-		}
-	}
-
-	public static class Extensions
-	{
-		public static MColor ToMediaColor(this System.Drawing.Color c) => MColor.FromArgb(c.A, c.R, c.G, c.B);
-	}
-
-	public class Editing : INotifyPropertyChanged
-	{
-		private Label label;
-		private bool started;
-
-		public Visibility Visibility { get; private set; } = Visibility.Collapsed;
-
-		public int X { get; private set; }
-
-		public int Y { get; private set; }
-
-		public string Text { get; set; }
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		public event Action<string, Label> Closing;
-
-		public void Start(WindowPoint p, Label label)
-		{
-			if (this.started)
-			{
-				throw new InvalidOperationException();
-			}
-
-			this.Visibility = Visibility.Visible;
-			this.label = label;
-			this.Text = label.Text;
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Visibility)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Text)));
-
-			this.SetPosition(p.X, p.Y);
-			this.started = true;
-		}
-
-		private void SetPosition(int x, int y)
-		{
-			this.X = x;
-			this.Y = y;
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.X)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Y)));
-		}
-
-		public void End()
-		{
-			if (!this.started)
-			{
-				return;
-			}
-
-			this.Visibility = Visibility.Collapsed;
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Visibility)));
-
-			if (!string.Equals(this.Text, this.label.Text, StringComparison.Ordinal))
-			{
-				this.Closing?.Invoke(this.Text, this.label);
-			}
-
-			this.started = false;
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Title)));
 		}
 	}
 }

@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using CompendiumMapCreator.Edits;
 
 namespace CompendiumMapCreator.Data
 {
-	public class UndoRedoStack<T> : IList<T>
+	public class UndoRedoStack<T> : IList<T>, INotifyCollectionChanged
 		where T : Edit
 	{
 		private readonly List<T> data;
+
+		public event NotifyCollectionChangedEventHandler CollectionChanged;
 
 		public IEnumerable<T> Data
 		{
@@ -76,12 +79,14 @@ namespace CompendiumMapCreator.Data
 
 			this.data.Add(item);
 			this.Count++;
+			this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
 		}
 
 		public void Clear()
 		{
 			this.data.Clear();
 			this.Count = 0;
+			this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 		}
 
 		public bool Contains(T item)
@@ -102,6 +107,8 @@ namespace CompendiumMapCreator.Data
 				T element = this.data[index];
 				this.data.RemoveAt(index);
 				this.Count--;
+
+				this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
 
 				return true;
 			}
@@ -134,6 +141,7 @@ namespace CompendiumMapCreator.Data
 
 			this.data.Insert(index, item);
 			this.Count++;
+			this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
 		}
 
 		public void RemoveAt(int index)
@@ -147,6 +155,7 @@ namespace CompendiumMapCreator.Data
 
 			this.data.RemoveAt(index);
 			this.Count--;
+			this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, element));
 		}
 
 		public void Undo(IList<Element> list)
@@ -156,6 +165,8 @@ namespace CompendiumMapCreator.Data
 				this.Count--;
 
 				this.data[this.Count].Undo(list);
+
+				this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, this.data[this.Count]));
 			}
 		}
 
@@ -166,6 +177,8 @@ namespace CompendiumMapCreator.Data
 				this.data[this.Count].Apply(list);
 
 				this.Count++;
+
+				this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, this.data[this.Count - 1]));
 			}
 		}
 
@@ -173,15 +186,16 @@ namespace CompendiumMapCreator.Data
 		{
 			int diff = this.data.Count - this.Count;
 
-			for (int i = 0; i < diff; i++)
-			{
-				this.data.RemoveAt(this.data.Count - 1);
-			}
+			List<T> removed = this.data.GetRange(this.data.Count - 1 - diff, diff);
+
+			this.data.RemoveRange(this.data.Count - 1 - diff, diff);
 
 			if (this.Count > 0)
 			{
 				this.Generation++;
 			}
+
+			this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, removed));
 		}
 
 		private struct Enumerator : IEnumerator, IEnumerator<T>
