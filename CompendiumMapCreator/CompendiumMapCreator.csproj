@@ -96,6 +96,8 @@
     <Compile Include="Edits\Remove.cs" />
     <Compile Include="Edits\Rotate.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Format\Export\Exporter.cs" />
+    <Compile Include="Format\Export\FullMap.cs" />
     <Compile Include="Format\Export\IDrawable.cs" />
     <Compile Include="Format\Export\InfoList.cs" />
     <Compile Include="Format\Export\Legend.cs" />
@@ -244,6 +246,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\drop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\rareChest.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

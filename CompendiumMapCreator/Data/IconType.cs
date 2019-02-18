@@ -22,6 +22,10 @@ namespace CompendiumMapCreator
 		[IconFile("lockedChest.png")]
 		LockedChest = 30,
 
+		[Name("Rare Chest")]
+		[IconFile("rareChest.png")]
+		RareChest = 35,
+
 		[Name("Locked Door")]
 		[IconFile("lockedDoor.png")]
 		LockedDoor = 40,

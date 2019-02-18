@@ -275,44 +275,6 @@ namespace CompendiumMapCreator
 						return;
 				}
 			}
-			else if ((e.KeyboardDevice.Modifiers & ModifierKeys.Shift) != 0 && this.ViewModel.Editing.Visibility == Visibility.Collapsed)
-			{
-				switch (e.Key)
-				{
-					//QuestNPC
-					case Key.D1:
-						this.ViewModel.SetType(IconType.QuestNPC);
-						return;
-					//SecretDoor
-					case Key.D2:
-						this.ViewModel.SetType(IconType.SecretDoor);
-						return;
-					//QuestExit
-					case Key.D3:
-						this.ViewModel.SetType(IconType.QuestExit);
-						return;
-					//Portal
-					case Key.D4:
-						this.ViewModel.SetType(IconType.Portal);
-						return;
-					//Label
-					case Key.D5:
-						this.ViewModel.SetType(IconType.Label);
-						return;
-					//Trap
-					case Key.D6:
-						this.ViewModel.SetType(IconType.Trap);
-						return;
-					//CollapsibleFloor
-					case Key.D7:
-						this.ViewModel.SetType(IconType.CollapsibleFloor);
-						return;
-					//Entrance
-					case Key.D8:
-						this.ViewModel.SetType(IconType.Entrance);
-						return;
-				}
-			}
 			else if (this.ViewModel.Editing.Visibility == Visibility.Collapsed)
 			{
 				switch (e.Key)
@@ -320,50 +282,6 @@ namespace CompendiumMapCreator
 					//Cursor
 					case Key.D1:
 						this.ViewModel.SetType(IconType.Cursor);
-						return;
-					//NormalChest
-					case Key.D2:
-						this.ViewModel.SetType(IconType.NormalChest);
-						return;
-					//TrappedChest
-					case Key.D3:
-						this.ViewModel.SetType(IconType.TrappedChest);
-						return;
-					//LockedChest
-					case Key.D4:
-						this.ViewModel.SetType(IconType.LockedChest);
-						return;
-					//LockedDoor
-					case Key.D5:
-						this.ViewModel.SetType(IconType.LockedDoor);
-						return;
-					//LeverValveRune
-					case Key.D6:
-						this.ViewModel.SetType(IconType.LeverValveRune);
-						return;
-					//ControlBox
-					case Key.D7:
-						this.ViewModel.SetType(IconType.ControlBox);
-						return;
-					//Collectible
-					case Key.D8:
-						this.ViewModel.SetType(IconType.Collectible);
-						return;
-					//Lore
-					case Key.D9:
-						this.ViewModel.SetType(IconType.Lore);
-						return;
-					//Natural
-					case Key.D0:
-						this.ViewModel.SetType(IconType.Natural);
-						return;
-					//Arcane
-					case Key.OemMinus:
-						this.ViewModel.SetType(IconType.Arcane);
-						return;
-					//QuestItem
-					case Key.OemPlus:
-						this.ViewModel.SetType(IconType.QuestItem);
 						return;
 				}
 			}

@@ -55,7 +55,12 @@
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 				<TextBlock Text="Ctrl+S" />
 				<TextBlock Text=": " />
-				<TextBlock Text="Save Project" />
+				<TextBlock Text="Save" />
+			</StackPanel>
+			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+				<TextBlock Text="Ctrl+Shift+S" />
+				<TextBlock Text=": " />
+				<TextBlock Text="Save As" />
 			</StackPanel>
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 				<TextBlock Text="Ctrl+L" />
@@ -93,32 +98,14 @@
 				<TextBlock Text=": " />
 				<TextBlock Text="Delete Selected" />
 			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="Up" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Move Selected Up" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="Down" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Move Selected Down" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="Left" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Move Selected Left" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="Right" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Move Selected Right" />
-			</StackPanel>
 
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 				<TextBlock Text="Shift" />
 				<TextBlock Text=": " />
 				<TextBlock Text="Make Selected Transparent" />
 			</StackPanel>
+
+			<TextBlock />
 
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 				<TextBlock Text="Ctrl+Click" />
@@ -139,90 +126,28 @@
 				<TextBlock Text=": " />
 				<TextBlock Text="Select Cursor" />
 			</StackPanel>
+
+			<TextBlock />
+
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="2" />
+				<TextBlock Text="Up" />
 				<TextBlock Text=": " />
-				<TextBlock Text="Select Normal Chest" />
+				<TextBlock Text="Move Selected Up" />
 			</StackPanel>
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="3" />
+				<TextBlock Text="Down" />
 				<TextBlock Text=": " />
-				<TextBlock Text="Select Trapped Chest" />
+				<TextBlock Text="Move Selected Down" />
 			</StackPanel>
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="4" />
+				<TextBlock Text="Left" />
 				<TextBlock Text=": " />
-				<TextBlock Text="Select Locked Chest" />
+				<TextBlock Text="Move Selected Left" />
 			</StackPanel>
 			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="5" />
+				<TextBlock Text="Right" />
 				<TextBlock Text=": " />
-				<TextBlock Text="Select Locked Door" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="6" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Select Lever/Valve/Rune" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="7" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Select Control Box" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="8" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Select All Collectibles" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="9" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Select Lore Collectible" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="0" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Select Natural Collectible" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="-" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Select Arcane Collectible" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="=" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Select Quest Item" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="Shift+1" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Select Quest NPC" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="Shift+2" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Select Secret Door" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="Shift+3" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Select Quest Exit" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="Shift+4" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Select Waypoint/Portal" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="Shift+5" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Select Label" />
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-				<TextBlock Text="Shift+6" />
-				<TextBlock Text=": " />
-				<TextBlock Text="Select Trap" />
+				<TextBlock Text="Move Selected Right" />
 			</StackPanel>
 		</StackPanel>
 	</Grid>

@@ -104,6 +104,9 @@ namespace CompendiumMapCreator.Format
 				case 30:
 					return IconType.LockedChest;
 
+				case 35:
+					return IconType.RareChest;
+
 				case 40:
 					return IconType.LockedDoor;
 
