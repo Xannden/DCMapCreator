@@ -14,8 +14,10 @@ namespace CompendiumMapCreator.Format
 			this.Title = title;
 		}
 
-		protected override Element ReadElement(BinaryReader reader, IconType? type)
+		protected override Element ReadElement(BinaryReader reader)
 		{
+			IconType? type = this.ReadType(reader.ReadInt32());
+
 			if (type == null)
 			{
 				return null;
@@ -88,7 +90,7 @@ namespace CompendiumMapCreator.Format
 			return element;
 		}
 
-		protected override IconType? ReadType(int value)
+		private IconType? ReadType(int value)
 		{
 			switch (value)
 			{
@@ -114,13 +116,13 @@ namespace CompendiumMapCreator.Format
 					return IconType.BlockedDoor;
 
 				case 50:
-					return IconType.LeverValveRune;
+					return IconType.Opener;
 
 				case 60:
-					return IconType.ControlBox;
+					return IconType.TrapBox;
 
 				case 70:
-					return IconType.Collectible;
+					return IconType.AnyCollectible;
 
 				case 80:
 					return IconType.Lore;
@@ -135,7 +137,7 @@ namespace CompendiumMapCreator.Format
 					return IconType.QuestItem;
 
 				case 111:
-					return IconType.UseQuestItem;
+					return IconType.QuestItemUse;
 
 				case 120:
 					return IconType.QuestNPC;

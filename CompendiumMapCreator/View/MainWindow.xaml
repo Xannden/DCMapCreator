@@ -29,7 +29,7 @@
 
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="170" />
+			<ColumnDefinition Width="200" />
 			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
@@ -62,27 +62,20 @@
 
 		<Button Grid.Row="1" Height="40" Content="New" Margin="10" Focusable="False" Click="LoadImage_Click" />
 
-		<ListBox Grid.Row="2" ItemsSource="{Binding Types}" SelectedItem="{Binding SelectedType}" Height="Auto" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
-			<ListBox.Resources>
+		<TreeView Name="ToolsView" Grid.Row="2" ItemsSource="{Binding ToolList}" SelectedItemChanged="Tools_SelectedItemChanged">
+			<TreeView.Resources>
 				<converter:IconTypeToImageSourceConverter x:Key="IconTypeToImage" />
 				<converter:IconTypeToDescriptionConverter x:Key="IconTypeToDescription" />
 				<converter:IconTypeToToolTipConverter x:Key="IconTypeToToolTip" />
-			</ListBox.Resources>
-			<ListBox.ItemContainerStyle>
-				<Style TargetType="ListBoxItem">
-					<Setter Property="IsTabStop" Value="False" />
-					<Setter Property="ToolBar.ToolTip" Value="{Binding ., Converter={StaticResource IconTypeToToolTip}}" />
-				</Style>
-			</ListBox.ItemContainerStyle>
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<StackPanel Orientation="Horizontal">
-						<Image Height="22" Width="22" Margin="0,0,4,0" Source="{Binding ., Converter={StaticResource IconTypeToImage}}" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" SnapsToDevicePixels="True" />
-						<TextBlock  Text="{Binding ., Converter={StaticResource IconTypeToDescription}}" VerticalAlignment="Center" />
+
+				<HierarchicalDataTemplate DataType="{x:Type data:Tool}" ItemsSource="{Binding Tools}">
+					<StackPanel Orientation="Horizontal" Margin="0,1,0,1" ToolTip="{Binding ToolTip}">
+						<Image Height="18" Width="18" Margin="0,0,4,0" Source="{Binding Image}" RenderOptions.BitmapScalingMode="NearestNeighbor"  SnapsToDevicePixels="True" />
+						<TextBlock Text="{Binding Description}" />
 					</StackPanel>
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
+				</HierarchicalDataTemplate>
+			</TreeView.Resources>
+		</TreeView>
 
 		<Button Grid.Row="3" Height="40" Margin="10" Content="Export Image" Focusable="False" Click="Export_Click" />
 

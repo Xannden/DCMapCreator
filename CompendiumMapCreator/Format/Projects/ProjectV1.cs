@@ -13,8 +13,10 @@ namespace CompendiumMapCreator.Format
 		{
 		}
 
-		protected override Element ReadElement(BinaryReader reader, IconType? type)
+		protected override Element ReadElement(BinaryReader reader)
 		{
+			IconType? type = this.ReadType(reader.ReadInt32());
+
 			int x = reader.ReadInt32();
 			int y = reader.ReadInt32();
 
@@ -50,7 +52,7 @@ namespace CompendiumMapCreator.Format
 			return element;
 		}
 
-		protected override IconType? ReadType(int value)
+		private IconType? ReadType(int value)
 		{
 			switch (value)
 			{
@@ -70,13 +72,13 @@ namespace CompendiumMapCreator.Format
 					return IconType.LockedDoor;
 
 				case 5:
-					return IconType.LeverValveRune;
+					return IconType.Opener;
 
 				case 6:
-					return IconType.ControlBox;
+					return IconType.TrapBox;
 
 				case 7:
-					return IconType.Collectible;
+					return IconType.AnyCollectible;
 
 				case 8:
 					return IconType.Lore;

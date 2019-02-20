@@ -3,27 +3,35 @@ using CompendiumMapCreator.Data;
 
 namespace CompendiumMapCreator.Format
 {
-	public class ProjectV2 : Project
+	public class ProjectV4 : Project
 	{
-		public ProjectV2(Image image) : base(image)
+		public ProjectV4(Image image) : base(image)
 		{
 		}
 
-		public ProjectV2(string file) : base(file)
+		public ProjectV4(string file, string title) : base(file)
 		{
+			this.Title = title;
 		}
 
 		protected override Element ReadElement(BinaryReader reader)
 		{
 			IconType? type = this.ReadType(reader.ReadInt32());
 
+			if (type == null)
+			{
+				return null;
+			}
+
 			int x = reader.ReadInt32();
 			int y = reader.ReadInt32();
 			bool isCopy = reader.ReadBoolean();
 
+			int length = reader.ReadInt32();
+
 			Element element;
 
-			switch (type.Value)
+			switch (type)
 			{
 				case IconType.Label:
 					{
@@ -69,6 +77,8 @@ namespace CompendiumMapCreator.Format
 					break;
 
 				default:
+					reader.BaseStream.Seek(length, SeekOrigin.Current);
+
 					element = new Element(type.Value);
 					break;
 			}
@@ -91,61 +101,103 @@ namespace CompendiumMapCreator.Format
 					return IconType.NormalChest;
 
 				case 2:
-					return IconType.TrappedChest;
-
-				case 3:
 					return IconType.LockedChest;
 
+				case 3:
+					return IconType.RareChest;
+
 				case 4:
-					return IconType.LockedDoor;
+					return IconType.TrappedChest;
 
 				case 5:
-					return IconType.Opener;
+					return IconType.Collectible;
 
 				case 6:
-					return IconType.TrapBox;
-
-				case 7:
 					return IconType.AnyCollectible;
 
-				case 8:
+				case 7:
 					return IconType.Lore;
 
-				case 9:
+				case 8:
 					return IconType.Natural;
 
-				case 10:
+				case 9:
 					return IconType.Arcane;
 
+				case 10:
+					return IconType.Plant;
+
 				case 11:
-					return IconType.QuestItem;
+					return IconType.Door;
 
 				case 12:
-					return IconType.QuestNPC;
+					return IconType.LockedDoor;
 
 				case 13:
-					return IconType.SecretDoor;
+					return IconType.BlockedDoor;
 
 				case 14:
-					return IconType.QuestExit;
+					return IconType.SecretDoor;
 
 				case 15:
-					return IconType.Portal;
+					return IconType.ProgressDoor;
 
 				case 16:
-					return IconType.Label;
+					return IconType.Trap;
 
 				case 17:
-					return IconType.Trap;
+					return IconType.TrapBox;
 
 				case 18:
 					return IconType.CollapsibleFloor;
 
 				case 19:
+					return IconType.Drop;
+
+				case 20:
+					return IconType.Alarm;
+
+				case 21:
+					return IconType.Disabler;
+
+				case 22:
+					return IconType.Opener;
+
+				case 23:
+					return IconType.Lever;
+
+				case 24:
+					return IconType.Valve;
+
+				case 25:
+					return IconType.Rune;
+
+				case 26:
+					return IconType.Label;
+
+				case 27:
+					return IconType.QuestItem;
+
+				case 28:
+					return IconType.QuestItemUse;
+
+				case 29:
+					return IconType.QuestNPC;
+
+				case 30:
+					return IconType.NPC;
+
+				case 31:
 					return IconType.Entrance;
 
+				case 32:
+					return IconType.QuestExit;
+
+				case 33:
+					return IconType.Portal;
+
 				default:
-					throw new InvalidDataException();
+					return null;
 			}
 		}
 	}

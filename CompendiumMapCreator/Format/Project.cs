@@ -13,7 +13,7 @@ namespace CompendiumMapCreator.Format
 {
 	public abstract class Project : INotifyPropertyChanged
 	{
-		private const int Version = 5;
+		private const int Version = 6;
 
 		private (int gen, int count) saved = (0, 0);
 		private Image _image;
@@ -76,6 +76,10 @@ namespace CompendiumMapCreator.Format
 
 							case 5:
 								project = new ProjectV3(dialog.FileName, reader.ReadString());
+								break;
+
+							case 6:
+								project = new ProjectV4(dialog.FileName, reader.ReadString());
 								break;
 
 							default:
@@ -297,9 +301,7 @@ namespace CompendiumMapCreator.Format
 
 			for (int i = 0; i < count; i++)
 			{
-				int value = reader.ReadInt32();
-
-				Element e = this.ReadElement(reader, this.ReadType(value));
+				Element e = this.ReadElement(reader);
 
 				if (e != null)
 				{
@@ -308,9 +310,7 @@ namespace CompendiumMapCreator.Format
 			}
 		}
 
-		protected abstract Element ReadElement(BinaryReader reader, IconType? type);
-
-		protected abstract IconType? ReadType(int value);
+		protected abstract Element ReadElement(BinaryReader reader);
 
 		private void WriteElement(BinaryWriter writer, Element element)
 		{

@@ -41,6 +41,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -78,6 +79,7 @@
     <Compile Include="Data\Elements\Portal.cs" />
     <Compile Include="Data\Attributes\NameAttribute.cs" />
     <Compile Include="Data\Attributes\ToolTipAttribute.cs" />
+    <Compile Include="Data\Tool.cs" />
     <Compile Include="Data\WindowPoint.cs" />
     <Compile Include="Edits\Add.cs" />
     <Compile Include="Edits\ChangeLabel.cs" />
@@ -107,13 +109,13 @@
     <Compile Include="Format\Projects\ProjectV2.cs" />
     <Compile Include="Format\Projects\ProjectV1.cs" />
     <Compile Include="Format\Projects\ProjectV3.cs" />
+    <Compile Include="Format\Projects\ProjectV4.cs" />
     <Compile Include="ViewModel\Drag\DragCollapsibleFloor.cs" />
     <Compile Include="ViewModel\Drag\DragMove.cs" />
     <Compile Include="ViewModel\Drag\DragSelect.cs" />
     <Compile Include="ViewModel\Drag\DragTrap.cs" />
     <Compile Include="ViewModel\Drag\IDrag.cs" />
     <Compile Include="ViewModel\Editing.cs" />
-    <Compile Include="ViewModel\Extensions.cs" />
     <Compile Include="ViewModel\MainWindow.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Data\Elements\Element.cs" />
@@ -179,27 +181,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\normalChest.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\collectible.png" />
-    <Resource Include="Icons\controlBox.png" />
-    <Resource Include="Icons\leverValve.png" />
-    <Resource Include="Icons\lockedChest.png" />
-    <Resource Include="Icons\lockedDoor.png" />
-    <Resource Include="Icons\questExit.png" />
-    <Resource Include="Icons\questItem.png" />
-    <Resource Include="Icons\questNPC.png" />
-    <Resource Include="Icons\secretDoor.png" />
-    <Resource Include="Icons\trappedChest.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\entrance.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\cursor.png" />
+    <Resource Include="release.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\0.png" />
@@ -212,43 +197,40 @@
     <Resource Include="Icons\7.png" />
     <Resource Include="Icons\8.png" />
     <Resource Include="Icons\9.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\label.png" />
-    <Resource Include="Icons\portal.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\rune.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\paw.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\book.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\trap.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\collapsibleFloor.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="release.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\questItemUse.png" />
-  </ItemGroup>
-  <ItemGroup>
+    <Resource Include="Icons\alarm.png" />
+    <Resource Include="Icons\anyCollectible.png" />
+    <Resource Include="Icons\arcane.png" />
     <Resource Include="Icons\blockedDoor.png" />
-  </ItemGroup>
-  <ItemGroup>
+    <Resource Include="Icons\collapsibleFloor.png" />
+    <Resource Include="Icons\collectible.png" />
+    <Resource Include="Icons\controlBox.png" />
+    <Resource Include="Icons\cursor.png" />
+    <Resource Include="Icons\disabler.png" />
+    <Resource Include="Icons\door.png" />
     <Resource Include="Icons\drop.png" />
-  </ItemGroup>
-  <ItemGroup>
+    <Resource Include="Icons\entrance.png" />
+    <Resource Include="Icons\label.png" />
+    <Resource Include="Icons\lever.png" />
+    <Resource Include="Icons\leverValve.png" />
+    <Resource Include="Icons\lockedChest.png" />
+    <Resource Include="Icons\lockedDoor.png" />
+    <Resource Include="Icons\lore.png" />
+    <Resource Include="Icons\natural.png" />
+    <Resource Include="Icons\normalChest.png" />
+    <Resource Include="Icons\plant.png" />
+    <Resource Include="Icons\portal.png" />
+    <Resource Include="Icons\progressDoor.png" />
+    <Resource Include="Icons\questExit.png" />
+    <Resource Include="Icons\questItem.png" />
+    <Resource Include="Icons\questItemUse.png" />
+    <Resource Include="Icons\questNPC.png" />
+    <Resource Include="Icons\questNPCNeutral.png" />
     <Resource Include="Icons\rareChest.png" />
+    <Resource Include="Icons\rune.png" />
+    <Resource Include="Icons\secretDoor.png" />
+    <Resource Include="Icons\trap.png" />
+    <Resource Include="Icons\trappedChest.png" />
+    <Resource Include="Icons\valve.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

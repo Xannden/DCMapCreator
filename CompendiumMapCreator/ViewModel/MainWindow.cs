@@ -21,7 +21,7 @@ namespace CompendiumMapCreator.ViewModel
 	public class MainWindow : INotifyPropertyChanged
 	{
 		private Project project;
-		private IconType selectedType;
+		private Tool selectedTool;
 		private IDrag dragging;
 		private string projectDir;
 		private string imageDir;
@@ -105,15 +105,31 @@ namespace CompendiumMapCreator.ViewModel
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public IconType[] Types => Enum.GetValues(typeof(IconType)) as IconType[];
-
-		public IconType SelectedType
+		public List<Tool> ToolList
 		{
-			get => this.selectedType;
+			get
+			{
+				return new List<Tool>()
+				{
+					Tools.Cursor,
+					Tools.Rewards,
+					Tools.Collectible,
+					Tools.Door,
+					Tools.Traps,
+					Tools.Opener,
+					Tools.QuestItems,
+					Tools.Movement,
+				};
+			}
+		}
+
+		public Tool SelectedTool
+		{
+			get => this.selectedTool;
 			set
 			{
-				this.selectedType = value;
-				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.SelectedType)));
+				this.selectedTool = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.SelectedTool)));
 			}
 		}
 
@@ -140,7 +156,7 @@ namespace CompendiumMapCreator.ViewModel
 			{
 				this.Project = result;
 				this.Project.Edits.Clear();
-				this.SelectedType = IconType.Cursor;
+				this.SelectedTool = Tools.Cursor;
 			}
 		}
 
@@ -175,9 +191,9 @@ namespace CompendiumMapCreator.ViewModel
 			this.Project?.Selected.Clear();
 		}
 
-		public void SetType(IconType type)
+		public void SetTool(Tool tool)
 		{
-			this.SelectedType = type;
+			this.SelectedTool = tool;
 			this.Project?.Selected.Clear();
 		}
 
@@ -205,7 +221,7 @@ namespace CompendiumMapCreator.ViewModel
 				{
 					this.Project = Project.FromImage(new Image(dialog.FileName));
 
-					this.SelectedType = IconType.Cursor;
+					this.SelectedTool = Tools.Cursor;
 				}
 				catch (Exception)
 				{
@@ -238,7 +254,7 @@ namespace CompendiumMapCreator.ViewModel
 				{
 					this.Project.AddEdit(new ChangeMap(this.Project, new Image(dialog.FileName)));
 
-					this.SelectedType = IconType.Cursor;
+					this.SelectedTool = Tools.Cursor;
 				}
 				catch (Exception)
 				{
@@ -263,7 +279,7 @@ namespace CompendiumMapCreator.ViewModel
 			switch (type)
 			{
 				case IconType.Label:
-					return new Label("", this.Project.Elements.Count((e) => e is Label l && !l.IsCopy));
+					return new Label(null, this.Project.Elements.Count((e) => e is Label l && !l.IsCopy));
 
 				case IconType.Portal:
 					return new Portal(this.Project.Elements.Count((e) => e is Portal p && !p.IsCopy));
@@ -290,11 +306,11 @@ namespace CompendiumMapCreator.ViewModel
 
 			if (!Keyboard.IsKeyDown(Key.Space))
 			{
-				if (this.SelectedType == IconType.Trap)
+				if (this.SelectedTool.Type == IconType.Trap)
 				{
 					this.dragging = new DragTrap(p);
 				}
-				else if (this.SelectedType == IconType.CollapsibleFloor)
+				else if (this.SelectedTool.Type == IconType.CollapsibleFloor)
 				{
 					this.dragging = new DragCollapsibleFloor(p);
 				}
@@ -309,7 +325,7 @@ namespace CompendiumMapCreator.ViewModel
 					{
 						this.dragging = new DragMove(new List<Element>(this.Project.Selected), p);
 					}
-					else if (this.SelectedType == IconType.Cursor)
+					else if (this.SelectedTool.Type == IconType.Cursor)
 					{
 						this.dragging = new DragSelect(p);
 					}
@@ -341,14 +357,14 @@ namespace CompendiumMapCreator.ViewModel
 
 		public void Click(ImagePoint p)
 		{
-			if (this.Project == null || this.SelectedType == IconType.Trap || this.SelectedType == IconType.CollapsibleFloor)
+			if (this.Project == null || this.SelectedTool.Type == IconType.Trap || this.SelectedTool.Type == IconType.CollapsibleFloor)
 			{
 				return;
 			}
 
-			if (this.SelectedType != IconType.Cursor)
+			if (this.SelectedTool.Type != IconType.Cursor)
 			{
-				Element element = this.CreateElement(this.SelectedType);
+				Element element = this.CreateElement(this.SelectedTool.Type);
 
 				ImagePoint position = p - new ImagePoint(element.Width / 2, element.Height / 2);
 

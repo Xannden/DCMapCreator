@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using CompendiumMapCreator.Controls;
 using CompendiumMapCreator.Data;
@@ -24,15 +25,27 @@ namespace CompendiumMapCreator
 		{
 			this.InitializeComponent();
 
+			//this.SelectTool(Tools.Cursor);
+
 			this.ViewModel.PropertyChanged += (_, e) =>
 			{
-				if (e.PropertyName == "Project")
+				if (e.PropertyName == nameof(this.ViewModel.Project))
 				{
 					this.Zoom.Center();
+				}
+				else if (e.PropertyName == nameof(this.ViewModel.SelectedTool))
+				{
+					this.SelectTool(this.ViewModel.SelectedTool);
 				}
 			};
 
 			this.drag = new DragHelper(this.ViewModel);
+		}
+
+		protected override void OnActivated(EventArgs e)
+		{
+			base.OnActivated(e);
+			this.SelectTool(Tools.Cursor);
 		}
 
 		public ViewModel.MainWindow ViewModel => (ViewModel.MainWindow)this.DataContext;
@@ -281,7 +294,35 @@ namespace CompendiumMapCreator
 				{
 					//Cursor
 					case Key.D1:
-						this.ViewModel.SetType(IconType.Cursor);
+						this.ViewModel.SetTool(Tools.Cursor);
+						return;
+
+					case Key.R:
+						this.ViewModel.SetTool(Tools.Rewards.Next(this.ViewModel.SelectedTool));
+						return;
+
+					case Key.C:
+						this.ViewModel.SetTool(Tools.Collectible.Next(this.ViewModel.SelectedTool));
+						return;
+
+					case Key.D:
+						this.ViewModel.SetTool(Tools.Door.Next(this.ViewModel.SelectedTool));
+						return;
+
+					case Key.T:
+						this.ViewModel.SetTool(Tools.Traps.Next(this.ViewModel.SelectedTool));
+						return;
+
+					case Key.O:
+						this.ViewModel.SetTool(Tools.Opener.Next(this.ViewModel.SelectedTool));
+						return;
+
+					case Key.Q:
+						this.ViewModel.SetTool(Tools.QuestItems.Next(this.ViewModel.SelectedTool));
+						return;
+
+					case Key.M:
+						this.ViewModel.SetTool(Tools.Movement.Next(this.ViewModel.SelectedTool));
 						return;
 				}
 			}
@@ -377,6 +418,53 @@ namespace CompendiumMapCreator
 			if (result.GetValueOrDefault())
 			{
 				this.ViewModel.SetTitle(window.MapTitle);
+			}
+		}
+
+		private void Tools_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+		{
+			this.ViewModel.SelectedTool = (Tool)this.ToolsView.SelectedValue;
+		}
+
+		private void SelectTool(Tool tool)
+		{
+			bool Select(TreeViewItem item)
+			{
+				if (((Tool)item.Header).Description == tool.Description)
+				{
+					item.IsSelected = true;
+					return true;
+				}
+
+				bool isExpanded = item.IsExpanded;
+				if (!isExpanded)
+				{
+					item.IsExpanded = true;
+					item.UpdateLayout();
+				}
+
+				for (int i = 0; i < item.Items.Count; i++)
+				{
+					TreeViewItem sub = (TreeViewItem)item.ItemContainerGenerator.ContainerFromIndex(i);
+
+					if (Select(sub))
+					{
+						return true;
+					}
+				}
+
+				item.IsExpanded = isExpanded;
+				return false;
+			}
+
+			for (int i = 0; i < this.ToolsView.Items.Count; i++)
+			{
+				TreeViewItem item = (TreeViewItem)this.ToolsView.ItemContainerGenerator.ContainerFromIndex(i);
+
+				if (Select(item))
+				{
+					return;
+				}
 			}
 		}
 

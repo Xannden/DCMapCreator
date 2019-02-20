@@ -56,5 +56,7 @@ namespace CompendiumMapCreator
 		{
 			return new Rectangle(r.X + p.X, r.Y + p.Y, r.Width, r.Height);
 		}
+
+		public static System.Windows.Media.Color ToMediaColor(this System.Drawing.Color c) => System.Windows.Media.Color.FromArgb(c.A, c.R, c.G, c.B);
 	}
 }

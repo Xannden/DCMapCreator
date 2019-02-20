@@ -8,103 +8,143 @@ namespace CompendiumMapCreator
 	{
 		[Name("Cursor")]
 		[IconFile("cursor.png")]
-		Cursor = 0,
+		Cursor,
 
 		[Name("Normal Chest")]
 		[IconFile("normalChest.png")]
-		NormalChest = 10,
-
-		[Name("Trapped Chest")]
-		[IconFile("trappedChest.png")]
-		TrappedChest = 20,
+		NormalChest,
 
 		[Name("Locked Chest")]
 		[IconFile("lockedChest.png")]
-		LockedChest = 30,
+		LockedChest,
 
 		[Name("Rare Chest")]
 		[IconFile("rareChest.png")]
-		RareChest = 35,
+		RareChest,
+
+		[Name("Trapped Chest")]
+		[IconFile("trappedChest.png")]
+		TrappedChest,
+
+		[Name("Collectible")]
+		[IconFile("collectible.png")]
+		Collectible,
+
+		[Name("Any Collectible")]
+		[IconFile("anyCollectible.png")]
+		[ToolTip("Adventurer's Pack, Rubble")]
+		AnyCollectible,
+
+		[Name("Lore Collectible")]
+		[IconFile("lore.png")]
+		[ToolTip("Some Bookshelf, Some Cabinet")]
+		Lore,
+
+		[Name("Natural Collectible")]
+		[IconFile("natural.png")]
+		[ToolTip("Bones, Fungus, Moss, Mushroom, Some Crude Altar")]
+		Natural,
+
+		[Name("Arcane Collectible")]
+		[IconFile("arcane.png")]
+		[ToolTip("Alchemy Table, Scroll Rack, Some Bookshelf, Some Cabinet, Some Crude Altar")]
+		Arcane,
+
+		[Name("Plant Collectible")]
+		[IconFile("plant.png")]
+		Plant,
+
+		[Name("Door")]
+		[IconFile("door.png")]
+		Door,
 
 		[Name("Locked Door")]
 		[IconFile("lockedDoor.png")]
-		LockedDoor = 40,
+		LockedDoor,
 
 		[Name("Blocked Door")]
 		[IconFile("blockedDoor.png")]
-		BlockedDoor = 41,
-
-		[Name("Lever/Valve/Rune")]
-		[IconFile("leverValve.png")]
-		LeverValveRune = 50,
-
-		[Name("Control Box")]
-		[IconFile("controlBox.png")]
-		ControlBox = 60,
-
-		[Name("Any Collectibles")]
-		[IconFile("collectible.png")]
-		[ToolTip("Adventurer's Pack, Rubble")]
-		Collectible = 70,
-
-		[Name("Lore Collectibles")]
-		[IconFile("book.png")]
-		[ToolTip("Some Bookshelf, Some Cabinet")]
-		Lore = 80,
-
-		[Name("Natural Collectibles")]
-		[IconFile("paw.png")]
-		[ToolTip("Bones, Fungus, Moss, Mushroom, Some Crude Altar")]
-		Natural = 90,
-
-		[Name("Arcane Collectibles")]
-		[IconFile("rune.png")]
-		[ToolTip("Alchemy Table, Scroll Rack, Some Bookshelf, Some Cabinet, Some Crude Altar")]
-		Arcane = 100,
-
-		[Name("Quest Item")]
-		[IconFile("questItem.png")]
-		QuestItem = 110,
-
-		[Name("Quest Item Used Here")]
-		[IconFile("questItemUse.png")]
-		UseQuestItem = 111,
-
-		[Name("Quest NPC")]
-		[IconFile("questNPC.png")]
-		QuestNPC = 120,
+		BlockedDoor,
 
 		[Name("Secret Door")]
 		[IconFile("secretDoor.png")]
-		SecretDoor = 130,
+		SecretDoor,
 
-		[Name("Quest Exit")]
-		[IconFile("questExit.png")]
-		QuestExit = 140,
-
-		[Name("Portal")]
-		[IconFile("portal.png")]
-		Portal = 150,
-
-		[Name("Label")]
-		[IconFile("label.png")]
-		Label = 160,
+		[Name("Progress Door")]
+		[IconFile("progressDoor.png")]
+		ProgressDoor,
 
 		[Name("Trap")]
 		[IconFile("trap.png")]
-		Trap = 170,
+		Trap,
+
+		[Name("Trap Box")]
+		[IconFile("controlBox.png")]
+		TrapBox,
 
 		[Name("Collapsible Floor")]
 		[IconFile("collapsibleFloor.png")]
-		CollapsibleFloor = 180,
+		CollapsibleFloor,
 
 		[Name("Drop")]
 		[IconFile("drop.png")]
-		Drop = 181,
+		Drop,
+
+		[Name("Alarm")]
+		[IconFile("alarm.png")]
+		Alarm,
+
+		[Name("Disabler")]
+		[IconFile("disabler.png")]
+		Disabler,
+
+		[Name("Opener")]
+		[IconFile("leverValve.png")]
+		Opener,
+
+		[Name("Lever")]
+		[IconFile("lever.png")]
+		Lever,
+
+		[Name("Valve")]
+		[IconFile("valve.png")]
+		Valve,
+
+		[Name("Rune")]
+		[IconFile("rune.png")]
+		Rune,
+
+		[Name("Label")]
+		[IconFile("label.png")]
+		Label,
+
+		[Name("Quest Item")]
+		[IconFile("questItem.png")]
+		QuestItem,
+
+		[Name("Quest Item Used Here")]
+		[IconFile("questItemUse.png")]
+		QuestItemUse,
+
+		[Name("Quest NPC")]
+		[IconFile("questNPC.png")]
+		QuestNPC,
+
+		[Name("NPC")]
+		[IconFile("questNPCNeutral.png")]
+		NPC,
 
 		[Name("Entrance")]
 		[IconFile("entrance.png")]
-		Entrance = 190,
+		Entrance,
+
+		[Name("Quest Exit")]
+		[IconFile("questExit.png")]
+		QuestExit,
+
+		[Name("Portal")]
+		[IconFile("portal.png")]
+		Portal,
 	}
 
 	public static class IconTypeExtensions

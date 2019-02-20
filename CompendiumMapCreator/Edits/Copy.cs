@@ -46,7 +46,7 @@ namespace CompendiumMapCreator.Edits
 				switch (source[i])
 				{
 					case Label e:
-						clone = new Label("", e.Number);
+						clone = new Label(null, e.Number);
 						break;
 
 					case Portal p:
