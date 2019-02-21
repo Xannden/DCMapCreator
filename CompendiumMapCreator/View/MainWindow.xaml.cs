@@ -42,12 +42,6 @@ namespace CompendiumMapCreator
 			this.drag = new DragHelper(this.ViewModel);
 		}
 
-		protected override void OnActivated(EventArgs e)
-		{
-			base.OnActivated(e);
-			this.SelectTool(Tools.Cursor);
-		}
-
 		public ViewModel.MainWindow ViewModel => (ViewModel.MainWindow)this.DataContext;
 
 		private void Paste()
@@ -423,7 +417,16 @@ namespace CompendiumMapCreator
 
 		private void Tools_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
-			this.ViewModel.SelectedTool = (Tool)this.ToolsView.SelectedValue;
+			Tool tool = (Tool)this.ToolsView.SelectedValue;
+
+			if (tool.IsSelectable)
+			{
+				this.ViewModel.SelectedTool = tool;
+			}
+			else
+			{
+				this.ViewModel.SelectedTool = tool.Tools[0];
+			}
 		}
 
 		private void SelectTool(Tool tool)
@@ -519,6 +522,11 @@ namespace CompendiumMapCreator
 				this.dragging = false;
 				this.mouseDown = false;
 			}
+		}
+
+		private void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			this.SelectTool(Tools.Cursor);
 		}
 	}
 }

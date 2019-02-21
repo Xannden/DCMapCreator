@@ -52,6 +52,7 @@ namespace CompendiumMapCreator
 
 		[Name("Plant Collectible")]
 		[IconFile("plant.png")]
+		[ToolTip("Flowering Plant")]
 		Plant,
 
 		[Name("Door")]

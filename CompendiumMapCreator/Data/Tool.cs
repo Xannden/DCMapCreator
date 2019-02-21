@@ -15,6 +15,8 @@ namespace CompendiumMapCreator.Data
 
 		public List<Tool> Tools { get; set; }
 
+		public bool IsSelectable { get; set; } = true;
+
 		public Tool(IconType type)
 		{
 			this.Type = type;
@@ -29,9 +31,16 @@ namespace CompendiumMapCreator.Data
 
 		public Tool Next(Tool curr)
 		{
+			Tool result = this;
+
+			//if (this.Type == this.Tools?[0].Type)
+			//{
+			//	result = this.Tools[0];
+			//}
+
 			if (curr == null || this.Tools == null || this.Tools.Count == 0)
 			{
-				return this;
+				return result;
 			}
 
 			if (this.Description == curr.Description)
@@ -43,11 +52,11 @@ namespace CompendiumMapCreator.Data
 			{
 				if (this.Tools[i]?.Description == curr.Description)
 				{
-					return i == (this.Tools.Count - 1) ? this : this.Tools[i + 1];
+					return i == (this.Tools.Count - 1) ? result : this.Tools[i + 1];
 				}
 			}
 
-			return this;
+			return result;
 		}
 	}
 
@@ -69,6 +78,7 @@ namespace CompendiumMapCreator.Data
 				RareChest,
 				TrappedChest,
 			},
+			IsSelectable = false,
 		};
 
 		public static Tool AnyCollectible = new Tool(IconType.AnyCollectible);
@@ -123,6 +133,7 @@ namespace CompendiumMapCreator.Data
 				Alarm ,
 				Disabler ,
 			},
+			IsSelectable = false,
 		};
 
 		public static Tool Lever = new Tool(IconType.Lever);
@@ -155,6 +166,7 @@ namespace CompendiumMapCreator.Data
 				QuestNPC ,
 				NPC ,
 			},
+			IsSelectable = false,
 		};
 
 		public static Tool Entrance = new Tool(IconType.Entrance);
@@ -169,6 +181,7 @@ namespace CompendiumMapCreator.Data
 				QuestExit,
 				Portal,
 			},
+			IsSelectable = false,
 		};
 	}
 }

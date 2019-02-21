@@ -7,13 +7,11 @@ namespace CompendiumMapCreator.Converter
 	public class AddConverter : IValueConverter
 
 	{
-		public int Value { get; set; }
-
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			if (value is int i)
 			{
-				return i + this.Value;
+				return i + int.Parse((string)parameter);
 			}
 
 			throw new ArgumentException("value must be a int");
@@ -23,7 +21,7 @@ namespace CompendiumMapCreator.Converter
 		{
 			if (value is int i)
 			{
-				return i - this.Value;
+				return i - int.Parse((string)parameter);
 			}
 
 			throw new ArgumentException("value must be a int");

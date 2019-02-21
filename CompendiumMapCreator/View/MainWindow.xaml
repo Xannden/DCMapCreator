@@ -13,19 +13,12 @@
 		PreviewMouseDown="Window_PreviewMouseDown"
 		MouseUp="Window_MouseUp"
 		KeyDown="Window_KeyDown"
+		Loaded="Window_Loaded"
 		mc:Ignorable="d"
 		Title="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Height="730" Width="1024">
 	<Window.DataContext>
 		<vm:MainWindow />
 	</Window.DataContext>
-
-	<Window.Resources>
-		<converter:EnumBooleanConverter x:Key="EnumBooleanConverter" />
-		<converter:EqualsToBrushConverter x:Key="EqualsToBrushConverter" IsFalse="Transparent" IsTrue="#7F87CEFA" />
-		<converter:AddConverter x:Key="AddOne" Value="2" />
-		<converter:ElementToVisibilityConverter x:Key="LabelVisibile" ElementType="{x:Type data:Label}" AllowCopies="False" />
-		<converter:ElementToVisibilityConverter x:Key="RotateVisibile" ElementType="{x:Type data:Entrance}" AllowCopies="True" />
-	</Window.Resources>
 
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -62,7 +55,7 @@
 
 		<Button Grid.Row="1" Height="40" Content="New" Margin="10" Focusable="False" Click="LoadImage_Click" />
 
-		<TreeView Name="ToolsView" Grid.Row="2" ItemsSource="{Binding ToolList}" SelectedItemChanged="Tools_SelectedItemChanged">
+		<TreeView Name="ToolsView" Grid.Row="2" ItemsSource="{Binding ToolList}" SelectedItemChanged="Tools_SelectedItemChanged" IsTabStop="False">
 			<TreeView.Resources>
 				<converter:IconTypeToImageSourceConverter x:Key="IconTypeToImage" />
 				<converter:IconTypeToDescriptionConverter x:Key="IconTypeToDescription" />
@@ -93,44 +86,48 @@
 				</Canvas>
 
 				<ItemsControl Focusable="False" ItemsSource="{Binding Project.Elements}" SnapsToDevicePixels="True">
+					<ItemsControl.Resources>
+						<converter:AddConverter x:Key="Add" />
+					</ItemsControl.Resources>
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
 							<Canvas />
 						</ItemsPanelTemplate>
 					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemContainerStyle>
+						<Style>
+							<Setter Property="Canvas.Left" Value="{Binding X, Converter={StaticResource Add}, ConverterParameter=-1}" />
+							<Setter Property="Canvas.Top" Value="{Binding Y, Converter={StaticResource Add}, ConverterParameter=-1}" />
+						</Style>
+					</ItemsControl.ItemContainerStyle>
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
-							<Canvas Width="{Binding Width}" Height="{Binding Height}" ClipToBounds="False" Opacity="{Binding Opacity}">
-								<Canvas.RenderTransform>
-									<TranslateTransform X="{Binding  X}" Y="{Binding Y}" />
-								</Canvas.RenderTransform>
-
-								<Border Width="{Binding Width, Converter={StaticResource AddOne}}" Height="{Binding Height, Converter={StaticResource AddOne }}" BorderThickness="1">
-
-									<Border.BorderBrush>
-										<MultiBinding Converter="{StaticResource EqualsToBrushConverter}">
-											<Binding Path="DataContext.Project.Selected" RelativeSource="{RelativeSource AncestorType=Window}" />
-											<Binding Path="." />
-										</MultiBinding>
-									</Border.BorderBrush>
-
-									<Border.RenderTransform>
-										<TranslateTransform X="-1" Y="-1" />
-									</Border.RenderTransform>
-
-									<Image Source="{Binding Image.BitmapImage}" Width="{Binding Width}" Height="{Binding Height}" ToolTip="{Binding ToolTip}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True">
-										<Image.ContextMenu>
-											<ContextMenu>
-												<MenuItem Header="Edit" Visibility="{Binding Converter={StaticResource LabelVisibile}}" Click="Edit" />
-												<MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy" />
-												<MenuItem Header="Delete" Click="Delete_Click" InputGestureText="Del" />
-												<MenuItem Header="Rotate Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateClockwise" />
-												<MenuItem Header="Rotate Counter Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateCounterClockwise" />
-											</ContextMenu>
-										</Image.ContextMenu>
-									</Image>
-								</Border>
-							</Canvas>
+							<Border  Opacity="{Binding Opacity}" BorderThickness="1">
+								<Border.Resources>
+									<converter:EqualsToBrushConverter x:Key="EqualsToBrushConverter" IsFalse="Transparent" IsTrue="#7F87CEFA" />
+								</Border.Resources>
+								<Border.BorderBrush>
+									<MultiBinding Converter="{StaticResource EqualsToBrushConverter}">
+										<Binding Path="DataContext.Project.Selected" RelativeSource="{RelativeSource AncestorType=Window}" />
+										<Binding Path="." />
+									</MultiBinding>
+								</Border.BorderBrush>
+								<Image  Source="{Binding Image.BitmapImage}" Width="{Binding Width}" Height="{Binding Height}" ToolTip="{Binding ToolTip}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True">
+									<Image.Resources>
+										<converter:ElementToVisibilityConverter x:Key="LabelVisibile" ElementType="{x:Type data:Label}" AllowCopies="False" />
+										<converter:ElementToVisibilityConverter x:Key="RotateVisibile" ElementType="{x:Type data:Entrance}" AllowCopies="True" />
+									</Image.Resources>
+									<Image.ContextMenu>
+										<ContextMenu>
+											<MenuItem Header="Edit" Visibility="{Binding Converter={StaticResource LabelVisibile}}" Click="Edit" />
+											<MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy" />
+											<MenuItem Header="Delete" Click="Delete_Click" InputGestureText="Del" />
+											<MenuItem Header="Rotate Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateClockwise" />
+											<MenuItem Header="Rotate Counter Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateCounterClockwise" />
+										</ContextMenu>
+									</Image.ContextMenu>
+								</Image>
+							</Border>
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
