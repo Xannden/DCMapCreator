@@ -40,61 +40,68 @@ namespace CompendiumMapCreator.Format
 			{
 				initialDirectory = Path.GetDirectoryName(dialog.FileName);
 
-				try
+				return Project.LoadFile(dialog.FileName);
+			}
+
+			return null;
+		}
+
+		public static Project LoadFile(string file)
+		{
+			try
+			{
+				using (BinaryReader reader = new BinaryReader(System.IO.File.OpenRead(file)))
 				{
-					using (BinaryReader reader = new BinaryReader(System.IO.File.OpenRead(dialog.FileName)))
+					int magic = reader.ReadInt32();
+
+					if (magic != 407893541)
 					{
-						int magic = reader.ReadInt32();
-
-						if (magic != 407893541)
-						{
-							throw new InvalidDataException();
-						}
-
-						char[] check = reader.ReadChars(3);
-
-						if (check[0] != 'D' || check[1] != 'M' || check[2] != 'C')
-						{
-							throw new InvalidDataException();
-						}
-
-						int version = reader.ReadInt32();
-
-						Project project;
-
-						switch (version)
-						{
-							case 1:
-								project = new ProjectV1(dialog.FileName);
-								break;
-
-							case 2:
-							case 3:
-							case 4:
-								project = new ProjectV2(dialog.FileName);
-								break;
-
-							case 5:
-								project = new ProjectV3(dialog.FileName, reader.ReadString());
-								break;
-
-							case 6:
-								project = new ProjectV4(dialog.FileName, reader.ReadString());
-								break;
-
-							default:
-								throw new InvalidDataException();
-						}
-
-						project.Load(reader);
-
-						return project;
+						throw new InvalidDataException();
 					}
+
+					char[] check = reader.ReadChars(3);
+
+					if (check[0] != 'D' || check[1] != 'M' || check[2] != 'C')
+					{
+						throw new InvalidDataException();
+					}
+
+					int version = reader.ReadInt32();
+
+					Project project;
+
+					switch (version)
+					{
+						case 1:
+							project = new ProjectV1(file);
+							break;
+
+						case 2:
+						case 3:
+						case 4:
+							project = new ProjectV2(file);
+							break;
+
+						case 5:
+							project = new ProjectV3(file, reader.ReadString());
+							break;
+
+						case 6:
+							project = new ProjectV4(file, reader.ReadString());
+							break;
+
+						default:
+							throw new InvalidDataException();
+					}
+
+					project.Load(reader);
+
+					return project;
 				}
-				catch (Exception)
-				{
-					MessageBox.Show("Unable to load file", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-				}
+			}
+			catch (Exception)
+			{
+				MessageBox.Show("Unable to load file", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
 
 			return null;
@@ -383,8 +390,13 @@ namespace CompendiumMapCreator.Format
 			{
 				initialDirectory = Path.GetDirectoryName(dialog.FileName);
 
-				Exporter.Run(dialog.FileName, this.Image, this.Elements, addLegend, this.Title);
+				this.Export(addLegend, dialog.FileName);
 			}
+		}
+
+		public void Export(bool addLegend, string file)
+		{
+			Exporter.Run(file, this.Image, this.Elements, addLegend, this.Title);
 		}
 	}
 }

@@ -1,9 +1,12 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Windows;
+using CompendiumMapCreator.Format;
 
 namespace CompendiumMapCreator
 {
@@ -35,6 +38,54 @@ namespace CompendiumMapCreator
 					this.Shutdown();
 				}
 			}
+
+			if (e.Args.Length > 0 && e.Args[0] == "export")
+			{
+				if (e.Args.Length >= 3)
+				{
+					string projectDir = e.Args[1];
+					string outputDir = e.Args[2];
+
+					if (!outputDir.EndsWith("/") && !outputDir.EndsWith("\\"))
+					{
+						outputDir += "\\";
+					}
+
+					List<string> files = this.GetFiles(projectDir);
+
+					for (int i = 0; i < files.Count; i++)
+					{
+						Project project = Project.LoadFile(files[i]);
+
+						project.Export(true, outputDir + Path.GetFileNameWithoutExtension(files[i]) + ".png");
+					}
+				}
+
+				this.Shutdown();
+			}
+
+			this.StartupUri = new Uri("View/MainWindow.xaml", UriKind.RelativeOrAbsolute);
+		}
+
+		private List<string> GetFiles(string path)
+		{
+			void GetFilesRecursive(string dir, List<string> list)
+			{
+				string[] dirs = Directory.GetDirectories(dir);
+
+				for (int i = 0; i < dirs.Length; i++)
+				{
+					GetFilesRecursive(dirs[i], list);
+				}
+
+				list.AddRange(Directory.GetFiles(dir));
+			}
+
+			List<string> files = new List<string>();
+
+			GetFilesRecursive(path, files);
+
+			return files;
 		}
 
 		private bool NeedsUpdate()
