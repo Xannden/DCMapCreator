@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using System.IO;
 
 namespace CompendiumMapCreator.Format.Export
 {
@@ -19,6 +20,8 @@ namespace CompendiumMapCreator.Format.Export
 				using (Graphics g = Graphics.FromImage(result))
 				{
 					map.Draw(g, new Point());
+
+					Directory.CreateDirectory(Path.GetDirectoryName(fileName));
 
 					result.Save(fileName, ImageFormat.Png);
 				}

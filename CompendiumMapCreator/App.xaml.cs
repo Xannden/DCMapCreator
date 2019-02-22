@@ -39,31 +39,53 @@ namespace CompendiumMapCreator
 				}
 			}
 
-			if (e.Args.Length > 0 && e.Args[0] == "export")
+			string inputDir = null;
+			string outputDir = null;
+
+			for (int i = 0; i < e.Args.Length; i++)
 			{
-				if (e.Args.Length >= 3)
+				if ((e.Args[i] == "-e" || e.Args[i] == "-export") && e.Args.Length > (i + 1))
 				{
-					string projectDir = e.Args[1];
-					string outputDir = e.Args[2];
+					inputDir = e.Args[i + 1];
+				}
+
+				if ((e.Args[i] == "-o" || e.Args[i] == "-output") && e.Args.Length > (i + 1))
+				{
+					outputDir = e.Args[i + 1];
 
 					if (!outputDir.EndsWith("/") && !outputDir.EndsWith("\\"))
 					{
 						outputDir += "\\";
 					}
+				}
+			}
 
-					List<string> files = this.GetFiles(projectDir);
+			if (string.IsNullOrEmpty(outputDir))
+			{
+				outputDir = inputDir;
+			}
 
-					for (int i = 0; i < files.Count; i++)
+			if (!string.IsNullOrEmpty(inputDir))
+			{
+				List<string> files = this.GetFiles(inputDir);
+
+				for (int i = 0; i < files.Count; i++)
+				{
+					try
 					{
 						Project project = Project.LoadFile(files[i]);
 
 						project.Export(true, outputDir + Path.GetFileNameWithoutExtension(files[i]) + ".png");
 					}
+#pragma warning disable RCS1075 // Avoid empty catch clause that catches System.Exception.
+					catch (Exception)
+#pragma warning restore RCS1075 // Avoid empty catch clause that catches System.Exception.
+					{
+					}
 				}
 
 				this.Shutdown();
 			}
-
 			this.StartupUri = new Uri("View/MainWindow.xaml", UriKind.RelativeOrAbsolute);
 		}
 
