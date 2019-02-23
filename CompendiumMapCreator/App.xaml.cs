@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
@@ -41,6 +42,8 @@ namespace CompendiumMapCreator
 
 			string inputDir = null;
 			string outputDir = null;
+			bool recursive = false;
+			bool addLegend = true;
 
 			for (int i = 0; i < e.Args.Length; i++)
 			{
@@ -58,6 +61,16 @@ namespace CompendiumMapCreator
 						outputDir += "\\";
 					}
 				}
+
+				if (e.Args[i] == "-r" || e.Args[i] == "-recursive")
+				{
+					recursive = true;
+				}
+
+				if (e.Args[i] == "-nl" || e.Args[i] == "-noLegend")
+				{
+					addLegend = false;
+				}
 			}
 
 			if (string.IsNullOrEmpty(outputDir))
@@ -67,7 +80,7 @@ namespace CompendiumMapCreator
 
 			if (!string.IsNullOrEmpty(inputDir))
 			{
-				List<string> files = this.GetFiles(inputDir);
+				List<string> files = this.GetFiles(inputDir, recursive);
 
 				for (int i = 0; i < files.Count; i++)
 				{
@@ -75,7 +88,7 @@ namespace CompendiumMapCreator
 					{
 						Project project = Project.LoadFile(files[i]);
 
-						project.Export(true, outputDir + Path.GetFileNameWithoutExtension(files[i]) + ".png");
+						project.Export(addLegend, outputDir + Path.GetFileNameWithoutExtension(files[i]) + ".png");
 					}
 #pragma warning disable RCS1075 // Avoid empty catch clause that catches System.Exception.
 					catch (Exception)
@@ -89,7 +102,7 @@ namespace CompendiumMapCreator
 			this.StartupUri = new Uri("View/MainWindow.xaml", UriKind.RelativeOrAbsolute);
 		}
 
-		private List<string> GetFiles(string path)
+		private List<string> GetFiles(string path, bool recursive)
 		{
 			void GetFilesRecursive(string dir, List<string> list)
 			{
@@ -103,11 +116,18 @@ namespace CompendiumMapCreator
 				list.AddRange(Directory.GetFiles(dir));
 			}
 
-			List<string> files = new List<string>();
+			if (recursive)
+			{
+				List<string> files = new List<string>();
 
-			GetFilesRecursive(path, files);
+				GetFilesRecursive(path, files);
 
-			return files;
+				return files;
+			}
+			else
+			{
+				return Directory.GetFiles(path).ToList();
+			}
 		}
 
 		private bool NeedsUpdate()
