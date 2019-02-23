@@ -142,7 +142,7 @@ namespace CompendiumMapCreator
 
 			Temp temp = (Temp)serializer.ReadObject(response.GetResponseStream());
 
-			return temp.tag_name != "V1.5";
+			return temp.tag_name != "V1.6";
 		}
 
 		[DataContract]
