@@ -38,7 +38,7 @@ namespace CompendiumMapCreator.Format
 						int number = reader.ReadInt32();
 						string text = reader.ReadString();
 
-						element = new Label(text, number);
+						element = new Label(text?.Length == 0 ? null : text, number);
 					}
 					break;
 

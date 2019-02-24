@@ -328,7 +328,7 @@ namespace CompendiumMapCreator.Format
 					long start = writer.BaseStream.Position;
 					writer.Write(0);
 					writer.Write(l.Number);
-					writer.Write(l.Text);
+					writer.Write(l.Text ?? string.Empty);
 
 					long end = writer.BaseStream.Position;
 					writer.Seek(-(int)(end - start), SeekOrigin.Current);
