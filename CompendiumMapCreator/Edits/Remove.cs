@@ -1,78 +1,79 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using CompendiumMapCreator.Data;
 
 namespace CompendiumMapCreator.Edits
 {
 	public sealed class Remove : Edit
 	{
-		private readonly List<NumberedElement> numbered = new List<NumberedElement>();
+		public List<(int index, Element element)> Removed { get; } = new List<(int, Element)>();
 
-		public List<Element> Removed { get; }
-
-		public Remove(List<Element> removed)
+		public Remove(List<Element> removed, IList<Element> list)
 		{
-			this.Removed = removed;
-
-			for (int i = 0; i < this.Removed.Count; i++)
+			for (int i = 0; i < removed.Count; i++)
 			{
-				if (this.Removed[i] is NumberedElement n && !n.IsCopy)
+				this.Removed.Add((list.IndexOf(removed[i]), removed[i]));
+
+				if (removed[i] is NumberedElement n && !n.IsCopy)
 				{
-					this.numbered.Add(n);
+					for (int j = 0; j < list.Count; j++)
+					{
+						if (list[j] is NumberedElement c && c.IsCopy && c.Number == n.Number)
+						{
+							this.Removed.Add((j, list[j]));
+						}
+					}
 				}
 			}
 
-			this.numbered.Sort((lhs, rhs) => rhs.Number.CompareTo(lhs.Number));
-
-			this.Removed.RemoveAll((e) => e is NumberedElement && !e.IsCopy);
+			this.Removed.Sort((lhs, rhs) => lhs.index.CompareTo(rhs.index));
 		}
 
 		public override void Apply(IList<Element> list)
 		{
-			foreach (Element element in this.Removed)
+			for (int i = this.Removed.Count - 1; i >= 0; i--)
 			{
-				list.Remove(element);
+				list.RemoveAt(this.Removed[i].index);
 			}
 
-			foreach (NumberedElement element in this.numbered)
+			List<int> numbers = this.Removed.Where((i) => i.element is NumberedElement n && !n.IsCopy).Select((i) => ((NumberedElement)i.element).Number).ToList();
+
+			numbers.Sort();
+
+			numbers.Reverse();
+
+			foreach (int number in numbers)
 			{
 				for (int i = 0; i < list.Count; i++)
 				{
-					if (list[i].GetType() != element.GetType())
-					{
-						continue;
-					}
-
-					if (list[i] is NumberedElement n && n.Number > element.Number && !list[i].IsCopy)
+					if (list[i] is NumberedElement n && n.Number > number)
 					{
 						n.Number--;
 					}
 				}
-				list.Remove(element);
 			}
 		}
 
 		public override void Undo(IList<Element> list)
 		{
-			foreach (Element element in this.Removed)
-			{
-				list.Add(element);
-			}
+			List<int> numbers = this.Removed.Where((i) => i.element is NumberedElement n && !n.IsCopy).Select((i) => ((NumberedElement)i.element).Number).ToList();
 
-			for (int i = this.numbered.Count - 1; i >= 0; i--)
+			numbers.Sort();
+
+			foreach (int number in numbers)
 			{
-				for (int j = 0; j < list.Count; j++)
+				for (int i = 0; i < list.Count; i++)
 				{
-					if (list[j].GetType() != this.numbered[i].GetType())
-					{
-						continue;
-					}
-
-					if (list[j] is NumberedElement n && n.Number >= this.numbered[i].Number && !list[j].IsCopy)
+					if (list[i] is NumberedElement n && n.Number >= number)
 					{
 						n.Number++;
 					}
 				}
-				list.Add(this.numbered[i]);
+			}
+
+			for (int i = 0; i < this.Removed.Count; i++)
+			{
+				list.Insert(this.Removed[i].index, this.Removed[i].element);
 			}
 		}
 	}

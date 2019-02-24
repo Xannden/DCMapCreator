@@ -182,7 +182,7 @@ namespace CompendiumMapCreator.ViewModel
 				return;
 			}
 
-			this.Project?.AddEdit(new Remove(new List<Element>(this.Project.Selected)));
+			this.Project?.AddEdit(new Remove(new List<Element>(this.Project.Selected), this.project.Elements));
 			this.Project?.Selected.Clear();
 		}
 
