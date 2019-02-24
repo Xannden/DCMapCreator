@@ -312,6 +312,24 @@ namespace CompendiumMapCreator.Format
 					this.Elements.Add(e);
 				}
 			}
+
+			int index = -1;
+
+			for (int i = this.Elements.Count - 1; i >= 0; i--)
+			{
+				if (this.Elements[i] is AreaElement)
+				{
+					if (index == -1)
+					{
+						index = i;
+					}
+				}
+				else if (index != -1)
+				{
+					this.Elements.Move(i, index);
+					index--;
+				}
+			}
 		}
 
 		protected abstract Element ReadElement(BinaryReader reader);
