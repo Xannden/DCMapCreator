@@ -112,21 +112,32 @@
 										<Binding Path="." />
 									</MultiBinding>
 								</Border.BorderBrush>
-								<Image  Source="{Binding Image.BitmapImage}" Width="{Binding Width}" Height="{Binding Height}" ToolTip="{Binding ToolTip}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True">
-									<Image.Resources>
-										<converter:ElementToVisibilityConverter x:Key="LabelVisibile" ElementType="{x:Type data:Label}" AllowCopies="False" />
-										<converter:ElementToVisibilityConverter x:Key="RotateVisibile" ElementType="{x:Type data:Entrance}" AllowCopies="True" />
-									</Image.Resources>
-									<Image.ContextMenu>
-										<ContextMenu>
-											<MenuItem Header="Edit" Visibility="{Binding Converter={StaticResource LabelVisibile}}" Click="Edit" />
-											<MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy" />
-											<MenuItem Header="Delete" Click="Delete_Click" InputGestureText="Del" />
-											<MenuItem Header="Rotate Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateClockwise" />
-											<MenuItem Header="Rotate Counter Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateCounterClockwise" />
-										</ContextMenu>
-									</Image.ContextMenu>
-								</Image>
+								<Grid Width="{Binding Width}" Height="{Binding Height}">
+									<Grid.Resources>
+										<BitmapImage x:Key="CopyStar" UriSource="../Icons/copy.png" />
+										<BooleanToVisibilityConverter x:Key="boolToVisibility" />
+									</Grid.Resources>
+									<Image  Source="{Binding Image.BitmapImage}" Width="{Binding Width}" Height="{Binding Height}" ToolTip="{Binding ToolTip}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True">
+										<Image.Resources>
+											<converter:ElementToVisibilityConverter x:Key="LabelVisibile" ElementType="{x:Type data:Label}" AllowCopies="False" />
+											<converter:ElementToVisibilityConverter x:Key="RotateVisibile" ElementType="{x:Type data:Entrance}" AllowCopies="True" />
+										</Image.Resources>
+										<Image.ContextMenu>
+											<ContextMenu>
+												<MenuItem Header="Edit" Visibility="{Binding Converter={StaticResource LabelVisibile}}" Click="Edit" />
+												<MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy" />
+												<MenuItem Header="Delete" Click="Delete_Click" InputGestureText="Del" />
+												<MenuItem Header="Rotate Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateClockwise" />
+												<MenuItem Header="Rotate Counter Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateCounterClockwise" />
+											</ContextMenu>
+										</Image.ContextMenu>
+									</Image>
+									<Image Source="{StaticResource CopyStar}" RenderOptions.BitmapScalingMode="NearestNeighbor" Visibility="{Binding IsCopy, Converter={StaticResource boolToVisibility}}">
+										<Image.RenderTransform>
+											<TranslateTransform X="2" Y="-2" />
+										</Image.RenderTransform>
+									</Image>
+								</Grid>
 							</Border>
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>

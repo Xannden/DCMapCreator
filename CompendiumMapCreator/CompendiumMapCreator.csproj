@@ -232,5 +232,8 @@
     <Resource Include="Icons\trappedChest.png" />
     <Resource Include="Icons\valve.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\copy.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

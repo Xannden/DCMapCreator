@@ -46,11 +46,17 @@ namespace CompendiumMapCreator.Edits
 				switch (source[i])
 				{
 					case Label e:
-						clone = new Label(null, e.Number);
+						clone = new Label(null, e.Number)
+						{
+							IsCopy = true
+						};
 						break;
 
 					case Portal p:
-						clone = new Portal(p.Number);
+						clone = new Portal(p.Number)
+						{
+							IsCopy = true
+						};
 						break;
 
 					case Trap t:
@@ -65,8 +71,6 @@ namespace CompendiumMapCreator.Edits
 						clone = new Element(source[i].Type);
 						break;
 				}
-
-				clone.IsCopy = true;
 
 				clone.X = source[i].X - mid_x + point.X;
 				clone.Y = source[i].Y - mid_y + point.Y;
