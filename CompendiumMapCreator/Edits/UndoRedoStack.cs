@@ -186,11 +186,9 @@ namespace CompendiumMapCreator.Data
 		{
 			int diff = this.data.Count - this.Count;
 
-			int index = Math.Max(this.data.Count - 1 - diff, 0);
+			List<T> removed = this.data.GetRange(this.Count, diff);
 
-			List<T> removed = this.data.GetRange(index, diff);
-
-			this.data.RemoveRange(index, diff);
+			this.data.RemoveRange(this.Count, diff);
 
 			if (this.Count > 0)
 			{

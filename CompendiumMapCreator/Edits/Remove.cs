@@ -8,7 +8,7 @@ namespace CompendiumMapCreator.Edits
 	{
 		public List<(int index, Element element)> Removed { get; } = new List<(int, Element)>();
 
-		public Remove(List<Element> removed, IList<Element> list)
+		public Remove(IList<Element> removed, IList<Element> list)
 		{
 			for (int i = 0; i < removed.Count; i++)
 			{
@@ -18,7 +18,7 @@ namespace CompendiumMapCreator.Edits
 				{
 					for (int j = 0; j < list.Count; j++)
 					{
-						if (list[j] is NumberedElement c && c.IsCopy && c.Number == n.Number)
+						if (list[j] is NumberedElement c && c.IsCopy && c.Number == n.Number && !this.Removed.Contains((j, list[j])))
 						{
 							this.Removed.Add((j, list[j]));
 						}

@@ -110,14 +110,12 @@ namespace CompendiumMapCreator.Format
 		{
 			this.Image = image;
 			this.Elements = new ObservableCollection<Element>();
-			this.Selected.CollectionChanged += (s, e) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Selected)));
 		}
 
 		protected Project(string file)
 		{
 			this.File = file;
 			this.Elements = new ObservableCollection<Element>();
-			this.Selected.CollectionChanged += (s, e) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Selected)));
 		}
 
 		public string File
@@ -181,15 +179,18 @@ namespace CompendiumMapCreator.Format
 					if (clear)
 					{
 						this.Selected.Clear();
+						this.OnPropertyChanged(nameof(this.Selected));
 					}
 
 					if (this.Selected.Contains(this.Elements[i]))
 					{
 						this.Selected.Remove(this.Elements[i]);
+						this.OnPropertyChanged(nameof(this.Selected));
 					}
 					else
 					{
 						this.Selected.Add(this.Elements[i]);
+						this.OnPropertyChanged(nameof(this.Selected));
 					}
 
 					if (this.Elements[i] is AreaElement)
@@ -222,6 +223,7 @@ namespace CompendiumMapCreator.Format
 			}
 
 			this.Selected.Clear();
+			this.OnPropertyChanged(nameof(this.Selected));
 		}
 
 		public void Save(ref string initialDirectory, bool forcePrompt)
@@ -412,6 +414,11 @@ namespace CompendiumMapCreator.Format
 		public void Export(bool addLegend, string file)
 		{
 			Exporter.Run(file, this.Image, this.Elements, addLegend, this.Title);
+		}
+
+		internal void OnPropertyChanged(string name)
+		{
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 		}
 	}
 }

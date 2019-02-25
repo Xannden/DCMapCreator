@@ -182,19 +182,22 @@ namespace CompendiumMapCreator.ViewModel
 				return;
 			}
 
-			this.Project?.AddEdit(new Remove(new List<Element>(this.Project.Selected), this.project.Elements));
+			this.Project?.AddEdit(new Remove(this.Project.Selected, this.project.Elements));
 			this.Project?.Selected.Clear();
+			this.Project.OnPropertyChanged(nameof(this.Project.Selected));
 		}
 
 		public void Deselect()
 		{
 			this.Project?.Selected.Clear();
+			this.Project.OnPropertyChanged(nameof(this.Project.Selected));
 		}
 
 		public void SetTool(Tool tool)
 		{
 			this.SelectedTool = tool;
 			this.Project?.Selected.Clear();
+			this.Project.OnPropertyChanged(nameof(this.Project.Selected));
 		}
 
 		public void LoadImage(Window window)
@@ -373,6 +376,7 @@ namespace CompendiumMapCreator.ViewModel
 
 				this.AddElement(element);
 				this.Project.Selected.Clear();
+				this.Project.OnPropertyChanged(nameof(this.Project.Selected));
 			}
 			else
 			{
