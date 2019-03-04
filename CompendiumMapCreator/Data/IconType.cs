@@ -8,144 +8,181 @@ namespace CompendiumMapCreator
 	{
 		[Name("Cursor")]
 		[IconFile("cursor.png")]
-		Cursor,
+		Cursor = 0,
 
 		[Name("Normal Chest")]
 		[IconFile("normalChest.png")]
-		NormalChest,
+		NormalChest = 1,
 
 		[Name("Locked Chest")]
 		[IconFile("lockedChest.png")]
-		LockedChest,
+		LockedChest = 2,
 
 		[Name("Rare Chest")]
 		[IconFile("rareChest.png")]
-		RareChest,
+		RareChest = 3,
 
 		[Name("Trapped Chest")]
 		[IconFile("trappedChest.png")]
-		TrappedChest,
+		TrappedChest = 4,
 
 		[Name("Collectible")]
 		[IconFile("collectible.png")]
-		Collectible,
+		Collectible = 5,
 
 		[Name("Any Collectible")]
 		[IconFile("anyCollectible.png")]
 		[ToolTip("Adventurer's Pack, Rubble")]
-		AnyCollectible,
+		AnyCollectible = 6,
 
 		[Name("Lore Collectible")]
 		[IconFile("lore.png")]
 		[ToolTip("Some Bookshelf, Some Cabinet")]
-		Lore,
+		Lore = 7,
 
 		[Name("Natural Collectible")]
 		[IconFile("natural.png")]
 		[ToolTip("Bones, Fungus, Moss, Mushroom, Some Crude Altar")]
-		Natural,
+		Natural = 8,
 
 		[Name("Arcane Collectible")]
 		[IconFile("arcane.png")]
 		[ToolTip("Alchemy Table, Scroll Rack, Some Bookshelf, Some Cabinet, Some Crude Altar")]
-		Arcane,
+		Arcane = 9,
 
 		[Name("Plant Collectible")]
 		[IconFile("plant.png")]
 		[ToolTip("Flowering Plant")]
-		Plant,
+		Plant = 10,
 
 		[Name("Door")]
 		[IconFile("door.png")]
-		Door,
+		Door = 11,
 
 		[Name("Locked Door")]
 		[IconFile("lockedDoor.png")]
-		LockedDoor,
+		LockedDoor = 12,
 
 		[Name("Blocked Door")]
 		[IconFile("blockedDoor.png")]
-		BlockedDoor,
+		BlockedDoor = 13,
 
 		[Name("Secret Door")]
 		[IconFile("secretDoor.png")]
-		SecretDoor,
+		SecretDoor = 14,
 
 		[Name("Progress Door")]
 		[IconFile("progressDoor.png")]
-		ProgressDoor,
+		ProgressDoor = 15,
 
 		[Name("Trap")]
 		[IconFile("trap.png")]
-		Trap,
+		Trap = 16,
 
 		[Name("Trap Box")]
 		[IconFile("controlBox.png")]
-		TrapBox,
+		TrapBox = 17,
 
 		[Name("Collapsible Floor")]
 		[IconFile("collapsibleFloor.png")]
-		CollapsibleFloor,
+		CollapsibleFloor = 18,
 
 		[Name("Drop")]
 		[IconFile("drop.png")]
-		Drop,
+		Drop = 19,
 
 		[Name("Alarm")]
 		[IconFile("alarm.png")]
-		Alarm,
+		Alarm = 20,
 
 		[Name("Disabler")]
 		[IconFile("disabler.png")]
-		Disabler,
+		Disabler = 21,
 
 		[Name("Opener")]
 		[IconFile("leverValve.png")]
-		Opener,
+		Opener = 22,
 
 		[Name("Lever")]
 		[IconFile("lever.png")]
-		Lever,
+		Lever = 23,
 
 		[Name("Valve")]
 		[IconFile("valve.png")]
-		Valve,
+		Valve = 24,
 
 		[Name("Rune")]
 		[IconFile("rune.png")]
-		Rune,
+		Rune = 25,
 
 		[Name("Label")]
 		[IconFile("label.png")]
-		Label,
+		Label = 26,
 
 		[Name("Quest Item")]
 		[IconFile("questItem.png")]
-		QuestItem,
+		QuestItem = 27,
 
 		[Name("Quest Item Used Here")]
 		[IconFile("questItemUse.png")]
-		QuestItemUse,
+		QuestItemUse = 28,
 
 		[Name("Quest NPC")]
 		[IconFile("questNPC.png")]
-		QuestNPC,
+		QuestNPC = 29,
 
 		[Name("NPC")]
 		[IconFile("questNPCNeutral.png")]
-		NPC,
+		NPC = 30,
 
 		[Name("Entrance")]
 		[IconFile("entrance.png")]
-		Entrance,
+		Entrance = 31,
 
 		[Name("Quest Exit")]
 		[IconFile("questExit.png")]
-		QuestExit,
+		QuestExit = 32,
 
 		[Name("Portal")]
 		[IconFile("portal.png")]
-		Portal,
+		Portal = 33,
+
+		[Name("Shrine")]
+		[IconFile("shrine.png")]
+		Shrine = 34,
+	}
+
+	public static class AttributeExtensions
+	{
+		public static bool TryGetCustomAttribute<T>(this TypeInfo info, out T attribute)
+			where T : Attribute
+		{
+			T[] attributes = (T[])info.GetCustomAttributes<T>();
+
+			if (attributes.Length > 0)
+			{
+				attribute = attributes[0];
+				return true;
+			}
+
+			attribute = default(T);
+			return false;
+		}
+
+		public static bool TryGetCustomAttribute<T>(this MemberInfo info, out T attribute)
+			where T : Attribute
+		{
+			T[] attributes = (T[])info?.GetCustomAttributes<T>();
+
+			if (attributes?.Length > 0)
+			{
+				attribute = attributes[0];
+				return true;
+			}
+
+			attribute = default(T);
+			return false;
+		}
 	}
 
 	public static class IconTypeExtensions
@@ -183,6 +220,11 @@ namespace CompendiumMapCreator
 			throw new ArgumentOutOfRangeException(nameof(item));
 		}
 
+		public static Image GetImage(this IconType item)
+		{
+			return Image.GetImageFromResources(item.GetImageFile());
+		}
+
 		public static string GetImageFile(this IconType item)
 		{
 			TypeInfo typeInfo = typeof(IconType).GetTypeInfo();
@@ -211,44 +253,6 @@ namespace CompendiumMapCreator
 			}
 
 			return null;
-		}
-
-		public static Image GetImage(this IconType item)
-		{
-			return Image.GetImageFromResources(item.GetImageFile());
-		}
-	}
-
-	public static class AttributeExtensions
-	{
-		public static bool TryGetCustomAttribute<T>(this TypeInfo info, out T attribute)
-			where T : Attribute
-		{
-			T[] attributes = (T[])info.GetCustomAttributes<T>();
-
-			if (attributes.Length > 0)
-			{
-				attribute = attributes[0];
-				return true;
-			}
-
-			attribute = default(T);
-			return false;
-		}
-
-		public static bool TryGetCustomAttribute<T>(this MemberInfo info, out T attribute)
-			where T : Attribute
-		{
-			T[] attributes = (T[])info?.GetCustomAttributes<T>();
-
-			if (attributes?.Length > 0)
-			{
-				attribute = attributes[0];
-				return true;
-			}
-
-			attribute = default(T);
-			return false;
 		}
 	}
 }

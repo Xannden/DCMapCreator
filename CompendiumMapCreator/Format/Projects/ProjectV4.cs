@@ -196,6 +196,9 @@ namespace CompendiumMapCreator.Format
 				case 33:
 					return IconType.Portal;
 
+				case 34:
+					return IconType.Shrine;
+
 				default:
 					return null;
 			}

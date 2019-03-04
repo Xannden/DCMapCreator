@@ -235,5 +235,8 @@
   <ItemGroup>
     <Resource Include="Icons\copy.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\shrine.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
