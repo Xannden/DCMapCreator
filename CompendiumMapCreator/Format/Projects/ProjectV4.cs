@@ -38,7 +38,10 @@ namespace CompendiumMapCreator.Format
 						int number = reader.ReadInt32();
 						string text = reader.ReadString();
 
-						element = new Label(text?.Length == 0 ? null : text, number);
+						element = new Label(text?.Length == 0 ? null : text, number)
+						{
+							IsCopy = isCopy
+						};
 					}
 					break;
 
@@ -46,7 +49,10 @@ namespace CompendiumMapCreator.Format
 					{
 						int number = reader.ReadInt32();
 
-						element = new Portal(number);
+						element = new Portal(number)
+						{
+							IsCopy = isCopy
+						};
 					}
 					break;
 
@@ -85,7 +91,6 @@ namespace CompendiumMapCreator.Format
 
 			element.X = x;
 			element.Y = y;
-			element.IsCopy = isCopy;
 
 			return element;
 		}
