@@ -6,19 +6,18 @@ namespace CompendiumMapCreator.Format.Export
 {
 	public class Legend : IDrawable
 	{
-		private const int XOffset = 10;
-		private const int LineHeight = 20;
-		private const int ImageWidth = 18;
-		private const int ImageHeight = 14;
 		private const int ImageCenterX = ImageWidth / 2;
 		private const int ImageCenterY = ImageHeight / 2;
+		private const int ImageHeight = 14;
+		private const int ImageWidth = 18;
+		private const int LineHeight = 20;
 		private const int TextX = XOffset + ImageWidth + 2;
-
-		private readonly Font font;
-		private readonly IList<Element> elements;
+		private const int XOffset = 10;
 		private readonly bool addLegend;
-		private List<IconType> types;
+		private readonly IList<Element> elements;
+		private readonly Font font;
 		private Size size;
+		private List<IconType> types;
 
 		public Legend(Font font, IList<Element> elements, bool addLegend)
 		{
@@ -65,7 +64,7 @@ namespace CompendiumMapCreator.Format.Export
 				return new Size();
 			}
 
-			this.types = this.elements.Select(e => e.Type).Where(t => t != IconType.Entrance && t != IconType.Label).Distinct().ToList();
+			this.types = this.elements.Select(e => e.Type).Where(t => t != IconType.Entrance && t != IconType.Label && t != IconType.Shrine).Distinct().ToList();
 
 			this.types.Sort();
 
