@@ -16,15 +16,6 @@ namespace CompendiumMapCreator
 	/// </summary>
 	public partial class App : Application
 	{
-		[DataContract]
-		internal class Temp
-		{
-#pragma warning disable CS0649
-			[DataMember]
-			internal string tag_name = null;
-#pragma warning restore CS0649
-		}
-
 		private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
 		{
 			if (!Debugger.IsAttached)
@@ -151,7 +142,16 @@ namespace CompendiumMapCreator
 
 			Temp temp = (Temp)serializer.ReadObject(response.GetResponseStream());
 
-			return temp.tag_name != "V1.6.1";
+			return temp.tag_name != "V1.6.2";
+		}
+
+		[DataContract]
+		internal class Temp
+		{
+#pragma warning disable CS0649
+			[DataMember]
+			internal string tag_name = null;
+#pragma warning restore CS0649
 		}
 	}
 }
