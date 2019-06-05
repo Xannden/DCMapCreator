@@ -238,5 +238,11 @@
   <ItemGroup>
     <Resource Include="Icons\shrine.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\craftingStation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\trader.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

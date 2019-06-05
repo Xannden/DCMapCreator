@@ -48,7 +48,7 @@ namespace CompendiumMapCreator.Format.Export
 				}
 				else
 				{
-					g.DrawString(this.types[i].GetDescription(), this.font, Brushes.White, TextX, y);
+					g.DrawString(this.types[i].GetName(), this.font, Brushes.White, TextX, y);
 				}
 
 				y += LineHeight;

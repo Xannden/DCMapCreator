@@ -11,147 +11,229 @@ using CompendiumMapCreator.Format;
 
 namespace CompendiumMapCreator
 {
-	/// <summary>
-	/// Interaction logic for App.xaml
-	/// </summary>
-	public partial class App : Application
-	{
-		private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-		{
-			if (!Debugger.IsAttached)
-			{
-				MessageBox.Show("An unexpected error has occurred.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
+    {
+        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            if (!Debugger.IsAttached)
+            {
+                MessageBox.Show("An unexpected error has occurred.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-				e.Handled = true;
-			}
-		}
+                e.Handled = true;
+            }
+        }
 
-		private void Application_Startup(object sender, StartupEventArgs e)
-		{
-			if (File.Exists("updater.exe") && this.NeedsUpdate())
-			{
-				MessageBoxResult result = MessageBox.Show("There is an update available.\n\nDo you want to update?", "DDO Compendium Map Creator", MessageBoxButton.YesNo, MessageBoxImage.Information);
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            if (File.Exists("updater.exe") && this.NeedsUpdate())
+            {
+                MessageBoxResult result = MessageBox.Show("There is an update available.\n\nDo you want to update?", "DDO Compendium Map Creator", MessageBoxButton.YesNo, MessageBoxImage.Information);
 
-				if (result == MessageBoxResult.Yes)
-				{
-					Process.Start("updater.exe", "CompendiumMapCreator.exe DCMapCreator");
+                if (result == MessageBoxResult.Yes)
+                {
+                    Process.Start("updater.exe", "CompendiumMapCreator.exe DCMapCreator");
 
-					this.Shutdown();
-				}
-			}
+                    this.Shutdown();
+                }
+            }
 
-			string inputDir = null;
-			string outputDir = null;
-			bool recursive = false;
-			bool addLegend = true;
+            if (e.Args.Length >= 3 && string.Equals(e.Args[0], "find", StringComparison.OrdinalIgnoreCase))
+            {
+                List<string> result = new List<string>();
 
-			for (int i = 0; i < e.Args.Length; i++)
-			{
-				if ((e.Args[i] == "-e" || e.Args[i] == "-export") && e.Args.Length > (i + 1))
-				{
-					inputDir = e.Args[i + 1];
-				}
+                string dir = e.Args[1];
 
-				if ((e.Args[i] == "-o" || e.Args[i] == "-output") && e.Args.Length > (i + 1))
-				{
-					outputDir = e.Args[i + 1];
+                List<IconType> types = this.GetIcons(e.Args[2].Split(','));
 
-					if (!outputDir.EndsWith("/") && !outputDir.EndsWith("\\"))
-					{
-						outputDir += "\\";
-					}
-				}
+                List<string> files = this.GetFiles(dir, true);
 
-				if (e.Args[i] == "-r" || e.Args[i] == "-recursive")
-				{
-					recursive = true;
-				}
+                for (int i = 0; i < files.Count; i++)
+                {
+                    try
+                    {
+                        Project project = Project.LoadFile(files[i]);
 
-				if (e.Args[i] == "-nl" || e.Args[i] == "-noLegend")
-				{
-					addLegend = false;
-				}
-			}
+                        if (types != null)
+                        {
+                            List<IconType> pTypes = project.Elements.Select(ele => ele.Type).Distinct().ToList();
 
-			if (string.IsNullOrEmpty(outputDir))
-			{
-				outputDir = inputDir;
-			}
-
-			if (!string.IsNullOrEmpty(inputDir))
-			{
-				List<string> files = this.GetFiles(inputDir, recursive);
-
-				for (int i = 0; i < files.Count; i++)
-				{
-					try
-					{
-						Project project = Project.LoadFile(files[i]);
-
-						project.Export(addLegend, outputDir + Path.GetFileNameWithoutExtension(files[i]) + ".png");
-					}
+                            if (pTypes.Intersect(types).Any())
+                            {
+                                result.Add(files[i]);
+                            }
+                        }
+                    }
 #pragma warning disable RCS1075 // Avoid empty catch clause that catches System.Exception.
-					catch (Exception)
+                    catch (Exception)
 #pragma warning restore RCS1075 // Avoid empty catch clause that catches System.Exception.
-					{
-					}
-				}
+                    {
+                    }
+                }
 
-				this.Shutdown();
-			}
-			this.StartupUri = new Uri("View/MainWindow.xaml", UriKind.RelativeOrAbsolute);
-		}
+                MessageBox.Show(result.Aggregate("Found these files\n\n", (a, s) => a + "\n\n" + s), "DDO Compendium Map Creator", MessageBoxButton.OK, MessageBoxImage.Information);
 
-		private List<string> GetFiles(string path, bool recursive)
-		{
-			void GetFilesRecursive(string dir, List<string> list)
-			{
-				string[] dirs = Directory.GetDirectories(dir);
+                this.Shutdown();
+            }
 
-				for (int i = 0; i < dirs.Length; i++)
-				{
-					GetFilesRecursive(dirs[i], list);
-				}
+            string inputDir = null;
+            string outputDir = null;
+            bool recursive = false;
+            bool addLegend = true;
+            string[] include = null;
 
-				list.AddRange(Directory.GetFiles(dir));
-			}
+            for (int i = 0; i < e.Args.Length; i++)
+            {
+                if ((e.Args[i] == "-e" || e.Args[i] == "-export") && e.Args.Length > (i + 1))
+                {
+                    inputDir = e.Args[i + 1];
+                }
 
-			if (recursive)
-			{
-				List<string> files = new List<string>();
+                if ((e.Args[i] == "-o" || e.Args[i] == "-output") && e.Args.Length > (i + 1))
+                {
+                    outputDir = e.Args[i + 1];
 
-				GetFilesRecursive(path, files);
+                    if (!outputDir.EndsWith("/") && !outputDir.EndsWith("\\"))
+                    {
+                        outputDir += "\\";
+                    }
+                }
 
-				return files;
-			}
-			else
-			{
-				return Directory.GetFiles(path).ToList();
-			}
-		}
+                if (e.Args[i] == "-r" || e.Args[i] == "-recursive")
+                {
+                    recursive = true;
+                }
 
-		private bool NeedsUpdate()
-		{
-			HttpWebRequest request = WebRequest.CreateHttp("https://api.github.com/repos/Xannden/DCMapCreator/releases/latest");
+                if (e.Args[i] == "-nl" || e.Args[i] == "-noLegend")
+                {
+                    addLegend = false;
+                }
 
-			request.UserAgent = "Xannden";
+                if ((e.Args[i] == "-i" || e.Args[i] == "-includes") && e.Args.Length > (i + 1))
+                {
+                    include = e.Args[i + 1].Split(',');
+                }
+            }
 
-			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            if (string.IsNullOrEmpty(outputDir))
+            {
+                outputDir = inputDir;
 
-			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Temp));
+                if (outputDir != null && !outputDir.EndsWith("/") && !outputDir.EndsWith("\\"))
+                {
+                    outputDir += "\\";
+                }
+            }
 
-			Temp temp = (Temp)serializer.ReadObject(response.GetResponseStream());
+            if (!string.IsNullOrEmpty(inputDir))
+            {
+                List<string> files = this.GetFiles(inputDir, recursive);
+                List<IconType> types = this.GetIcons(include);
 
-			return temp.tag_name != "V1.6.2";
-		}
+                for (int i = 0; i < files.Count; i++)
+                {
+                    try
+                    {
+                        Project project = Project.LoadFile(files[i]);
 
-		[DataContract]
-		internal class Temp
-		{
+                        if (types != null)
+                        {
+                            List<IconType> pTypes = project.Elements.Select(ele => ele.Type).Distinct().ToList();
+
+                            if (!pTypes.Intersect(types).Any())
+                            {
+                                continue;
+                            }
+                        }
+
+                        project.Export(addLegend, outputDir + Path.GetFileNameWithoutExtension(files[i]) + ".png");
+                    }
+#pragma warning disable RCS1075 // Avoid empty catch clause that catches System.Exception.
+                    catch (Exception)
+#pragma warning restore RCS1075 // Avoid empty catch clause that catches System.Exception.
+                    {
+                    }
+                }
+
+                this.Shutdown();
+            }
+            this.StartupUri = new Uri("View/MainWindow.xaml", UriKind.RelativeOrAbsolute);
+        }
+
+        private List<string> GetFiles(string path, bool recursive)
+        {
+            void GetFilesRecursive(string dir, List<string> list)
+            {
+                string[] dirs = Directory.GetDirectories(dir);
+
+                for (int i = 0; i < dirs.Length; i++)
+                {
+                    GetFilesRecursive(dirs[i], list);
+                }
+
+                list.AddRange(Directory.GetFiles(dir));
+            }
+
+            if (recursive)
+            {
+                List<string> files = new List<string>();
+
+                GetFilesRecursive(path, files);
+
+                return files;
+            }
+            else
+            {
+                return Directory.GetFiles(path).ToList();
+            }
+        }
+
+        private List<IconType> GetIcons(string[] includes)
+        {
+            if (includes == null)
+            {
+                return null;
+            }
+
+            List<IconType> types = new List<IconType>();
+
+            for (int i = 0; i < includes.Length; i++)
+            {
+                IconType? type = IconTypeExtensions.FromName(includes[i]);
+
+                if (type != null)
+                {
+                    types.Add(type.Value);
+                }
+            }
+
+            return types;
+        }
+
+        private bool NeedsUpdate()
+        {
+            HttpWebRequest request = WebRequest.CreateHttp("https://api.github.com/repos/Xannden/DCMapCreator/releases/latest");
+
+            request.UserAgent = "Xannden";
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Temp));
+
+            Temp temp = (Temp)serializer.ReadObject(response.GetResponseStream());
+
+            return temp.tag_name != "V1.7";
+        }
+
+        [DataContract]
+        internal class Temp
+        {
 #pragma warning disable CS0649
-			[DataMember]
-			internal string tag_name = null;
+            [DataMember]
+            internal string tag_name = null;
 #pragma warning restore CS0649
-		}
-	}
+        }
+    }
 }
