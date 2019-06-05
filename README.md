@@ -5,5 +5,6 @@
   * -recursive(-r) Makes the export check every subdirectory for projects recursively
   * -noLegend(-nl) The exported images will not include a legend
   * -includes(-i) \<types> Only export maps that have types   
+* find \<path> \<types> list all of the maps that have types in \<path>
 
 \<types> is a comma seperated list of icon names
