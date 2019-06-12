@@ -41,6 +41,11 @@ namespace CompendiumMapCreator
                 }
             }
 
+            if (File.Exists("errorLog.txt"))
+            {
+                File.Delete("errorLog.txt");
+            }
+
             if (e.Args.Length >= 3 && string.Equals(e.Args[0], "find", StringComparison.OrdinalIgnoreCase))
             {
                 List<string> result = new List<string>();
