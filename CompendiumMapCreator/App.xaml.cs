@@ -20,8 +20,9 @@ namespace CompendiumMapCreator
         {
             if (!Debugger.IsAttached)
             {
-                MessageBox.Show("An unexpected error has occurred.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                File.AppendAllText("errorLog.txt", e.Exception.ToString());
 
+                MessageBox.Show("An unexpected error has occurred.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 e.Handled = true;
             }
         }
