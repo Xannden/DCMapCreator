@@ -16,6 +16,7 @@ namespace CompendiumMapCreator.Format.Export
 		private readonly bool addLegend;
 		private readonly IList<Element> elements;
 		private readonly Font font;
+		private bool hasPossible;
 		private Size size;
 		private List<IconType> types;
 
@@ -24,6 +25,7 @@ namespace CompendiumMapCreator.Format.Export
 			this.font = font;
 			this.elements = elements;
 			this.addLegend = addLegend;
+			this.hasPossible = false;
 		}
 
 		public void Draw(Graphics g, Point p)
@@ -54,6 +56,14 @@ namespace CompendiumMapCreator.Format.Export
 				y += LineHeight;
 			}
 
+			if (this.hasPossible)
+			{
+				Image image = Image.GetImageFromResources("Icons/possLoc.png");
+
+				g.DrawImage(image.DrawingImage, x + (ImageCenterX - (image.Width / 2)), y + (ImageCenterY - (image.Height / 2)));
+				g.DrawString("Possible Location", this.font, Brushes.White, TextX, y);
+			}
+
 			g.DrawVerticalLine(p.X + this.size.Width - 2, p.Y - 1, p.Y + this.size.Height + 1);
 		}
 
@@ -70,7 +80,12 @@ namespace CompendiumMapCreator.Format.Export
 
 			this.types.Insert(0, IconType.Entrance);
 
-			this.size = new Size(150, this.types.Count * LineHeight);
+			if (this.elements.Any((e) => e.IsOptional))
+			{
+				this.hasPossible = true;
+			}
+
+			this.size = new Size(150, (this.types.Count * LineHeight) + (this.hasPossible ? LineHeight : 0));
 
 			return this.size;
 		}

@@ -3,13 +3,13 @@ using CompendiumMapCreator.Data;
 
 namespace CompendiumMapCreator.Format.Projects
 {
-	public class ProjectV4 : Project
+	public class ProjectV5 : Project
 	{
-		public ProjectV4(Image image) : base(image)
+		public ProjectV5(Image image) : base(image)
 		{
 		}
 
-		public ProjectV4(string file, string title) : base(file)
+		public ProjectV5(string file, string title) : base(file)
 		{
 			this.Title = title;
 		}
@@ -26,6 +26,7 @@ namespace CompendiumMapCreator.Format.Projects
 			int x = reader.ReadInt32();
 			int y = reader.ReadInt32();
 			bool isCopy = reader.ReadBoolean();
+			bool isOptional = reader.ReadBoolean();
 
 			int length = reader.ReadInt32();
 
@@ -91,6 +92,7 @@ namespace CompendiumMapCreator.Format.Projects
 
 			element.X = x;
 			element.Y = y;
+			element.IsOptional = isOptional;
 
 			return element;
 		}

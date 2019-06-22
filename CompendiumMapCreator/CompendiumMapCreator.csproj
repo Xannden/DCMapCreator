@@ -64,6 +64,7 @@
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Compile Include="Controls\OptionalBorder.cs" />
     <Compile Include="Controls\Zoom.cs" />
     <Compile Include="Converter\ElementToVisibilityConverter.cs" />
     <Compile Include="Converter\IconTypeToDescriptionConverter.cs" />
@@ -110,6 +111,10 @@
     <Compile Include="Format\Projects\ProjectV1.cs" />
     <Compile Include="Format\Projects\ProjectV3.cs" />
     <Compile Include="Format\Projects\ProjectV4.cs" />
+    <Compile Include="Format\Projects\ProjectV5.cs" />
+    <Compile Include="Format\Serializer\FieldAttribute.cs" />
+    <Compile Include="Format\Serializer\SerializableAttribute.cs" />
+    <Compile Include="Format\Serializer\Serializer.cs" />
     <Compile Include="ViewModel\Drag\DragCollapsibleFloor.cs" />
     <Compile Include="ViewModel\Drag\DragMove.cs" />
     <Compile Include="ViewModel\Drag\DragSelect.cs" />
@@ -243,6 +248,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\trader.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CmdLib\CmdLib.csproj">
+      <Project>{8414fb7b-0e5f-4f68-b44e-91d612766f49}</Project>
+      <Name>CmdLib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\possLoc.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

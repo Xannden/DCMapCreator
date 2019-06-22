@@ -25,7 +25,7 @@ namespace CompendiumMapCreator.Format.Export
 
 			for (int i = 0; i < this.elements.Count; i++)
 			{
-				g.DrawImage(this.elements[i].Image.DrawingImage, this.elements[i].X + position.X, this.elements[i].Y + position.Y);
+				this.DrawElement(g, this.elements[i], position);
 			}
 
 			g.DrawVerticalLine(p.X - 2, p.Y, p.Y + this.size.Height);
@@ -51,6 +51,40 @@ namespace CompendiumMapCreator.Format.Export
 			this.size = new Size(bounding.Width + 10, bounding.Height + 10);
 
 			return this.size;
+		}
+
+		private void DrawElement(Graphics g, Element e, Point offset)
+		{
+			Point p = new Point(e.X + offset.X, e.Y + offset.Y);
+
+			g.DrawImage(e.Image.DrawingImage, p);
+
+			if (e.IsOptional)
+			{
+				Rectangle rect = new Rectangle(p, new Size(e.Width, e.Height));
+
+				Pen pen = new Pen(new SolidBrush(Color.FromArgb(255, 0xC0, 0xC0, 0xC0)), 1);
+
+				//TopLeft
+				Point topLeft = rect.TopLeft();
+				g.DrawLine(pen, topLeft.OffsetBy(-1, -1), topLeft.OffsetBy(2, -1));
+				g.DrawLine(pen, topLeft.OffsetBy(-1, -1), topLeft.OffsetBy(-1, 2));
+
+				//TopRight
+				Point topRight = rect.TopRight();
+				g.DrawLine(pen, topRight.OffsetBy(-3, -1), topRight.OffsetBy(0, -1));
+				g.DrawLine(pen, topRight.OffsetBy(0, -1), topRight.OffsetBy(0, 2));
+
+				//BottomLeft
+				Point bottomLeft = rect.BottomLeft();
+				g.DrawLine(pen, bottomLeft.OffsetBy(-1, 0), bottomLeft.OffsetBy(2, 0));
+				g.DrawLine(pen, bottomLeft.OffsetBy(-1, 0), bottomLeft.OffsetBy(-1, -3));
+
+				//BottomRight
+				Point bottomRight = rect.BottomRight();
+				g.DrawLine(pen, bottomRight.OffsetBy(-3, 0), bottomRight.OffsetBy(0, 0));
+				g.DrawLine(pen, bottomRight.OffsetBy(-0, 0), bottomRight.OffsetBy(0, -3));
+			}
 		}
 	}
 }

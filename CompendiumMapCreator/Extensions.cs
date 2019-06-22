@@ -47,6 +47,31 @@ namespace CompendiumMapCreator
 			return new Point(p.X + o.X, p.Y + o.Y);
 		}
 
+		public static Point OffsetBy(this Point p, int x, int y)
+		{
+			return new Point(p.X + x, p.Y + y);
+		}
+
+		public static Point TopLeft(this Rectangle r)
+		{
+			return new Point(r.Left, r.Top);
+		}
+
+		public static Point TopRight(this Rectangle r)
+		{
+			return new Point(r.Right, r.Top);
+		}
+
+		public static Point BottomLeft(this Rectangle r)
+		{
+			return new Point(r.Left, r.Bottom);
+		}
+
+		public static Point BottomRight(this Rectangle r)
+		{
+			return new Point(r.Right, r.Bottom);
+		}
+
 		public static RectangleF OffsetBy(this Rectangle r, int xOffset = 0, int yOffset = 0, int widthOffset = 0, int heightOffset = 0)
 		{
 			return new RectangleF(r.X + xOffset, r.Y + yOffset, r.Width + widthOffset, r.Height + heightOffset);

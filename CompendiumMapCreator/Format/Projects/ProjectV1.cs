@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using CompendiumMapCreator.Data;
 
-namespace CompendiumMapCreator.Format
+namespace CompendiumMapCreator.Format.Projects
 {
 	public class ProjectV1 : Project
 	{
