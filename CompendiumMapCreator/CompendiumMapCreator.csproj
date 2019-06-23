@@ -250,12 +250,6 @@
     <Resource Include="Icons\trader.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CmdLib\CmdLib.csproj">
-      <Project>{8414fb7b-0e5f-4f68-b44e-91d612766f49}</Project>
-      <Name>CmdLib</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Icons\possLoc.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
