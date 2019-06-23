@@ -41,7 +41,7 @@ namespace CompendiumMapCreator.Edits
 
 			for (int i = 0; i < source.Count; i++)
 			{
-				Element clone = null;
+				Element clone;
 
 				switch (source[i])
 				{
@@ -74,6 +74,7 @@ namespace CompendiumMapCreator.Edits
 
 				clone.X = source[i].X - mid_x + point.X;
 				clone.Y = source[i].Y - mid_y + point.Y;
+				clone.IsOptional = source[i].IsOptional;
 
 				this.Clones.Add(clone);
 			}
