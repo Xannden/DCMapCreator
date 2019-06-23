@@ -135,9 +135,9 @@
                                                 </ContextMenu>
                                             </Image.ContextMenu>
                                         </Image>
-                                        <Image Source="{StaticResource CopyStar}" RenderOptions.BitmapScalingMode="NearestNeighbor" Visibility="{Binding IsCopy, Converter={StaticResource boolToVisibility}}">
+                                        <Image Source="{StaticResource CopyStar}" Width="5" Height="5" RenderOptions.BitmapScalingMode="NearestNeighbor" Visibility="{Binding IsCopy, Converter={StaticResource boolToVisibility}}" IsHitTestVisible="False">
                                             <Image.RenderTransform>
-                                                <TranslateTransform X="2" Y="-2" />
+                                                <TranslateTransform X="4" Y="-4" />
                                             </Image.RenderTransform>
                                         </Image>
                                     </Grid>
