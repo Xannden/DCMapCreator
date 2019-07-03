@@ -22,6 +22,14 @@ namespace CompendiumMapCreator.ViewModel
 
 		public void Update(int x, int y, Project project) => this.Selection = Rectangle.FromLTRB(Math.Min(this.start.X, x), Math.Min(this.start.Y, y), Math.Max(this.start.X, x) + 1, Math.Max(this.start.Y, y) + 1);
 
-		public (bool apply, Edit) End() => (true, new Add(new Trap(this.Selection.Width, this.Selection.Height) { X = this.Selection.Left, Y = this.Selection.Top }));
+		public (bool apply, Edit) End()
+		{
+			if (this.Selection.Height == 0 || this.Selection.Width == 0)
+			{
+				return (false, null);
+			}
+
+			return (true, new Add(new Trap(this.Selection.Width, this.Selection.Height) { X = this.Selection.Left, Y = this.Selection.Top }));
+		}
 	}
 }
