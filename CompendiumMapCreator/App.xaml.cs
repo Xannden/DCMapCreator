@@ -127,7 +127,7 @@ namespace CompendiumMapCreator
 			{
 				outputDir = inputDir;
 
-				if (outputDir != null && !outputDir.EndsWith("/") && !outputDir.EndsWith("\\"))
+				if (outputDir?.EndsWith("/") == false && !outputDir.EndsWith("\\"))
 				{
 					outputDir += "\\";
 				}
@@ -207,7 +207,7 @@ namespace CompendiumMapCreator
 
 			for (int i = 0; i < includes.Length; i++)
 			{
-				IconType? type = IconTypeExtensions.FromName(includes[i]);
+				IconType? type = includes[i].FromName();
 
 				if (type != null)
 				{

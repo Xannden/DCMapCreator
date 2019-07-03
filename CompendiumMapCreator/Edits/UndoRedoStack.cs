@@ -213,7 +213,7 @@ namespace CompendiumMapCreator.Data
 
 			public object Current => this.index < 0 ? null : this.data[this.index];
 
-			T IEnumerator<T>.Current => this.index < 0 ? default(T) : this.data[this.index];
+			T IEnumerator<T>.Current => this.index < 0 ? default : this.data[this.index];
 
 			public void Dispose()
 			{

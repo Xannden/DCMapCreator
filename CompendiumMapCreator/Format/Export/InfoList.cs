@@ -66,8 +66,6 @@ namespace CompendiumMapCreator.Format.Export
 			//Make sure there is always at least 1 column
 			columns = Math.Max(columns, 1);
 
-			int rows = (int)Math.Ceiling(this.labels.Count / (float)columns);
-
 			float columnWidth = width / columns;
 
 			this.positions = new Rectangle[this.labels.Count];
