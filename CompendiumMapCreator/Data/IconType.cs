@@ -159,6 +159,14 @@ namespace CompendiumMapCreator
 		[IconFile("trader.png")]
 		Trader = 36,
 
+		[Name("Map Relocate")]
+		[IconFile("mapRelocate.png")]
+		MapRelocate = 37,
+
+		[Name("Locked Lever")]
+		[IconFile("leverLocked.png")]
+		LockedLever = 38,
+
 		Max,
 	}
 
