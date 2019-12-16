@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Media;
 
 namespace CompendiumMapCreator.Data
@@ -144,8 +145,10 @@ namespace CompendiumMapCreator.Data
 		#endregion Meta Tools
 	}
 
-	public class Tool
+	public class Tool : INotifyPropertyChanged
 	{
+		private bool isExpanded;
+
 		public Tool(IconType type)
 		{
 			this.Type = type;
@@ -160,6 +163,17 @@ namespace CompendiumMapCreator.Data
 
 		public string Description { get; }
 
+		public bool IsExpanded
+		{
+			get => this.isExpanded;
+
+			set
+			{
+				this.isExpanded = value;
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsExpanded)));
+			}
+		}
+
 		public ImageSource Image => this.Type.GetImage().BitmapImage;
 
 		public bool IsSelectable { get; set; } = true;
@@ -169,6 +183,8 @@ namespace CompendiumMapCreator.Data
 		public string ToolTip => this.Type.GetToolTip();
 
 		public IconType Type { get; set; }
+
+		public event PropertyChangedEventHandler PropertyChanged;
 
 		public Tool Next(Tool curr)
 		{

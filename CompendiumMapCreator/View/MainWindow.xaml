@@ -1,21 +1,21 @@
 ﻿<Window x:Class="CompendiumMapCreator.MainWindow"
-		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:local="clr-namespace:CompendiumMapCreator"
-		xmlns:converter="clr-namespace:CompendiumMapCreator.Converter"
-		xmlns:vm="clr-namespace:CompendiumMapCreator.ViewModel"
-		xmlns:data="clr-namespace:CompendiumMapCreator.Data"
-		xmlns:Controls="clr-namespace:CompendiumMapCreator.Controls"
-		Closing="Window_Closing"
-		Name="Window"
-		PreviewMouseDown="Window_PreviewMouseDown"
-		MouseUp="Window_MouseUp"
-		KeyDown="Window_KeyDown"
-		Loaded="Window_Loaded"
-		mc:Ignorable="d"
-		Title="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Height="730" Width="1024">
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CompendiumMapCreator"
+        xmlns:converter="clr-namespace:CompendiumMapCreator.Converter"
+        xmlns:vm="clr-namespace:CompendiumMapCreator.ViewModel"
+        xmlns:data="clr-namespace:CompendiumMapCreator.Data"
+        xmlns:Controls="clr-namespace:CompendiumMapCreator.Controls"
+        Closing="Window_Closing"
+        Name="Window"
+        PreviewMouseDown="Window_PreviewMouseDown"
+        MouseUp="Window_MouseUp"
+        KeyDown="Window_KeyDown"
+        Loaded="Window_Loaded"
+        mc:Ignorable="d"
+        Title="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Height="730" Width="1024">
     <Window.DataContext>
         <vm:MainWindow />
     </Window.DataContext>
@@ -68,6 +68,17 @@
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.Resources>
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="TreeViewItem">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+            <TreeView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Expand All" Click="ExpandAll_Click" />
+                    <MenuItem Header="Collapse All" Click="CollapseAll_Click" />
+                </ContextMenu>
+            </TreeView.ContextMenu>
         </TreeView>
 
         <Button Grid.Row="3" Height="40" Margin="10" Content="Export Image" Focusable="False" Click="Export_Click" />

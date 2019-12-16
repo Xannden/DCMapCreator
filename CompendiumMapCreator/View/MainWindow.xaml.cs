@@ -536,5 +536,31 @@ namespace CompendiumMapCreator
 				this.mouseDown = false;
 			}
 		}
+
+		private void ExpandAll_Click(object sender, RoutedEventArgs e)
+		{
+			foreach (object item in this.ToolsView.Items)
+			{
+				Tool tool = item as Tool;
+
+				if (tool != null)
+				{
+					tool.IsExpanded = true;
+				}
+			}
+		}
+
+		private void CollapseAll_Click(object sender, RoutedEventArgs e)
+		{
+			foreach (object item in this.ToolsView.Items)
+			{
+				Tool tool = item as Tool;
+
+				if (tool != null)
+				{
+					tool.IsExpanded = false;
+				}
+			}
+		}
 	}
 }
