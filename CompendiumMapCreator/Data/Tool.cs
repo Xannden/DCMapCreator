@@ -43,20 +43,29 @@ namespace CompendiumMapCreator.Data
 		public static Tool TrappedChest = new Tool(IconType.TrappedChest);
 		public static Tool Valve = new Tool(IconType.Valve);
 		public static Tool MapRelocate = new Tool(IconType.MapRelocate);
-		public static Tool LockedLever = new Tool(IconType.LockedLever);
+		public static Tool LeverLocked = new Tool(IconType.LeverLocked);
+		public static Tool Explorer = new Tool(IconType.Explorer);
+		public static Tool Explorer2 = new Tool(IconType.Explorer2);
+		public static Tool Entrance2 = new Tool(IconType.Entrance2);
+		public static Tool PartyGather = new Tool(IconType.PartyGather);
+		public static Tool Scroll = new Tool(IconType.Scroll);
+		public static Tool RuneLocked = new Tool(IconType.RuneLocked);
+		public static Tool ValveLocked = new Tool(IconType.ValveLocked);
 
 		#endregion Base Tools
 
 		#region Meta Tools
 
-		public static Tool Activators = new Tool(IconType.Opener, "Activaters")
+		public static Tool Activators = new Tool(IconType.Opener, "Activators")
 		{
 			Tools = new List<Tool>()
 			{
 				Lever,
 				Valve,
 				Rune,
-				LockedLever,
+				LeverLocked,
+				ValveLocked,
+				RuneLocked
 			},
 		};
 		public static Tool Collectible = new Tool(IconType.Collectible, "Collectible Devices")
@@ -68,6 +77,9 @@ namespace CompendiumMapCreator.Data
 				Natural,
 				Arcane,
 				Plant,
+				Scroll,
+				Explorer,
+				Explorer2
 			},
 		};
 
@@ -90,6 +102,8 @@ namespace CompendiumMapCreator.Data
 				Entrance,
 				QuestExit,
 				Portal,
+				Entrance2,
+				PartyGather,
 			},
 			IsSelectable = false,
 		};

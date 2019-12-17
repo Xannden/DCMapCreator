@@ -165,7 +165,35 @@ namespace CompendiumMapCreator
 
 		[Name("Locked Lever")]
 		[IconFile("leverLocked.png")]
-		LockedLever = 38,
+		LeverLocked = 38,
+
+		[Name("Explorer")]
+		[IconFile("explorer.png")]
+		Explorer = 39,
+
+		[Name("Explorer 2")]
+		[IconFile("explorer2.png")]
+		Explorer2 = 40,
+
+		[Name("Entrance 2")]
+		[IconFile("entrance2.png")]
+		Entrance2 = 41,
+
+		[Name("Party Gather")]
+		[IconFile("partyGather.png")]
+		PartyGather = 42,
+
+		[Name("Scroll")]
+		[IconFile("scroll.png")]
+		Scroll = 43,
+
+		[Name("Locked Rune")]
+		[IconFile("runeLocked.png")]
+		RuneLocked = 44,
+
+		[Name("Locked Valve")]
+		[IconFile("valveLocked.png")]
+		ValveLocked = 45,
 
 		Max,
 	}

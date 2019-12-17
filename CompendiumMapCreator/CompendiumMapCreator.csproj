@@ -254,5 +254,18 @@
     <Resource Include="Icons\leverLocked.png" />
     <Resource Include="Icons\mapRelocate.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\entrance2.png" />
+    <Resource Include="Icons\explorer2.png" />
+    <Resource Include="Icons\explorer.png" />
+    <Resource Include="Icons\partyGather.png" />
+    <Resource Include="Icons\scroll.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\valveLocked.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\runeLocked.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
