@@ -240,6 +240,9 @@ namespace CompendiumMapCreator.ViewModel
 				case IconType.Portal:
 					return new Portal(this.Project.Elements.Count((e) => e is Portal p && !p.IsCopy));
 
+				case IconType.MapRelocate:
+					return new MapRelocate(this.Project.Elements.Count((e) => e is MapRelocate r && !r.IsCopy));
+
 				case IconType.Entrance:
 					return new Entrance(Rotation._0);
 

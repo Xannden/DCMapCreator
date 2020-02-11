@@ -59,6 +59,13 @@ namespace CompendiumMapCreator.Edits
 						};
 						break;
 
+					case MapRelocate r:
+						clone = new MapRelocate(r.Number)
+						{
+							IsCopy = true,
+						};
+						break;
+
 					case Trap t:
 						clone = new Trap(t.AreaWidth, t.AreaHeight);
 						break;

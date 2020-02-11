@@ -14,7 +14,7 @@ namespace CompendiumMapCreator.Format
 {
 	public abstract class Project : INotifyPropertyChanged
 	{
-		private const int Version = 7;
+		private const int Version = 8;
 
 		private Image _image;
 		private (int gen, int count) saved = (0, 0);
@@ -147,7 +147,8 @@ namespace CompendiumMapCreator.Format
 						break;
 
 					case 7:
-						reader.ReadInt32(); //TODO: Add type
+					case 8:
+						reader.ReadInt32();
 						project = new ProjectV5(file, reader.ReadString());
 						break;
 
@@ -414,6 +415,11 @@ namespace CompendiumMapCreator.Format
 				case Portal p:
 					writer.Write(sizeof(int));
 					writer.Write(p.Number);
+					break;
+
+				case MapRelocate r:
+					writer.Write(sizeof(int));
+					writer.Write(r.Number);
 					break;
 
 				case AreaElement a:

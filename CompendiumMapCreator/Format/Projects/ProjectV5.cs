@@ -57,6 +57,17 @@ namespace CompendiumMapCreator.Format.Projects
 					}
 					break;
 
+				case IconType.MapRelocate:
+					{
+						int number = reader.ReadInt32();
+
+						element = new MapRelocate(number)
+						{
+							IsCopy = isCopy
+						};
+					}
+					break;
+
 				case IconType.Trap:
 					{
 						int width = reader.ReadInt32();

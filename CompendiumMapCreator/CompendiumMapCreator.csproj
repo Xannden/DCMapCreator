@@ -70,6 +70,7 @@
     <Compile Include="Data\Elements\AreaElement.cs" />
     <Compile Include="Data\Elements\CollapsableFloor.cs" />
     <Compile Include="Data\Elements\Entrance.cs" />
+    <Compile Include="Data\Elements\MapRelocate.cs" />
     <Compile Include="Data\Elements\Trap.cs" />
     <Compile Include="Data\Attributes\IconFileAttribute.cs" />
     <Compile Include="Data\ImagePoint.cs" />
