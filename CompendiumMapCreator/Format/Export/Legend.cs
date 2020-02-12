@@ -71,7 +71,7 @@ namespace CompendiumMapCreator.Format.Export
 		{
 			if (!this.addLegend)
 			{
-				return new Size();
+				return default;
 			}
 
 			this.types = this.elements.Select(e => e.Type).Where(t => t != IconType.Entrance && t != IconType.Label && t != IconType.Shrine).Distinct().ToList();

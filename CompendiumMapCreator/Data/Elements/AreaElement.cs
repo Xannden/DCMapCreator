@@ -12,7 +12,8 @@ namespace CompendiumMapCreator.Data
 
 		public Color Color { get; }
 
-		protected AreaElement(int areaWidth, int areaHeight, Color color, IconType type) : base(CreateImage(areaWidth, areaHeight, color), type)
+		protected AreaElement(int areaWidth, int areaHeight, Color color, IconType type)
+			: base(CreateImage(areaWidth, areaHeight, color), type)
 		{
 			this.AreaWidth = areaWidth;
 			this.AreaHeight = areaHeight;

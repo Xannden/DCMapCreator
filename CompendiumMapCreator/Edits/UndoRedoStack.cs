@@ -55,7 +55,8 @@ namespace CompendiumMapCreator.Data
 			}
 		}
 
-		public UndoRedoStack() : this(0)
+		public UndoRedoStack()
+			: this(0)
 		{
 		}
 

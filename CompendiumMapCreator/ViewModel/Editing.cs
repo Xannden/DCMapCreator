@@ -39,14 +39,6 @@ namespace CompendiumMapCreator.ViewModel
 			this.started = true;
 		}
 
-		private void SetPosition(int x, int y)
-		{
-			this.X = x;
-			this.Y = y;
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.X)));
-			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Y)));
-		}
-
 		public void End()
 		{
 			if (!this.started)
@@ -63,6 +55,14 @@ namespace CompendiumMapCreator.ViewModel
 			}
 
 			this.started = false;
+		}
+
+		private void SetPosition(int x, int y)
+		{
+			this.X = x;
+			this.Y = y;
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.X)));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Y)));
 		}
 	}
 }

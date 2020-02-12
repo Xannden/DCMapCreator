@@ -41,43 +41,24 @@ namespace CompendiumMapCreator.Edits
 
 			for (int i = 0; i < source.Count; i++)
 			{
-				Element clone;
-
-				switch (source[i])
+				Element clone = source[i] switch
 				{
-					case Label e:
-						clone = new Label(null, e.Number)
-						{
-							IsCopy = true
-						};
-						break;
-
-					case Portal p:
-						clone = new Portal(p.Number)
-						{
-							IsCopy = true
-						};
-						break;
-
-					case MapRelocate r:
-						clone = new MapRelocate(r.Number)
-						{
-							IsCopy = true,
-						};
-						break;
-
-					case Trap t:
-						clone = new Trap(t.AreaWidth, t.AreaHeight);
-						break;
-
-					case CollapsibleFloor f:
-						clone = new CollapsibleFloor(f.AreaWidth, f.AreaHeight);
-						break;
-
-					default:
-						clone = new Element(source[i].Type);
-						break;
-				}
+					Label e => new Label(null, e.Number)
+					{
+						IsCopy = true,
+					},
+					Portal p => new Portal(p.Number)
+					{
+						IsCopy = true,
+					},
+					MapRelocate r => new MapRelocate(r.Number)
+					{
+						IsCopy = true,
+					},
+					Trap t => new Trap(t.AreaWidth, t.AreaHeight),
+					CollapsibleFloor f => new CollapsibleFloor(f.AreaWidth, f.AreaHeight),
+					_ => new Element(source[i].Type),
+				};
 
 				clone.X = source[i].X - mid_x + point.X;
 				clone.Y = source[i].Y - mid_y + point.Y;

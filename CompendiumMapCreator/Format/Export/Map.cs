@@ -63,24 +63,25 @@ namespace CompendiumMapCreator.Format.Export
 			{
 				Rectangle rect = new Rectangle(p, new Size(e.Width, e.Height));
 
-				Pen pen = new Pen(new SolidBrush(Color.FromArgb(255, 0xC0, 0xC0, 0xC0)), 1);
+				using SolidBrush brush = new SolidBrush(Color.FromArgb(255, 0xC0, 0xC0, 0xC0));
+				using Pen pen = new Pen(brush, 1);
 
-				//TopLeft
+				// TopLeft
 				Point topLeft = rect.TopLeft();
 				g.DrawLine(pen, topLeft.OffsetBy(-1, -1), topLeft.OffsetBy(2, -1));
 				g.DrawLine(pen, topLeft.OffsetBy(-1, -1), topLeft.OffsetBy(-1, 2));
 
-				//TopRight
+				// TopRight
 				Point topRight = rect.TopRight();
 				g.DrawLine(pen, topRight.OffsetBy(-3, -1), topRight.OffsetBy(0, -1));
 				g.DrawLine(pen, topRight.OffsetBy(0, -1), topRight.OffsetBy(0, 2));
 
-				//BottomLeft
+				// BottomLeft
 				Point bottomLeft = rect.BottomLeft();
 				g.DrawLine(pen, bottomLeft.OffsetBy(-1, 0), bottomLeft.OffsetBy(2, 0));
 				g.DrawLine(pen, bottomLeft.OffsetBy(-1, 0), bottomLeft.OffsetBy(-1, -3));
 
-				//BottomRight
+				// BottomRight
 				Point bottomRight = rect.BottomRight();
 				g.DrawLine(pen, bottomRight.OffsetBy(-3, 0), bottomRight.OffsetBy(0, 0));
 				g.DrawLine(pen, bottomRight.OffsetBy(-0, 0), bottomRight.OffsetBy(0, -3));

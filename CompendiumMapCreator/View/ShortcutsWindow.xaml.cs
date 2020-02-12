@@ -3,7 +3,7 @@
 namespace CompendiumMapCreator.View
 {
 	/// <summary>
-	/// Interaction logic for ShortcutsWindow.xaml
+	/// Interaction logic for ShortcutsWindow.xaml.
 	/// </summary>
 	public partial class ShortcutsWindow : Window
 	{

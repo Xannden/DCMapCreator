@@ -16,7 +16,7 @@ namespace CompendiumMapCreator.Format
 	{
 		private const int Version = 8;
 
-		private Image _image;
+		private Image image;
 		private (int gen, int count) saved = (0, 0);
 		private string title;
 
@@ -48,11 +48,11 @@ namespace CompendiumMapCreator.Format
 
 		public Image Image
 		{
-			get => this._image;
+			get => this.image;
 
 			set
 			{
-				this._image = value;
+				this.image = value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Image)));
 			}
 		}
@@ -106,60 +106,59 @@ namespace CompendiumMapCreator.Format
 
 		public static Project LoadFile(string file)
 		{
-			using (BinaryReader reader = new BinaryReader(System.IO.File.OpenRead(file)))
+			using BinaryReader reader = new BinaryReader(System.IO.File.OpenRead(file));
+
+			int magic = reader.ReadInt32();
+
+			if (magic != 407893541)
 			{
-				int magic = reader.ReadInt32();
-
-				if (magic != 407893541)
-				{
-					throw new InvalidDataException();
-				}
-
-				char[] check = reader.ReadChars(3);
-
-				if (check[0] != 'D' || check[1] != 'M' || check[2] != 'C')
-				{
-					throw new InvalidDataException();
-				}
-
-				int version = reader.ReadInt32();
-
-				Project project;
-
-				switch (version)
-				{
-					case 1:
-						project = new ProjectV1(file);
-						break;
-
-					case 2:
-					case 3:
-					case 4:
-						project = new ProjectV2(file);
-						break;
-
-					case 5:
-						project = new ProjectV3(file, reader.ReadString());
-						break;
-
-					case 6:
-						project = new ProjectV4(file, reader.ReadString());
-						break;
-
-					case 7:
-					case 8:
-						reader.ReadInt32();
-						project = new ProjectV5(file, reader.ReadString());
-						break;
-
-					default:
-						throw new InvalidDataException();
-				}
-
-				project.Load(reader);
-
-				return project;
+				throw new InvalidDataException();
 			}
+
+			char[] check = reader.ReadChars(3);
+
+			if (check[0] != 'D' || check[1] != 'M' || check[2] != 'C')
+			{
+				throw new InvalidDataException();
+			}
+
+			int version = reader.ReadInt32();
+
+			Project project;
+
+			switch (version)
+			{
+				case 1:
+					project = new ProjectV1(file);
+					break;
+
+				case 2:
+				case 3:
+				case 4:
+					project = new ProjectV2(file);
+					break;
+
+				case 5:
+					project = new ProjectV3(file, reader.ReadString());
+					break;
+
+				case 6:
+					project = new ProjectV4(file, reader.ReadString());
+					break;
+
+				case 7:
+				case 8:
+					reader.ReadInt32();
+					project = new ProjectV5(file, reader.ReadString());
+					break;
+
+				default:
+					throw new InvalidDataException();
+			}
+
+			project.Load(reader);
+
+			return project;
 		}
 
 		public void AddEdit(Edit edit, bool apply = true)
@@ -260,7 +259,7 @@ namespace CompendiumMapCreator.Format
 						writer.Write(407893541);
 						writer.Write("DMC".ToCharArray());
 						writer.Write(Version);
-						writer.Write(0);//TODO: Type
+						writer.Write(0); // TODO: Type
 						writer.Write(this.Title ?? string.Empty);
 						writer.Write(this.Image.Data.Length);
 						writer.Write(this.Image.Data.GetBuffer());

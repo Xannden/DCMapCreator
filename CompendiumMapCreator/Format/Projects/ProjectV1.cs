@@ -5,11 +5,13 @@ namespace CompendiumMapCreator.Format.Projects
 {
 	public class ProjectV1 : Project
 	{
-		public ProjectV1(Image image) : base(image)
+		public ProjectV1(Image image)
+			: base(image)
 		{
 		}
 
-		public ProjectV1(string file) : base(file)
+		public ProjectV1(string file)
+			: base(file)
 		{
 		}
 
@@ -31,6 +33,7 @@ namespace CompendiumMapCreator.Format.Projects
 
 						element = new Label(text, number);
 					}
+
 					break;
 
 				case IconType.Portal:
@@ -39,6 +42,7 @@ namespace CompendiumMapCreator.Format.Projects
 
 						element = new Portal(number);
 					}
+
 					break;
 
 				default:
@@ -54,71 +58,30 @@ namespace CompendiumMapCreator.Format.Projects
 
 		private IconType? ReadType(int value)
 		{
-			switch (value)
+			return value switch
 			{
-				case 0:
-					return IconType.Cursor;
-
-				case 1:
-					return IconType.NormalChest;
-
-				case 2:
-					return IconType.TrappedChest;
-
-				case 3:
-					return IconType.LockedChest;
-
-				case 4:
-					return IconType.LockedDoor;
-
-				case 5:
-					return IconType.Opener;
-
-				case 6:
-					return IconType.TrapBox;
-
-				case 7:
-					return IconType.AnyCollectible;
-
-				case 8:
-					return IconType.Lore;
-
-				case 9:
-					return IconType.Natural;
-
-				case 10:
-					return IconType.Arcane;
-
-				case 11:
-					return IconType.QuestItem;
-
-				case 12:
-					return IconType.QuestNPC;
-
-				case 13:
-					return IconType.SecretDoor;
-
-				case 14:
-					return IconType.QuestExit;
-
-				case 15:
-					return IconType.Portal;
-
-				case 16:
-					return IconType.Label;
-
-				case 17:
-					return IconType.Trap;
-
-				case 18:
-					return IconType.CollapsibleFloor;
-
-				case 19:
-					return IconType.Entrance;
-
-				default:
-					throw new InvalidDataException();
-			}
+				0 => IconType.Cursor,
+				1 => IconType.NormalChest,
+				2 => IconType.TrappedChest,
+				3 => IconType.LockedChest,
+				4 => IconType.LockedDoor,
+				5 => IconType.Opener,
+				6 => IconType.TrapBox,
+				7 => IconType.AnyCollectible,
+				8 => IconType.Lore,
+				9 => IconType.Natural,
+				10 => IconType.Arcane,
+				11 => IconType.QuestItem,
+				12 => IconType.QuestNPC,
+				13 => IconType.SecretDoor,
+				14 => IconType.QuestExit,
+				15 => IconType.Portal,
+				16 => IconType.Label,
+				17 => IconType.Trap,
+				18 => IconType.CollapsibleFloor,
+				19 => IconType.Entrance,
+				_ => throw new InvalidDataException(),
+			};
 		}
 	}
 }

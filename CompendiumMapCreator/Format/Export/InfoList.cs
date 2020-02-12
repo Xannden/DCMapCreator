@@ -52,10 +52,10 @@ namespace CompendiumMapCreator.Format.Export
 		{
 			if (this.labels == null)
 			{
-				return new Size();
+				return default;
 			}
 
-			//Calculate the number of columns
+			// Calculate the number of columns
 			int columns = width / 200;
 
 			if (columns > this.labels.Count)
@@ -63,7 +63,7 @@ namespace CompendiumMapCreator.Format.Export
 				columns = this.labels.Count;
 			}
 
-			//Make sure there is always at least 1 column
+			// Make sure there is always at least 1 column
 			columns = Math.Max(columns, 1);
 
 			float columnWidth = width / columns;

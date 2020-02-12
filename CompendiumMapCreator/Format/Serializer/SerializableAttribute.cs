@@ -3,9 +3,9 @@
 namespace CompendiumMapCreator.Format.Serializer
 {
 	[AttributeUsage(AttributeTargets.Struct, AllowMultiple = false)]
-	public sealed class SerializeAttribute : Attribute
+	public sealed class SerializableAttribute : Attribute
 	{
-		public SerializeAttribute(int magic, string name, int version)
+		public SerializableAttribute(int magic, string name, int version)
 		{
 			this.Magic = magic;
 			this.Name = name.ToCharArray();

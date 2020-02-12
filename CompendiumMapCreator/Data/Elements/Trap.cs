@@ -6,7 +6,8 @@ namespace CompendiumMapCreator.Data
 	{
 		public static Color DrawingColor => Color.FromArgb(255, 47, 158, 0);
 
-		public Trap(int width, int height) : base(width, height, Trap.DrawingColor, IconType.Trap)
+		public Trap(int width, int height)
+			: base(width, height, Trap.DrawingColor, IconType.Trap)
 		{
 		}
 	}

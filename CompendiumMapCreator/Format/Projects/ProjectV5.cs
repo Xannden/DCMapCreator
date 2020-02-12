@@ -5,11 +5,13 @@ namespace CompendiumMapCreator.Format.Projects
 {
 	public class ProjectV5 : Project
 	{
-		public ProjectV5(Image image) : base(image)
+		public ProjectV5(Image image)
+			: base(image)
 		{
 		}
 
-		public ProjectV5(string file, string title) : base(file)
+		public ProjectV5(string file, string title)
+			: base(file)
 		{
 			this.Title = title;
 		}
@@ -41,9 +43,10 @@ namespace CompendiumMapCreator.Format.Projects
 
 						element = new Label(text?.Length == 0 ? null : text, number)
 						{
-							IsCopy = isCopy
+							IsCopy = isCopy,
 						};
 					}
+
 					break;
 
 				case IconType.Portal:
@@ -52,9 +55,10 @@ namespace CompendiumMapCreator.Format.Projects
 
 						element = new Portal(number)
 						{
-							IsCopy = isCopy
+							IsCopy = isCopy,
 						};
 					}
+
 					break;
 
 				case IconType.MapRelocate:
@@ -63,9 +67,10 @@ namespace CompendiumMapCreator.Format.Projects
 
 						element = new MapRelocate(number)
 						{
-							IsCopy = isCopy
+							IsCopy = isCopy,
 						};
 					}
+
 					break;
 
 				case IconType.Trap:
@@ -75,6 +80,7 @@ namespace CompendiumMapCreator.Format.Projects
 
 						element = new Trap(width, height);
 					}
+
 					break;
 
 				case IconType.CollapsibleFloor:
@@ -84,6 +90,7 @@ namespace CompendiumMapCreator.Format.Projects
 
 						element = new CollapsibleFloor(width, height);
 					}
+
 					break;
 
 				case IconType.Entrance:
@@ -92,6 +99,7 @@ namespace CompendiumMapCreator.Format.Projects
 
 						element = new Entrance(rotation);
 					}
+
 					break;
 
 				default:

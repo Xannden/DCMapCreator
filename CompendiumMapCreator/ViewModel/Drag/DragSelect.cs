@@ -49,6 +49,6 @@ namespace CompendiumMapCreator.ViewModel
 			project.OnPropertyChanged(nameof(project.Selected));
 		}
 
-		public (bool apply, Edit) End() => (false, null);
+		public (bool apply, Edit edit) End() => (false, null);
 	}
 }

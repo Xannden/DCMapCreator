@@ -26,7 +26,7 @@ namespace CompendiumMapCreator.Format.Export
 
 		public void Draw(Graphics g, Point p)
 		{
-			g.FillRectangle(Brushes.Black, new RectangleF(new PointF(), this.size));
+			g.FillRectangle(Brushes.Black, new RectangleF(default, this.size));
 
 			this.title.Draw(g, this.titlePos.OffsetBy(p));
 			this.legend.Draw(g, this.legendPos.OffsetBy(p));

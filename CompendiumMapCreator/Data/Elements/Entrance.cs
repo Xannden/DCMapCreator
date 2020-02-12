@@ -4,7 +4,8 @@
 	{
 		public Rotation Rotation { get; private set; }
 
-		public Entrance(Rotation rotation) : base(CreateImage(rotation), IconType.Entrance)
+		public Entrance(Rotation rotation)
+			: base(CreateImage(rotation), IconType.Entrance)
 		{
 			this.Rotation = rotation;
 		}
@@ -59,31 +60,14 @@
 
 		private static Image CreateImage(Rotation rotation)
 		{
-			switch (rotation)
+			return rotation switch
 			{
-				case Rotation._0:
-					return new Image(Image.GetImageUri(IconType.Entrance.GetImageFile()), System.Windows.Media.Imaging.Rotation.Rotate0);
-
-				case Rotation._90:
-					return new Image(Image.GetImageUri(IconType.Entrance.GetImageFile()), System.Windows.Media.Imaging.Rotation.Rotate90);
-
-				case Rotation._180:
-					return new Image(Image.GetImageUri(IconType.Entrance.GetImageFile()), System.Windows.Media.Imaging.Rotation.Rotate180);
-
-				case Rotation._270:
-					return new Image(Image.GetImageUri(IconType.Entrance.GetImageFile()), System.Windows.Media.Imaging.Rotation.Rotate270);
-
-				default:
-					return null;
-			}
+				Rotation._0 => new Image(Image.GetImageUri(IconType.Entrance.GetImageFile()), System.Windows.Media.Imaging.Rotation.Rotate0),
+				Rotation._90 => new Image(Image.GetImageUri(IconType.Entrance.GetImageFile()), System.Windows.Media.Imaging.Rotation.Rotate90),
+				Rotation._180 => new Image(Image.GetImageUri(IconType.Entrance.GetImageFile()), System.Windows.Media.Imaging.Rotation.Rotate180),
+				Rotation._270 => new Image(Image.GetImageUri(IconType.Entrance.GetImageFile()), System.Windows.Media.Imaging.Rotation.Rotate270),
+				_ => null,
+			};
 		}
-	}
-
-	public enum Rotation
-	{
-		_0 = 0,
-		_90 = 1,
-		_180 = 2,
-		_270 = 3,
 	}
 }

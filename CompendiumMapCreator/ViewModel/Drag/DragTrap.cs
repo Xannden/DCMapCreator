@@ -22,7 +22,7 @@ namespace CompendiumMapCreator.ViewModel
 
 		public void Update(int x, int y, Project project) => this.Selection = Rectangle.FromLTRB(Math.Min(this.start.X, x), Math.Min(this.start.Y, y), Math.Max(this.start.X, x) + 1, Math.Max(this.start.Y, y) + 1);
 
-		public (bool apply, Edit) End()
+		public (bool apply, Edit edit) End()
 		{
 			if (this.Selection.Height == 0 || this.Selection.Width == 0)
 			{

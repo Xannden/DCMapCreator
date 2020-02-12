@@ -122,11 +122,7 @@ namespace CompendiumMapCreator.ViewModel
 			}
 		}
 
-		public List<Tool> ToolList
-		{
-			get
-			{
-				return new List<Tool>()
+		public List<Tool> ToolList => new List<Tool>()
 				{
 					Tools.Cursor,
 					Tools.Rewards,
@@ -138,8 +134,6 @@ namespace CompendiumMapCreator.ViewModel
 					Tools.Movement,
 					Tools.Workstation,
 				};
-			}
-		}
 
 		public void AddElement(Element element)
 		{
@@ -174,7 +168,7 @@ namespace CompendiumMapCreator.ViewModel
 
 				try
 				{
-					this.Project.AddEdit(new ChangeMap(this.Project, new Image(dialog.FileName)));
+					this.Project.AddEdit(new ChangeMap(this.Project, new Image(File.ReadAllBytes(dialog.FileName))));
 
 					this.SelectedTool = Tools.Cursor;
 				}
@@ -232,29 +226,16 @@ namespace CompendiumMapCreator.ViewModel
 
 		public Element CreateElement(IconType type)
 		{
-			switch (type)
+			return type switch
 			{
-				case IconType.Label:
-					return new Label(null, this.Project.Elements.Count((e) => e is Label l && !l.IsCopy));
-
-				case IconType.Portal:
-					return new Portal(this.Project.Elements.Count((e) => e is Portal p && !p.IsCopy));
-
-				case IconType.MapRelocate:
-					return new MapRelocate(this.Project.Elements.Count((e) => e is MapRelocate r && !r.IsCopy));
-
-				case IconType.Entrance:
-					return new Entrance(Rotation._0);
-
-				case IconType.Trap:
-					return new Trap(5, 5);
-
-				case IconType.CollapsibleFloor:
-					return new CollapsibleFloor(5, 5);
-
-				default:
-					return new Element(type);
-			}
+				IconType.Label => new Label(null, this.Project.Elements.Count((e) => e is Label l && !l.IsCopy)),
+				IconType.Portal => new Portal(this.Project.Elements.Count((e) => e is Portal p && !p.IsCopy)),
+				IconType.MapRelocate => new MapRelocate(this.Project.Elements.Count((e) => e is MapRelocate r && !r.IsCopy)),
+				IconType.Entrance => new Entrance(Rotation._0),
+				IconType.Trap => new Trap(5, 5),
+				IconType.CollapsibleFloor => new CollapsibleFloor(5, 5),
+				_ => new Element(type),
+			};
 		}
 
 		public void Delete()
@@ -375,7 +356,7 @@ namespace CompendiumMapCreator.ViewModel
 
 				try
 				{
-					this.Project = Project.FromImage(new Image(dialog.FileName));
+					this.Project = Project.FromImage(new Image(File.ReadAllBytes(dialog.FileName)));
 
 					this.SelectedTool = Tools.Cursor;
 				}

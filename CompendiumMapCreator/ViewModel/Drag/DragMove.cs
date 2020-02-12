@@ -41,7 +41,7 @@ namespace CompendiumMapCreator.ViewModel
 			this.Change = (x - this.Start.X, y - this.Start.Y);
 		}
 
-		public (bool apply, Edit) End()
+		public (bool apply, Edit edit) End()
 		{
 			Edit result = null;
 

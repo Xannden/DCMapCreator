@@ -3,33 +3,29 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace CompendiumMapCreator
 {
 	public class Image : IDisposable
 	{
-		private static readonly Dictionary<string, Image> cache = new Dictionary<string, Image>();
+		private static readonly Dictionary<string, Image> Cache = new Dictionary<string, Image>();
 
 		public static Image GetImageFromResources(string fileName)
 		{
-			if (cache.TryGetValue(fileName, out Image value))
+			if (Cache.TryGetValue(fileName, out Image value))
 			{
 				return value;
 			}
 			else
 			{
-				Image image = new Image(GetImageUri(fileName));
+				Image image = new Image(GetImageUri(fileName), Rotation.Rotate0);
 
-				cache.Add(fileName, image);
+				Cache.Add(fileName, image);
 
 				return image;
 			}
 		}
-
-		public static Uri GetImageUri(string fileName)
-			=> new Uri("pack://application:,,,/" + Assembly.GetExecutingAssembly().GetName().Name + ";component/" + fileName, UriKind.Absolute);
 
 		public MemoryStream Data { get; private set; }
 
@@ -41,13 +37,9 @@ namespace CompendiumMapCreator
 
 		public int Height => this.DrawingImage.Height;
 
-		public Image(string path) : this(File.ReadAllBytes(path))
+		public Image(string uri, Rotation rotation)
 		{
-		}
-
-		public Image(Uri uri, Rotation rotation = Rotation.Rotate0)
-		{
-			Stream stream = Application.GetResourceStream(uri).Stream;
+			Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(uri);
 
 			byte[] data = new BinaryReader(stream).ReadBytes((int)stream.Length);
 
@@ -63,6 +55,9 @@ namespace CompendiumMapCreator
 		{
 			this.Load(stream, rotation);
 		}
+
+		public static string GetImageUri(string fileName)
+			=> "CompendiumMapCreator." + fileName.Replace('\\', '.').Replace('/', '.');
 
 		private void Load(MemoryStream stream, Rotation rotation)
 		{
@@ -99,6 +94,8 @@ namespace CompendiumMapCreator
 
 		private bool disposedValue; // To detect redundant calls
 
+		public void Dispose() => this.Dispose(true);
+
 		protected virtual void Dispose(bool disposing)
 		{
 			if (!this.disposedValue)
@@ -112,11 +109,6 @@ namespace CompendiumMapCreator
 				this.disposedValue = true;
 			}
 		}
-
-		// This code added to correctly implement the disposable pattern.
-		public void Dispose() =>
-			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-			this.Dispose(true);
 
 		#endregion IDisposable Support
 	}

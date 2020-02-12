@@ -12,7 +12,7 @@ using CompendiumMapCreator.Format;
 namespace CompendiumMapCreator
 {
 	/// <summary>
-	/// Interaction logic for App.xaml
+	/// Interaction logic for App.xaml.
 	/// </summary>
 	public partial class App : Application
 	{
@@ -165,12 +165,13 @@ namespace CompendiumMapCreator
 
 				this.Shutdown();
 			}
+
 			this.StartupUri = new Uri("View/MainWindow.xaml", UriKind.RelativeOrAbsolute);
 		}
 
 		private List<string> GetFiles(string path, bool recursive)
 		{
-			void GetFilesRecursive(string dir, List<string> list)
+			static void GetFilesRecursive(string dir, List<string> list)
 			{
 				string[] dirs = Directory.GetDirectories(dir);
 
@@ -230,7 +231,7 @@ namespace CompendiumMapCreator
 
 			Temp temp = (Temp)serializer.ReadObject(response.GetResponseStream());
 
-			return temp.tag_name != "V1.8.1";
+			return temp.Tag_name != "V1.8.1";
 		}
 
 		[DataContract]
@@ -238,7 +239,8 @@ namespace CompendiumMapCreator
 		{
 #pragma warning disable CS0649
 			[DataMember]
-			internal string tag_name = null;
+			internal string Tag_name { get; set; } = null;
+
 #pragma warning restore CS0649
 		}
 	}

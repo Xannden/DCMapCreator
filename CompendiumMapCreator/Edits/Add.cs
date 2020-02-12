@@ -15,7 +15,7 @@ namespace CompendiumMapCreator.Edits
 
 		public override void Apply(IList<Element> list)
 		{
-			Debug.Assert(this.Added != null);
+			Debug.Assert(this.Added != null, "Added is null");
 
 			if (this.Added is AreaElement)
 			{
@@ -42,7 +42,7 @@ namespace CompendiumMapCreator.Edits
 
 		public override void Undo(IList<Element> list)
 		{
-			Debug.Assert(this.Added != null);
+			Debug.Assert(this.Added != null, "Added is null");
 
 			list.Remove(this.Added);
 		}

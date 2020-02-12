@@ -4,7 +4,7 @@ using System.Windows;
 namespace CompendiumMapCreator.View
 {
 	/// <summary>
-	/// Interaction logic for TitleWindow.xaml
+	/// Interaction logic for TitleWindow.xaml.
 	/// </summary>
 	public partial class TitleWindow : Window
 	{
@@ -21,6 +21,14 @@ namespace CompendiumMapCreator.View
 			this.DataContext = this;
 		}
 
+		protected override void OnActivated(EventArgs e)
+		{
+			this.Box.Focus();
+			this.Box.SelectAll();
+
+			base.OnActivated(e);
+		}
+
 		private void Cancel_Click(object sender, RoutedEventArgs e)
 		{
 			this.DialogResult = false;
@@ -33,14 +41,6 @@ namespace CompendiumMapCreator.View
 			this.DialogResult = true;
 
 			this.Close();
-		}
-
-		protected override void OnActivated(EventArgs e)
-		{
-			this.Box.Focus();
-			this.Box.SelectAll();
-
-			base.OnActivated(e);
 		}
 	}
 }

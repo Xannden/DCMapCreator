@@ -4,12 +4,12 @@ using System.Windows.Input;
 namespace CompendiumMapCreator
 {
 	public class DelegateCommand<T> : ICommand
-
 	{
 		private readonly Predicate<T> canExecute;
 		private readonly Action<T> execute;
 
-		public DelegateCommand(Action<T> execute) : this(execute, null)
+		public DelegateCommand(Action<T> execute)
+			: this(execute, null)
 		{
 		}
 
@@ -24,8 +24,6 @@ namespace CompendiumMapCreator
 		public bool CanExecute(T parameter) => this.canExecute?.Invoke(parameter) ?? true;
 
 		public void Execute(T parameter) => this.execute?.Invoke(parameter);
-
-		protected void OnCanExecuteChanged(EventArgs e) => this.CanExecuteChanged?.Invoke(this, e);
 
 		bool ICommand.CanExecute(object parameter)
 		{
@@ -46,5 +44,7 @@ namespace CompendiumMapCreator
 				this.execute?.Invoke(t);
 			}
 		}
+
+		protected void OnCanExecuteChanged(EventArgs e) => this.CanExecuteChanged?.Invoke(this, e);
 	}
 }

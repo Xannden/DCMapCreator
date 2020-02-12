@@ -10,7 +10,7 @@ using CompendiumMapCreator.View;
 namespace CompendiumMapCreator
 {
 	/// <summary>
-	/// Interaction logic for MainWindow.xaml
+	/// Interaction logic for MainWindow.xaml.
 	/// </summary>
 	public partial class MainWindow : Window
 	{
@@ -25,8 +25,7 @@ namespace CompendiumMapCreator
 		{
 			this.InitializeComponent();
 
-			//this.SelectTool(Tools.Cursor);
-
+			// this.SelectTool(Tools.Cursor);
 			this.ViewModel.PropertyChanged += (_, e) =>
 			{
 				if (e.PropertyName == nameof(this.ViewModel.Project))
@@ -77,6 +76,7 @@ namespace CompendiumMapCreator
 			{
 				return;
 			}
+
 			this.copied = new List<Element>(this.ViewModel.Project.Selected);
 		}
 
@@ -230,7 +230,7 @@ namespace CompendiumMapCreator
 			{
 				switch (e.Key)
 				{
-					//Save project as
+					// Save project as
 					case Key.S:
 						this.ViewModel.SaveProject(forcePrompt: true);
 						return;
@@ -240,39 +240,39 @@ namespace CompendiumMapCreator
 			{
 				switch (e.Key)
 				{
-					//Load Image
+					// Load Image
 					case Key.N:
 						this.ViewModel.LoadImage(this.Window);
 						return;
-					//Export
+					// Export
 					case Key.E:
 						this.ViewModel.Export();
 						return;
-					//Undo
+					// Undo
 					case Key.Z:
 						this.ViewModel.Undo();
 						return;
-					//Redo
+					// Redo
 					case Key.Y:
 						this.ViewModel.Redo();
 						return;
-					//Save project
+					// Save project
 					case Key.S:
 						this.ViewModel.SaveProject();
 						return;
-					//Load project
+					// Load project
 					case Key.L:
 						this.ViewModel.LoadProject(this.Window);
 						return;
-					//Copy
+					// Copy
 					case Key.C:
 						this.Copy();
 						return;
-					//Paste
+					// Paste
 					case Key.V:
 						this.Paste();
 						return;
-					//Deselect
+					// Deselect
 					case Key.D:
 						this.ViewModel.Deselect();
 						return;
@@ -286,7 +286,7 @@ namespace CompendiumMapCreator
 			{
 				switch (e.Key)
 				{
-					//Cursor
+					// Cursor
 					case Key.D1:
 						this.ViewModel.SetTool(Tools.Cursor);
 						return;
@@ -327,7 +327,7 @@ namespace CompendiumMapCreator
 
 			switch (e.Key)
 			{
-				//Delete
+				// Delete
 				case Key.Delete:
 					this.ViewModel.Delete();
 					break;
@@ -400,6 +400,7 @@ namespace CompendiumMapCreator
 					{
 						this.change.X++;
 					}
+
 					this.ViewModel.DragUpdate(this.origin + this.change);
 				}
 				else if (this.moving)
@@ -541,9 +542,7 @@ namespace CompendiumMapCreator
 		{
 			foreach (object item in this.ToolsView.Items)
 			{
-				Tool tool = item as Tool;
-
-				if (tool != null)
+				if (item is Tool tool)
 				{
 					tool.IsExpanded = true;
 				}
@@ -554,9 +553,7 @@ namespace CompendiumMapCreator
 		{
 			foreach (object item in this.ToolsView.Items)
 			{
-				Tool tool = item as Tool;
-
-				if (tool != null)
+				if (item is Tool tool)
 				{
 					tool.IsExpanded = false;
 				}

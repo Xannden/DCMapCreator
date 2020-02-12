@@ -13,6 +13,7 @@ namespace CompendiumMapCreator.Data
 		public int Number
 		{
 			get => this.number;
+
 			set
 			{
 				this.number = value;
@@ -22,7 +23,8 @@ namespace CompendiumMapCreator.Data
 
 		public Color Background { get; }
 
-		public NumberedElement(int number, Color background, IconType type) : base(CreateImage(number, background), type)
+		public NumberedElement(int number, Color background, IconType type)
+			: base(CreateImage(number, background), type)
 		{
 			this.number = number;
 			this.Background = background;
@@ -71,7 +73,8 @@ namespace CompendiumMapCreator.Data
 			{
 				digits.Add(number % 10);
 				number /= 10;
-			} while (number > 0);
+			}
+			while (number > 0);
 
 			digits.Reverse();
 

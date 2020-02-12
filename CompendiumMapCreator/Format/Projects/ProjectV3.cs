@@ -5,11 +5,13 @@ namespace CompendiumMapCreator.Format.Projects
 {
 	public class ProjectV3 : Project
 	{
-		public ProjectV3(Image image) : base(image)
+		public ProjectV3(Image image)
+			: base(image)
 		{
 		}
 
-		public ProjectV3(string file, string title) : base(file)
+		public ProjectV3(string file, string title)
+			: base(file)
 		{
 			this.Title = title;
 		}
@@ -40,6 +42,7 @@ namespace CompendiumMapCreator.Format.Projects
 
 						element = new Label(text, number);
 					}
+
 					break;
 
 				case IconType.Portal:
@@ -48,6 +51,7 @@ namespace CompendiumMapCreator.Format.Projects
 
 						element = new Portal(number);
 					}
+
 					break;
 
 				case IconType.Trap:
@@ -57,6 +61,7 @@ namespace CompendiumMapCreator.Format.Projects
 
 						element = new Trap(width, height);
 					}
+
 					break;
 
 				case IconType.CollapsibleFloor:
@@ -66,6 +71,7 @@ namespace CompendiumMapCreator.Format.Projects
 
 						element = new CollapsibleFloor(width, height);
 					}
+
 					break;
 
 				case IconType.Entrance:
@@ -74,6 +80,7 @@ namespace CompendiumMapCreator.Format.Projects
 
 						element = new Entrance(rotation);
 					}
+
 					break;
 
 				default:
@@ -92,83 +99,34 @@ namespace CompendiumMapCreator.Format.Projects
 
 		private IconType? ReadType(int value)
 		{
-			switch (value)
+			return value switch
 			{
-				case 0:
-					return IconType.Cursor;
-
-				case 10:
-					return IconType.NormalChest;
-
-				case 20:
-					return IconType.TrappedChest;
-
-				case 30:
-					return IconType.LockedChest;
-
-				case 35:
-					return IconType.RareChest;
-
-				case 40:
-					return IconType.LockedDoor;
-
-				case 41:
-					return IconType.BlockedDoor;
-
-				case 50:
-					return IconType.Opener;
-
-				case 60:
-					return IconType.TrapBox;
-
-				case 70:
-					return IconType.AnyCollectible;
-
-				case 80:
-					return IconType.Lore;
-
-				case 90:
-					return IconType.Natural;
-
-				case 100:
-					return IconType.Arcane;
-
-				case 110:
-					return IconType.QuestItem;
-
-				case 111:
-					return IconType.QuestItemUse;
-
-				case 120:
-					return IconType.QuestNPC;
-
-				case 130:
-					return IconType.SecretDoor;
-
-				case 140:
-					return IconType.QuestExit;
-
-				case 150:
-					return IconType.Portal;
-
-				case 160:
-					return IconType.Label;
-
-				case 170:
-					return IconType.Trap;
-
-				case 180:
-					return IconType.CollapsibleFloor;
-
-				case 181:
-					return IconType.Drop;
-
-				case 190:
-					return IconType.Entrance;
-
-				default:
-					return null;
-			}
+				0 => IconType.Cursor,
+				10 => IconType.NormalChest,
+				20 => IconType.TrappedChest,
+				30 => IconType.LockedChest,
+				35 => IconType.RareChest,
+				40 => IconType.LockedDoor,
+				41 => IconType.BlockedDoor,
+				50 => IconType.Opener,
+				60 => IconType.TrapBox,
+				70 => IconType.AnyCollectible,
+				80 => IconType.Lore,
+				90 => IconType.Natural,
+				100 => IconType.Arcane,
+				110 => IconType.QuestItem,
+				111 => IconType.QuestItemUse,
+				120 => IconType.QuestNPC,
+				130 => IconType.SecretDoor,
+				140 => IconType.QuestExit,
+				150 => IconType.Portal,
+				160 => IconType.Label,
+				170 => IconType.Trap,
+				180 => IconType.CollapsibleFloor,
+				181 => IconType.Drop,
+				190 => IconType.Entrance,
+				_ => null,
+			};
 		}
 	}
 }

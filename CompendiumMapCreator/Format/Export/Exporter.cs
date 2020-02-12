@@ -10,22 +10,20 @@ namespace CompendiumMapCreator.Format.Export
 	{
 		public static void Run(string fileName, Image image, IList<Element> elements, bool addLegend, string title)
 		{
-			using (Font font = new Font(new FontFamily(GenericFontFamilies.SansSerif), 8))
-			{
-				FullMap map = new FullMap(font, image, elements, addLegend, title);
+			using Font font = new Font(new FontFamily(GenericFontFamilies.SansSerif), 8);
 
-				Size size = map.Layout(int.MaxValue, int.MaxValue);
+			FullMap map = new FullMap(font, image, elements, addLegend, title);
 
-				using (Bitmap result = new Bitmap(size.Width, size.Height))
-				using (Graphics g = Graphics.FromImage(result))
-				{
-					map.Draw(g, new Point());
+			Size size = map.Layout(int.MaxValue, int.MaxValue);
 
-					Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+			using Bitmap result = new Bitmap(size.Width, size.Height);
+			using Graphics g = Graphics.FromImage(result);
 
-					result.Save(fileName, ImageFormat.Png);
-				}
-			}
+			map.Draw(g, default);
+
+			Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+
+			result.Save(fileName, ImageFormat.Png);
 		}
 	}
 }

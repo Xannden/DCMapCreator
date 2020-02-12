@@ -1,272 +1,36 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7B42060F-2D78-45F1-9DF2-311D94704B42}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>CompendiumMapCreator</RootNamespace>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyName>CompendiumMapCreator</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>..\..\..\c#\Yoware\CompendiumPageCreator\CompendiumPageCreator\CompendiumPageCreator.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>..\..\..\c#\Yoware\CompendiumPageCreator\CompendiumPageCreator\CompendiumPageCreator.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
+    <RootNamespace>CompendiumMapCreator</RootNamespace>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+    <Win32Resource />
+    <CodeAnalysisRuleSet>D:\Code\VS\Xannden.ruleset</CodeAnalysisRuleSet>
+      
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Design" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
+    <EmbeddedResource Include="Icons\*.png" />
   </ItemGroup>
+
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </ApplicationDefinition>
-    <Compile Include="Controls\OptionalBorder.cs" />
-    <Compile Include="Controls\Zoom.cs" />
-    <Compile Include="Converter\ElementToVisibilityConverter.cs" />
-    <Compile Include="Converter\IconTypeToDescriptionConverter.cs" />
-    <Compile Include="Converter\IconTypeToToolTipConverter.cs" />
-    <Compile Include="Data\Elements\AreaElement.cs" />
-    <Compile Include="Data\Elements\CollapsableFloor.cs" />
-    <Compile Include="Data\Elements\Entrance.cs" />
-    <Compile Include="Data\Elements\MapRelocate.cs" />
-    <Compile Include="Data\Elements\Trap.cs" />
-    <Compile Include="Data\Attributes\IconFileAttribute.cs" />
-    <Compile Include="Data\ImagePoint.cs" />
-    <Compile Include="Data\Elements\Label.cs" />
-    <Compile Include="Data\Elements\NumberedElement.cs" />
-    <Compile Include="Data\Elements\Portal.cs" />
-    <Compile Include="Data\Attributes\NameAttribute.cs" />
-    <Compile Include="Data\Attributes\ToolTipAttribute.cs" />
-    <Compile Include="Data\Tool.cs" />
-    <Compile Include="Data\WindowPoint.cs" />
-    <Compile Include="Edits\Add.cs" />
-    <Compile Include="Edits\ChangeLabel.cs" />
-    <Compile Include="Edits\ChangeMap.cs" />
-    <Compile Include="Edits\Copy.cs" />
-    <Compile Include="Edits\Edit.cs" />
-    <Compile Include="Commands\DelegateCommand.cs" />
-    <Compile Include="Converter\AddConverter.cs" />
-    <Compile Include="Converter\EqualsToBrushConverter.cs" />
-    <Compile Include="Converter\EnumBooleanConverter.cs" />
-    <Compile Include="Data\IconType.cs" />
-    <Compile Include="Data\Image.cs" />
-    <Compile Include="Converter\IconTypeToImageSourceConverter.cs" />
-    <Compile Include="Edits\UndoRedoStack.cs" />
-    <Compile Include="Edits\Move.cs" />
-    <Compile Include="Edits\Remove.cs" />
-    <Compile Include="Edits\Rotate.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Format\Export\Exporter.cs" />
-    <Compile Include="Format\Export\FullMap.cs" />
-    <Compile Include="Format\Export\IDrawable.cs" />
-    <Compile Include="Format\Export\InfoList.cs" />
-    <Compile Include="Format\Export\Legend.cs" />
-    <Compile Include="Format\Export\Map.cs" />
-    <Compile Include="Format\Export\Title.cs" />
-    <Compile Include="Format\Project.cs" />
-    <Compile Include="Format\Projects\ProjectV2.cs" />
-    <Compile Include="Format\Projects\ProjectV1.cs" />
-    <Compile Include="Format\Projects\ProjectV3.cs" />
-    <Compile Include="Format\Projects\ProjectV4.cs" />
-    <Compile Include="Format\Projects\ProjectV5.cs" />
-    <Compile Include="Format\Serializer\FieldAttribute.cs" />
-    <Compile Include="Format\Serializer\SerializableAttribute.cs" />
-    <Compile Include="Format\Serializer\Serializer.cs" />
-    <Compile Include="ViewModel\Drag\DragCollapsibleFloor.cs" />
-    <Compile Include="ViewModel\Drag\DragMove.cs" />
-    <Compile Include="ViewModel\Drag\DragSelect.cs" />
-    <Compile Include="ViewModel\Drag\DragTrap.cs" />
-    <Compile Include="ViewModel\Drag\IDrag.cs" />
-    <Compile Include="ViewModel\Editing.cs" />
-    <Compile Include="ViewModel\MainWindow.cs" />
-    <Compile Include="Commands\RelayCommand.cs" />
-    <Compile Include="Data\Elements\Element.cs" />
-    <Compile Include="View\AboutWindow.xaml.cs">
-      <DependentUpon>AboutWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\ShortcutsWindow.xaml.cs">
-      <DependentUpon>ShortcutsWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\TitleWindow.xaml.cs">
-      <DependentUpon>TitleWindow.xaml</DependentUpon>
-    </Compile>
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\AboutWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="View\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="View\ShortcutsWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\TitleWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <AdditionalFiles Include="..\..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
+    <None Include="..\..\Xannden.ruleset" Link="Xannden.ruleset" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="App.config" />
+    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.113">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="release.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\0.png" />
-    <Resource Include="Icons\1.png" />
-    <Resource Include="Icons\2.png" />
-    <Resource Include="Icons\3.png" />
-    <Resource Include="Icons\4.png" />
-    <Resource Include="Icons\5.png" />
-    <Resource Include="Icons\6.png" />
-    <Resource Include="Icons\7.png" />
-    <Resource Include="Icons\8.png" />
-    <Resource Include="Icons\9.png" />
-    <Resource Include="Icons\alarm.png" />
-    <Resource Include="Icons\anyCollectible.png" />
-    <Resource Include="Icons\arcane.png" />
-    <Resource Include="Icons\blockedDoor.png" />
-    <Resource Include="Icons\collapsibleFloor.png" />
-    <Resource Include="Icons\collectible.png" />
-    <Resource Include="Icons\controlBox.png" />
-    <Resource Include="Icons\cursor.png" />
-    <Resource Include="Icons\disabler.png" />
-    <Resource Include="Icons\door.png" />
-    <Resource Include="Icons\drop.png" />
-    <Resource Include="Icons\entrance.png" />
-    <Resource Include="Icons\label.png" />
-    <Resource Include="Icons\lever.png" />
-    <Resource Include="Icons\leverValve.png" />
-    <Resource Include="Icons\lockedChest.png" />
-    <Resource Include="Icons\lockedDoor.png" />
-    <Resource Include="Icons\lore.png" />
-    <Resource Include="Icons\natural.png" />
-    <Resource Include="Icons\normalChest.png" />
-    <Resource Include="Icons\plant.png" />
-    <Resource Include="Icons\portal.png" />
-    <Resource Include="Icons\progressDoor.png" />
-    <Resource Include="Icons\questExit.png" />
-    <Resource Include="Icons\questItem.png" />
-    <Resource Include="Icons\questItemUse.png" />
-    <Resource Include="Icons\questNPC.png" />
-    <Resource Include="Icons\questNPCNeutral.png" />
-    <Resource Include="Icons\rareChest.png" />
-    <Resource Include="Icons\rune.png" />
-    <Resource Include="Icons\secretDoor.png" />
-    <Resource Include="Icons\trap.png" />
-    <Resource Include="Icons\trappedChest.png" />
-    <Resource Include="Icons\valve.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\copy.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\shrine.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\craftingStation.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\trader.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\possLoc.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\leverLocked.png" />
-    <Resource Include="Icons\mapRelocate.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\entrance2.png" />
-    <Resource Include="Icons\explorer2.png" />
-    <Resource Include="Icons\explorer.png" />
-    <Resource Include="Icons\partyGather.png" />
-    <Resource Include="Icons\scroll.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\valveLocked.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\runeLocked.png" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

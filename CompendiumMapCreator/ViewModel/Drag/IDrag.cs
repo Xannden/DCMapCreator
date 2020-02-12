@@ -9,7 +9,7 @@ namespace CompendiumMapCreator.ViewModel
 	{
 		void Update(int x, int y, Project project);
 
-		(bool apply, Edit) End();
+		(bool apply, Edit edit) End();
 
 		MColor Color { get; }
 

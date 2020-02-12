@@ -6,7 +6,8 @@ namespace CompendiumMapCreator.Data
 	{
 		private string text;
 
-		public Label(string text, int number) : base(number, Color.Yellow, IconType.Label)
+		public Label(string text, int number)
+			: base(number, Color.Yellow, IconType.Label)
 		{
 			this.Text = text;
 		}
