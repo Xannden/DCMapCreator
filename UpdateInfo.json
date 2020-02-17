@@ -2,5 +2,49 @@
   {
     "version": "1.8.1",
     "link": "https://github.com/Xannden/DCMapCreator/releases/download/V1.8.1/CompendiumMapCreator.exe"
+  },
+  {
+    "version": "1.8.0",
+    "link": "https://github.com/Xannden/DCMapCreator/releases/download/V1.8/CompendiumMapCreator.exe"
+  },
+  {
+    "version": "1.7.0",
+    "link": "https://github.com/Xannden/DCMapCreator/releases/download/V1.7/CompendiumMapCreator.exe"
+  },
+  {
+    "version": "1.6.2",
+    "link": "https://github.com/Xannden/DCMapCreator/releases/download/V1.6.2/CompendiumMapCreator.exe"
+  },
+  {
+    "version": "1.6.1",
+    "link": "https://github.com/Xannden/DCMapCreator/releases/download/V1.6.1/CompendiumMapCreator.exe"
+  },
+  {
+    "version": "1.6.0",
+    "link": "https://github.com/Xannden/DCMapCreator/releases/download/V1.6/CompendiumMapCreator.exe"
+  },
+  {
+    "version": "1.5.0",
+    "link": "https://github.com/Xannden/DCMapCreator/releases/download/V1.5/CompendiumMapCreator.exe"
+  },
+  {
+    "version": "1.4.0",
+    "link": "https://github.com/Xannden/DCMapCreator/releases/download/V1.4/CompendiumMapCreator.exe"
+  },
+  {
+    "version": "1.3.0",
+    "link": "https://github.com/Xannden/DCMapCreator/releases/download/V1.3/CompendiumMapCreator.exe"
+  },
+  {
+    "version": "1.2.0",
+    "link": "https://github.com/Xannden/DCMapCreator/releases/download/V1.2/CompendiumMapCreator.exe"
+  },
+  {
+    "version": "1.1.0",
+    "link": "https://github.com/Xannden/DCMapCreator/releases/download/V1.1/CompendiumMapCreator.exe"
+  },
+  {
+    "version": "1.0.0",
+    "link": "https://github.com/Xannden/DCMapCreator/releases/download/V1.0/CompendiumMapCreator.exe"
   }
 ]
