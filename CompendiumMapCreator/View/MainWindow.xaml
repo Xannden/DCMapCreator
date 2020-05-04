@@ -13,7 +13,6 @@
         PreviewMouseDown="Window_PreviewMouseDown"
         MouseUp="Window_MouseUp"
         KeyDown="Window_KeyDown"
-        Loaded="Window_Loaded"
         mc:Ignorable="d"
         Title="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Height="730" Width="1024">
     <Window.DataContext>
@@ -57,20 +56,18 @@
 
         <TreeView Name="ToolsView" Grid.Row="2" ItemsSource="{Binding ToolList}" SelectedItemChanged="Tools_SelectedItemChanged" IsTabStop="False">
             <TreeView.Resources>
-                <converter:IconTypeToImageSourceConverter x:Key="IconTypeToImage" />
-                <converter:IconTypeToDescriptionConverter x:Key="IconTypeToDescription" />
-                <converter:IconTypeToToolTipConverter x:Key="IconTypeToToolTip" />
 
-                <HierarchicalDataTemplate DataType="{x:Type data:Tool}" ItemsSource="{Binding Tools}">
+                <HierarchicalDataTemplate DataType="{x:Type vm:ToolVM}" ItemsSource="{Binding Elements}">
                     <StackPanel Orientation="Horizontal" Margin="0,1,0,1" ToolTip="{Binding ToolTip}">
-                        <Image Height="18" Width="18" Margin="0,0,4,0" Source="{Binding Image}" RenderOptions.BitmapScalingMode="NearestNeighbor"  SnapsToDevicePixels="True" />
-                        <TextBlock Text="{Binding Description}" />
+                        <Image Height="18" Width="18" Margin="0,0,4,0" Source="{Binding Icon.BitmapImage}" RenderOptions.BitmapScalingMode="NearestNeighbor"  SnapsToDevicePixels="True" />
+                        <TextBlock Text="{Binding Name}" />
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.Resources>
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                 </Style>
             </TreeView.ItemContainerStyle>
             <TreeView.ContextMenu>
@@ -99,22 +96,41 @@
                 <ItemsControl Focusable="False" ItemsSource="{Binding Project.Elements}" SnapsToDevicePixels="True">
                     <ItemsControl.Resources>
                         <converter:AddConverter x:Key="Add" />
-                    </ItemsControl.Resources>
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Canvas />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style>
-                            <Setter Property="Canvas.Left" Value="{Binding X, Converter={StaticResource Add}, ConverterParameter=-1}" />
-                            <Setter Property="Canvas.Top" Value="{Binding Y, Converter={StaticResource Add}, ConverterParameter=-1}" />
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Controls:OptionalBorder ShouldDisplay="{Binding IsOptional}">
-                                <Border  Opacity="{Binding Opacity}" BorderThickness="1">
+                        <DataTemplate DataType="{x:Type vm:ElementVM}">
+                            <Controls:OptionalBorder ShouldDisplay="{Binding Optional}">
+                                <Border Opacity="{Binding Opacity}" BorderThickness="1">
+                                    <Border.Resources>
+                                        <converter:EqualsToBrushConverter x:Key="EqualsToBrushConverter" IsFalse="Transparent" IsTrue="#7F87CEFA" />
+                                    </Border.Resources>
+                                    <Border.BorderBrush>
+                                        <MultiBinding Converter="{StaticResource EqualsToBrushConverter}">
+                                            <Binding Path="DataContext.Project.Selected" RelativeSource="{RelativeSource AncestorType=Window}" />
+                                            <Binding Path="." />
+                                        </MultiBinding>
+                                    </Border.BorderBrush>
+
+                                    <Grid Width="{Binding Width}" Height="{Binding Height}">
+                                        <Grid.Resources>
+                                            <BooleanToVisibilityConverter x:Key="boolToVisibility" />
+                                        </Grid.Resources>
+                                        <Image  Source="{Binding Image.BitmapImage}" Width="{Binding Width}" Height="{Binding Height}" ToolTip="{Binding ToolTip}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True">
+                                            <Image.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy" />
+                                                    <MenuItem Header="Delete" Click="Delete_Click" InputGestureText="Del" />
+                                                    <!-- <MenuItem Header="Rotate Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateClockwise" />
+                                                    <MenuItem Header="Rotate Counter Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateCounterClockwise" /> -->
+                                                    <MenuItem Header="Possible Location" IsCheckable="True" IsChecked="{Binding Optional}" />
+                                                </ContextMenu>
+                                            </Image.ContextMenu>
+                                        </Image>
+                                    </Grid>
+                                </Border>
+                            </Controls:OptionalBorder>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:NumberedElementVM}">
+                            <Controls:OptionalBorder ShouldDisplay="{Binding Optional}">
+                                <Border Opacity="{Binding Opacity}" BorderThickness="1">
                                     <Border.Resources>
                                         <converter:EqualsToBrushConverter x:Key="EqualsToBrushConverter" IsFalse="Transparent" IsTrue="#7F87CEFA" />
                                     </Border.Resources>
@@ -131,18 +147,11 @@
                                             <BooleanToVisibilityConverter x:Key="boolToVisibility" />
                                         </Grid.Resources>
                                         <Image  Source="{Binding Image.BitmapImage}" Width="{Binding Width}" Height="{Binding Height}" ToolTip="{Binding ToolTip}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True">
-                                            <Image.Resources>
-                                                <converter:ElementToVisibilityConverter x:Key="LabelVisibile" ElementType="{x:Type data:Label}" AllowCopies="False" />
-                                                <converter:ElementToVisibilityConverter x:Key="RotateVisibile" ElementType="{x:Type data:Entrance}" AllowCopies="True" />
-                                            </Image.Resources>
                                             <Image.ContextMenu>
                                                 <ContextMenu>
-                                                    <MenuItem Header="Edit" Visibility="{Binding Converter={StaticResource LabelVisibile}}" Click="Edit" />
                                                     <MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy" />
                                                     <MenuItem Header="Delete" Click="Delete_Click" InputGestureText="Del" />
-                                                    <MenuItem Header="Rotate Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateClockwise" />
-                                                    <MenuItem Header="Rotate Counter Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateCounterClockwise" />
-                                                    <MenuItem Header="Possible Location" IsCheckable="True" IsChecked="{Binding IsOptional}" />
+                                                    <MenuItem Header="Possible Location" IsCheckable="True" IsChecked="{Binding Optional}" />
                                                 </ContextMenu>
                                             </Image.ContextMenu>
                                         </Image>
@@ -155,7 +164,80 @@
                                 </Border>
                             </Controls:OptionalBorder>
                         </DataTemplate>
-                    </ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:LabelElementVM}">
+                            <Controls:OptionalBorder ShouldDisplay="{Binding Optional}">
+                                <Border Opacity="{Binding Opacity}" BorderThickness="1">
+                                    <Border.Resources>
+                                        <converter:EqualsToBrushConverter x:Key="EqualsToBrushConverter" IsFalse="Transparent" IsTrue="#7F87CEFA" />
+                                    </Border.Resources>
+                                    <Border.BorderBrush>
+                                        <MultiBinding Converter="{StaticResource EqualsToBrushConverter}">
+                                            <Binding Path="DataContext.Project.Selected" RelativeSource="{RelativeSource AncestorType=Window}" />
+                                            <Binding Path="." />
+                                        </MultiBinding>
+                                    </Border.BorderBrush>
+
+                                    <Grid Width="{Binding Width}" Height="{Binding Height}">
+                                        <Grid.Resources>
+                                            <BitmapImage x:Key="CopyStar" UriSource="../Icons/copy.png" />
+                                            <BooleanToVisibilityConverter x:Key="boolToVisibility" />
+                                        </Grid.Resources>
+                                        <Image  Source="{Binding Image.BitmapImage}" Width="{Binding Width}" Height="{Binding Height}" ToolTip="{Binding ToolTip}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True">
+                                            <Image.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Edit"  Click="Edit" />
+                                                    <MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy" />
+                                                    <MenuItem Header="Delete" Click="Delete_Click" InputGestureText="Del" />
+                                                    <MenuItem Header="Possible Location" IsCheckable="True" IsChecked="{Binding Optional}" />
+                                                </ContextMenu>
+                                            </Image.ContextMenu>
+                                        </Image>
+                                        <Image Source="{StaticResource CopyStar}" Width="5" Height="5" RenderOptions.BitmapScalingMode="NearestNeighbor" Visibility="{Binding IsCopy, Converter={StaticResource boolToVisibility}}" IsHitTestVisible="False">
+                                            <Image.RenderTransform>
+                                                <TranslateTransform X="4" Y="-4" />
+                                            </Image.RenderTransform>
+                                        </Image>
+                                    </Grid>
+                                </Border>
+                            </Controls:OptionalBorder>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:AreaElementVM}">
+                            <Controls:OptionalBorder ShouldDisplay="{Binding Optional}">
+                                <Border  Opacity="{Binding Opacity}" BorderThickness="1">
+                                    <Border.Resources>
+                                        <converter:EqualsToBrushConverter x:Key="EqualsToBrushConverter" IsFalse="Transparent" IsTrue="#7F87CEFA" />
+                                    </Border.Resources>
+                                    <Border.BorderBrush>
+                                        <MultiBinding Converter="{StaticResource EqualsToBrushConverter}">
+                                            <Binding Path="DataContext.Project.Selected" RelativeSource="{RelativeSource AncestorType=Window}" />
+                                            <Binding Path="." />
+                                        </MultiBinding>
+                                    </Border.BorderBrush>
+
+                                    <Rectangle Width="{Binding Width}" Height="{Binding Height}" Fill="{Binding Color}" ToolTip="{Binding ToolTip}" />
+
+                                    <Border.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy" />
+                                            <MenuItem Header="Delete" Click="Delete_Click" InputGestureText="Del" />
+                                            <MenuItem Header="Possible Location" IsCheckable="True" IsChecked="{Binding Optional}" />
+                                        </ContextMenu>
+                                    </Border.ContextMenu>
+                                </Border>
+                            </Controls:OptionalBorder>
+                        </DataTemplate>
+                    </ItemsControl.Resources>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style>
+                            <Setter Property="Canvas.Left" Value="{Binding X, Converter={StaticResource Add}, ConverterParameter=-1}" />
+                            <Setter Property="Canvas.Top" Value="{Binding Y, Converter={StaticResource Add}, ConverterParameter=-1}" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
                 </ItemsControl>
 
                 <Canvas>

@@ -1,52 +1,51 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CompendiumMapCreator.Data;
+using CompendiumMapCreator.ViewModel;
 
 namespace CompendiumMapCreator.Edits
 {
 	public sealed class Remove : Edit
 	{
-		public List<(int index, Element element)> Removed { get; } = new List<(int, Element)>();
+		public List<(int index, ElementVM element)> Removed { get; } = new List<(int, ElementVM)>();
 
-		public Remove(IList<Element> removed, IList<Element> list)
+		public Remove(IList<ElementVM> removed, IList<ElementVM> list)
 		{
 			for (int i = 0; i < removed.Count; i++)
 			{
 				this.Removed.Add((list.IndexOf(removed[i]), removed[i]));
 
-				if (removed[i] is NumberedElement n && !n.IsCopy)
+				if (removed[i] is NumberedElementVM n && !n.IsCopy)
 				{
 					for (int j = 0; j < list.Count; j++)
 					{
-						if (list[j] is NumberedElement c && c.IsCopy && c.Number == n.Number && !this.Removed.Contains((j, list[j])))
+						if (list[j] is NumberedElementVM c && c.Id == n.Id && c.IsCopy && c.Number == n.Number && !this.Removed.Contains((j, list[j])))
 						{
 							this.Removed.Add((j, list[j]));
 						}
 					}
 				}
 			}
-
-			this.Removed.Sort((lhs, rhs) => lhs.index.CompareTo(rhs.index));
 		}
 
-		public override void Apply(IList<Element> list)
+		public override void Apply(IList<ElementVM> list)
 		{
 			for (int i = this.Removed.Count - 1; i >= 0; i--)
 			{
+				this.Removed[i] = (list.IndexOf(this.Removed[i].element), this.Removed[i].element);
 				list.RemoveAt(this.Removed[i].index);
 			}
 
-			List<int> numbers = this.Removed.Where((i) => i.element is NumberedElement n && !n.IsCopy).Select((i) => ((NumberedElement)i.element).Number).ToList();
+			List<NumberedElementVM> elements = this.Removed.Where((i) => i.element is NumberedElementVM n && !n.IsCopy).Select((i) => i.element as NumberedElementVM).ToList();
 
-			numbers.Sort();
+			elements.Sort((lhs, rhs) => lhs.Number.CompareTo(rhs.Number));
 
-			numbers.Reverse();
+			elements.Reverse();
 
-			foreach (int number in numbers)
+			foreach (NumberedElementVM element in elements)
 			{
 				for (int i = 0; i < list.Count; i++)
 				{
-					if (list[i] is NumberedElement n && n.Number > number)
+					if (list[i] is NumberedElementVM n && n.Id == element.Id && n.Number > element.Number)
 					{
 						n.Number--;
 					}
@@ -54,17 +53,17 @@ namespace CompendiumMapCreator.Edits
 			}
 		}
 
-		public override void Undo(IList<Element> list)
+		public override void Undo(IList<ElementVM> list)
 		{
-			List<int> numbers = this.Removed.Where((i) => i.element is NumberedElement n && !n.IsCopy).Select((i) => ((NumberedElement)i.element).Number).ToList();
+			List<NumberedElementVM> elements = this.Removed.Where((i) => i.element is NumberedElementVM n && !n.IsCopy).Select((i) => i.element as NumberedElementVM).ToList();
 
-			numbers.Sort();
+			elements.Sort();
 
-			foreach (int number in numbers)
+			foreach (NumberedElementVM element in elements)
 			{
 				for (int i = 0; i < list.Count; i++)
 				{
-					if (list[i] is NumberedElement n && n.Number >= number)
+					if (list[i] is NumberedElementVM n && n.Id == element.Id && n.Number >= element.Number)
 					{
 						n.Number++;
 					}

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using CompendiumMapCreator.Data;
+﻿using System.Drawing;
 
 namespace CompendiumMapCreator
 {
@@ -18,28 +16,6 @@ namespace CompendiumMapCreator
 			g.DrawLine(new Pen(Color.Gray, 1f), x0, y - 1, x1, y - 1);
 			g.DrawLine(new Pen(Color.White, 1f), x0, y, x1, y);
 			g.DrawLine(new Pen(Color.Gray, 1f), x0, y + 1, x1, y + 1);
-		}
-
-		public static List<Label> GetLabels(this IList<Element> elements)
-		{
-			List<Label> labels = new List<Label>();
-
-			for (int i = 0; i < elements.Count; i++)
-			{
-				if (elements[i] is Label l && !string.IsNullOrEmpty(l.Text))
-				{
-					labels.Add(l);
-				}
-			}
-
-			if (labels.Count == 0)
-			{
-				return null;
-			}
-
-			labels.Sort((lhs, rhs) => lhs.Number.CompareTo(rhs.Number));
-
-			return labels;
 		}
 
 		public static Point OffsetBy(this Point p, Point o)

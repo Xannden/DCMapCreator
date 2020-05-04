@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using CompendiumMapCreator.Edits;
+using CompendiumMapCreator.ViewModel;
 
 namespace CompendiumMapCreator.Data
 {
@@ -65,7 +66,7 @@ namespace CompendiumMapCreator.Data
 			this.data = new List<T>(size);
 		}
 
-		public void Add(T item, IList<Element> list)
+		public void Add(T item, IList<ElementVM> list)
 		{
 			item.Apply(list);
 			this.Add(item);
@@ -159,7 +160,7 @@ namespace CompendiumMapCreator.Data
 			this.CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, element));
 		}
 
-		public void Undo(IList<Element> list)
+		public void Undo(IList<ElementVM> list)
 		{
 			if (this.Count > 0)
 			{
@@ -171,7 +172,7 @@ namespace CompendiumMapCreator.Data
 			}
 		}
 
-		public void Redo(IList<Element> list)
+		public void Redo(IList<ElementVM> list)
 		{
 			if (this.Count < this.data.Count)
 			{

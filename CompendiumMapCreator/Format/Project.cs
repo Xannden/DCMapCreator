@@ -6,15 +6,17 @@ using System.IO;
 using System.Windows;
 using CompendiumMapCreator.Data;
 using CompendiumMapCreator.Edits;
-using CompendiumMapCreator.Format.Export;
 using CompendiumMapCreator.Format.Projects;
+
+//using CompendiumMapCreator.Format.Projects;
+using CompendiumMapCreator.ViewModel;
 using Microsoft.Win32;
 
 namespace CompendiumMapCreator.Format
 {
 	public abstract class Project : INotifyPropertyChanged
 	{
-		private const int Version = 8;
+		private const int Version = 9;
 
 		private Image image;
 		private (int gen, int count) saved = (0, 0);
@@ -23,20 +25,20 @@ namespace CompendiumMapCreator.Format
 		protected Project(Image image)
 		{
 			this.Image = image;
-			this.Elements = new ObservableCollection<Element>();
+			this.Elements = new ObservableCollection<ElementVM>();
 		}
 
 		protected Project(string file)
 		{
 			this.File = file;
-			this.Elements = new ObservableCollection<Element>();
+			this.Elements = new ObservableCollection<ElementVM>();
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public UndoRedoStack<Edit> Edits { get; } = new UndoRedoStack<Edit>();
 
-		public ObservableCollection<Element> Elements
+		public ObservableCollection<ElementVM> Elements
 		{
 			get; protected set;
 		}
@@ -57,7 +59,7 @@ namespace CompendiumMapCreator.Format
 			}
 		}
 
-		public ObservableCollection<Element> Selected { get; } = new ObservableCollection<Element>();
+		public ObservableCollection<ElementVM> Selected { get; } = new ObservableCollection<ElementVM>();
 
 		public string Title
 		{
@@ -70,7 +72,7 @@ namespace CompendiumMapCreator.Format
 			}
 		}
 
-		public static Project FromImage(Image image) => new ProjectV3(image);
+		public static Project FromImage(Image image) => new ProjectV6(image);
 
 		public static Project Load(ref string initialDirectory)
 		{
@@ -152,6 +154,11 @@ namespace CompendiumMapCreator.Format
 					project = new ProjectV5(file, reader.ReadString());
 					break;
 
+				case 9:
+					reader.ReadInt32();
+					project = new ProjectV6(file, reader.ReadString());
+					break;
+
 				default:
 					throw new InvalidDataException();
 			}
@@ -173,7 +180,7 @@ namespace CompendiumMapCreator.Format
 			}
 		}
 
-		public void Copy(ImagePoint mousePosition, IList<Element> elements) => this.AddEdit(new Copy(elements, mousePosition));
+		public void Copy(ImagePoint mousePosition, IList<ElementVM> elements) => this.AddEdit(new Copy(elements, mousePosition));
 
 		public void Export(bool addLegend, ref string initialDirectory)
 		{
@@ -208,7 +215,7 @@ namespace CompendiumMapCreator.Format
 
 		public void Export(bool addLegend, string file)
 		{
-			Exporter.Run(file, this.Image, this.Elements, addLegend, this.Title);
+			//Exporter.Run(file, this.Image, this.Elements, addLegend, this.Title);
 		}
 
 		public bool HasUnsaved() => this.saved.gen != this.Edits.Generation || this.saved.count != this.Edits.Count;
@@ -251,36 +258,7 @@ namespace CompendiumMapCreator.Format
 
 			if (result)
 			{
-				try
-				{
-					using (MemoryStream stream = new MemoryStream())
-					using (BinaryWriter writer = new BinaryWriter(stream))
-					{
-						writer.Write(407893541);
-						writer.Write("DMC".ToCharArray());
-						writer.Write(Version);
-						writer.Write(0); // TODO: Type
-						writer.Write(this.Title ?? string.Empty);
-						writer.Write(this.Image.Data.Length);
-						writer.Write(this.Image.Data.GetBuffer());
-						writer.Write(this.Elements.Count);
-
-						foreach (Element item in this.Elements)
-						{
-							writer.Write((int)item.Type);
-							this.WriteElement(writer, item);
-						}
-
-						System.IO.File.WriteAllBytes(this.File, stream.ToArray());
-					}
-
-					this.saved = (this.Edits.Generation, this.Edits.Count);
-				}
-				catch (Exception e)
-				{
-					System.IO.File.AppendAllText("errorLog.txt", e.ToString());
-					MessageBox.Show("Unable to save file", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-				}
+				this.WriteData();
 			}
 		}
 
@@ -307,13 +285,13 @@ namespace CompendiumMapCreator.Format
 						this.OnPropertyChanged(nameof(this.Selected));
 					}
 
-					if (this.Elements[i] is AreaElement)
+					if (this.Elements[i] is AreaElementVM)
 					{
 						int index = 0;
 
 						for (int j = this.Elements.Count - 1; j >= 0; j--)
 						{
-							if (this.Elements[j] is AreaElement)
+							if (this.Elements[j] is AreaElementVM)
 							{
 								index = j;
 								break;
@@ -347,94 +325,88 @@ namespace CompendiumMapCreator.Format
 			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 		}
 
-		protected abstract Element ReadElement(BinaryReader reader);
+		protected abstract Dictionary<int, ElementId> ReadElementTable(BinaryReader reader);
+
+		internal virtual bool SupportsOptional => true;
+
+		internal virtual bool SupportsCopy => true;
+
+		internal virtual bool SupportsExtraData => true;
 
 		private void Load(BinaryReader reader)
 		{
-			long length = reader.ReadInt64();
-			byte[] data = reader.ReadBytes((int)length);
+			this.Image = this.ReadImage(reader);
 
-			this.Image = new Image(data);
+			Dictionary<int, ElementId> table = this.ReadElementTable(reader);
 
 			int count = reader.ReadInt32();
 			this.Elements.Clear();
 
 			for (int i = 0; i < count; i++)
 			{
-				Element e = this.ReadElement(reader);
+				int id = reader.ReadInt32();
+				ElementVM e = ElementVM.ReadElement(reader, table[id], this);
 
 				if (e != null)
 				{
 					this.Elements.Add(e);
 				}
 			}
+		}
 
-			int index = -1;
+		private Image ReadImage(BinaryReader reader)
+		{
+			long length = reader.ReadInt64();
+			byte[] data = reader.ReadBytes((int)length);
 
-			for (int i = this.Elements.Count - 1; i >= 0; i--)
+			return new Image(data);
+		}
+
+		private void WriteData()
+		{
+			try
 			{
-				if (this.Elements[i] is AreaElement)
+				using (MemoryStream stream = new MemoryStream())
+				using (BinaryWriter writer = new BinaryWriter(stream))
 				{
-					if (index == -1)
-					{
-						index = i;
-					}
+					this.WriteHeader(writer);
+
+					writer.Write(this.Image.Data.Length);
+					writer.Write(this.Image.Data.GetBuffer());
+
+					Dictionary<ElementId, int> table = App.Config.WriteElementTable(writer); // Element type table
+
+					this.WriteElements(writer, table);
+
+					System.IO.File.WriteAllBytes(this.File, stream.ToArray());
 				}
-				else if (index != -1)
-				{
-					this.Elements.Move(i, index);
-					index--;
-				}
+
+				this.saved = (this.Edits.Generation, this.Edits.Count);
+			}
+			catch (Exception e)
+			{
+				System.IO.File.AppendAllText("errorLog.txt", e.ToString());
+				MessageBox.Show("Unable to save file", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
 		}
 
-		private void WriteElement(BinaryWriter writer, Element element)
+		private void WriteHeader(BinaryWriter writer)
 		{
-			writer.Write(element.X);
-			writer.Write(element.Y);
-			writer.Write(element.IsCopy);
-			writer.Write(element.IsOptional);
+			writer.Write(407893541); // Magic number
+			writer.Write("DMC".ToCharArray()); // File name check
+			writer.Write(Version); // Project Version
+			writer.Write(0); // TODO: Dungeon or wilderness
+			writer.Write(this.Title ?? string.Empty); // project title
+		}
 
-			switch (element)
+		private void WriteElements(BinaryWriter writer, Dictionary<ElementId, int> table)
+		{
+			writer.Write(this.Elements.Count);
+
+			foreach (ElementVM element in this.Elements)
 			{
-				case Label l:
-					long start = writer.BaseStream.Position;
-					writer.Write(0);
-					writer.Write(l.Number);
-					writer.Write(l.Text ?? string.Empty);
-
-					long end = writer.BaseStream.Position;
-					writer.Seek(-(int)(end - start), SeekOrigin.Current);
-
-					writer.Write((int)(end - start));
-
-					writer.Seek((int)(end - start - 4), SeekOrigin.Current);
-					break;
-
-				case Portal p:
-					writer.Write(sizeof(int));
-					writer.Write(p.Number);
-					break;
-
-				case MapRelocate r:
-					writer.Write(sizeof(int));
-					writer.Write(r.Number);
-					break;
-
-				case AreaElement a:
-					writer.Write(sizeof(int) + sizeof(int));
-					writer.Write(a.AreaWidth);
-					writer.Write(a.AreaHeight);
-					break;
-
-				case Entrance e:
-					writer.Write(sizeof(int));
-					writer.Write((int)e.Rotation);
-					break;
-
-				default:
-					writer.Write(0);
-					break;
+				writer.Write(table[element.Id]);
+				element.WriteElement(writer);
 			}
 		}
 	}

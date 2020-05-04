@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using CompendiumMapCreator.Format;
+using CompendiumMapCreator.ViewModel;
 
 namespace CompendiumMapCreator.Edits
 {
@@ -16,12 +17,12 @@ namespace CompendiumMapCreator.Edits
 			this.newImage = newImage;
 		}
 
-		public override void Apply(IList<Element> list)
+		public override void Apply(IList<ElementVM> list)
 		{
 			this.project.Image = this.newImage;
 		}
 
-		public override void Undo(IList<Element> list)
+		public override void Undo(IList<ElementVM> list)
 		{
 			this.project.Image = this.oldImage;
 		}

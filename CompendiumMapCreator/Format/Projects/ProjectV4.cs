@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using CompendiumMapCreator.Data;
 
 namespace CompendiumMapCreator.Format.Projects
@@ -16,102 +17,58 @@ namespace CompendiumMapCreator.Format.Projects
 			this.Title = title;
 		}
 
-		protected override Element ReadElement(BinaryReader reader)
+		internal override bool SupportsOptional => false;
+
+		protected override Dictionary<int, ElementId> ReadElementTable(BinaryReader reader)
 		{
-			IconType? type = this.ReadType(reader.ReadInt32());
-
-			if (type == null)
+			return new Dictionary<int, ElementId>
 			{
-				return null;
-			}
-
-			int x = reader.ReadInt32();
-			int y = reader.ReadInt32();
-			bool isCopy = reader.ReadBoolean();
-
-			int length = reader.ReadInt32();
-
-			Element element;
-
-			switch (type)
-			{
-				case IconType.Label:
-					{
-						int number = reader.ReadInt32();
-						string text = reader.ReadString();
-
-						element = new Label(text?.Length == 0 ? null : text, number)
-						{
-							IsCopy = isCopy,
-						};
-					}
-
-					break;
-
-				case IconType.Portal:
-					{
-						int number = reader.ReadInt32();
-
-						element = new Portal(number)
-						{
-							IsCopy = isCopy,
-						};
-					}
-
-					break;
-
-				case IconType.Trap:
-					{
-						int width = reader.ReadInt32();
-						int height = reader.ReadInt32();
-
-						element = new Trap(width, height);
-					}
-
-					break;
-
-				case IconType.CollapsibleFloor:
-					{
-						int width = reader.ReadInt32();
-						int height = reader.ReadInt32();
-
-						element = new CollapsibleFloor(width, height);
-					}
-
-					break;
-
-				case IconType.Entrance:
-					{
-						Rotation rotation = (Rotation)reader.ReadInt32();
-
-						element = new Entrance(rotation);
-					}
-
-					break;
-
-				default:
-					reader.BaseStream.Seek(length, SeekOrigin.Current);
-
-					element = new Element(type.Value);
-					break;
-			}
-
-			element.X = x;
-			element.Y = y;
-
-			return element;
-		}
-
-		private IconType? ReadType(int value)
-		{
-			if (value < (int)IconType.Max && value >= 0)
-			{
-				return (IconType)value;
-			}
-			else
-			{
-				return null;
-			}
+				[1] = new ElementId("normalChest"),
+				[2] = new ElementId("lockedChest"),
+				[3] = new ElementId("rareChest"),
+				[4] = new ElementId("trappedChest"),
+				[5] = new ElementId("collectible"),
+				[6] = new ElementId("anyCollectible"),
+				[7] = new ElementId("loreCollectible"),
+				[8] = new ElementId("naturalCollectible"),
+				[9] = new ElementId("arcaneCollectible"),
+				[10] = new ElementId("plantCollectible"),
+				[11] = new ElementId("door"),
+				[12] = new ElementId("lockedDoor"),
+				[13] = new ElementId("blockedDoor"),
+				[14] = new ElementId("secretDoor"),
+				[15] = new ElementId("progressDoor"),
+				[16] = new ElementId("trap"),
+				[17] = new ElementId("trapBox"),
+				[18] = new ElementId("collapsibleFloor"),
+				[19] = new ElementId("drop"),
+				[20] = new ElementId("alarm"),
+				[21] = new ElementId("disabler"),
+				[22] = new ElementId("activator"),
+				[23] = new ElementId("lever"),
+				[24] = new ElementId("valve"),
+				[25] = new ElementId("Rune"),
+				[26] = new ElementId("label"),
+				[27] = new ElementId("questItem"),
+				[28] = new ElementId("useQuestItem"),
+				[29] = new ElementId("friendlyNpc"),
+				[30] = new ElementId("shiftyNpc"),
+				[31] = new ElementId("entrance"),
+				[32] = new ElementId("questExit"),
+				[33] = new ElementId("portal"),
+				[34] = new ElementId("shrine"),
+				[35] = new ElementId("craftingStation"),
+				[36] = new ElementId("trader"),
+				[37] = new ElementId("mapRelocate"),
+				[38] = new ElementId("leverLocked"),
+				[39] = new ElementId("explorer"),
+				[40] = new ElementId("explorer2"),
+				[41] = new ElementId("entrance2"),
+				[42] = new ElementId("partyGather"),
+				[43] = new ElementId("scroll"),
+				[44] = new ElementId("runeLocked"),
+				[45] = new ElementId("valveLocked"),
+			};
 		}
 	}
 }

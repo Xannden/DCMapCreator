@@ -1,29 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using CompendiumMapCreator.Data;
+using CompendiumMapCreator.ViewModel;
 
 namespace CompendiumMapCreator.Edits
 {
 	public sealed class Add : Edit
 	{
-		public Element Added { get; }
+		public ElementVM Added { get; }
 
-		public Add(Element added)
+		public Add(ElementVM added)
 		{
 			this.Added = added;
 		}
 
-		public override void Apply(IList<Element> list)
+		public override void Apply(IList<ElementVM> list)
 		{
 			Debug.Assert(this.Added != null, "Added is null");
 
-			if (this.Added is AreaElement)
+			if (this.Added.IsBackground)
 			{
 				int index = 0;
 
 				for (int i = list.Count - 1; i >= 0; i--)
 				{
-					if (list[i] is AreaElement)
+					if (list[i].IsBackground)
 					{
 						index = i;
 						break;
@@ -40,7 +40,7 @@ namespace CompendiumMapCreator.Edits
 			}
 		}
 
-		public override void Undo(IList<Element> list)
+		public override void Undo(IList<ElementVM> list)
 		{
 			Debug.Assert(this.Added != null, "Added is null");
 

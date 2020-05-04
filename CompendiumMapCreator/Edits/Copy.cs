@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using CompendiumMapCreator.Data;
+using CompendiumMapCreator.ViewModel;
 
 namespace CompendiumMapCreator.Edits
 {
 	public class Copy : Edit
 	{
-		private List<Element> Clones { get; }
+		private List<ElementVM> Clones { get; }
 
-		public Copy(IList<Element> source, ImagePoint point)
+		public Copy(IList<ElementVM> source, ImagePoint point)
 		{
-			this.Clones = new List<Element>();
+			this.Clones = new List<ElementVM>();
 
 			(int x_min, int y_min, int x_max, int y_max) = (int.MaxValue, int.MaxValue, int.MinValue, int.MinValue);
 
@@ -41,34 +42,18 @@ namespace CompendiumMapCreator.Edits
 
 			for (int i = 0; i < source.Count; i++)
 			{
-				Element clone = source[i] switch
-				{
-					Label e => new Label(null, e.Number)
-					{
-						IsCopy = true,
-					},
-					Portal p => new Portal(p.Number)
-					{
-						IsCopy = true,
-					},
-					MapRelocate r => new MapRelocate(r.Number)
-					{
-						IsCopy = true,
-					},
-					Trap t => new Trap(t.AreaWidth, t.AreaHeight),
-					CollapsibleFloor f => new CollapsibleFloor(f.AreaWidth, f.AreaHeight),
-					_ => new Element(source[i].Type),
-				};
+				ElementVM clone = source[i].Clone();
 
 				clone.X = source[i].X - mid_x + point.X;
 				clone.Y = source[i].Y - mid_y + point.Y;
-				clone.IsOptional = source[i].IsOptional;
+				clone.Optional = source[i].Optional;
+				clone.IsCopy = true;
 
 				this.Clones.Add(clone);
 			}
 		}
 
-		public override void Apply(IList<Element> list)
+		public override void Apply(IList<ElementVM> list)
 		{
 			for (int i = 0; i < this.Clones.Count; i++)
 			{
@@ -76,7 +61,7 @@ namespace CompendiumMapCreator.Edits
 			}
 		}
 
-		public override void Undo(IList<Element> list)
+		public override void Undo(IList<ElementVM> list)
 		{
 			for (int i = 0; i < this.Clones.Count; i++)
 			{

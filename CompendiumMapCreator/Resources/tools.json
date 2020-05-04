@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Rewards",
+    "icon": "normalChest.png",
+    "shortcut": "R",
+    "elements": [
+      "normalChest",
+      "lockedChest",
+      "rareChest",
+      "trappedChest"
+    ]
+  },
+  {
+    "name": "Collectible Devices",
+    "icon": "collectible.png",
+    "shortcut": "C",
+    "elements": [
+      "anyCollectible",
+      "loreCollectible",
+      "naturalCollectible",
+      "arcaneCollectible",
+      "plantCollectible",
+      "scroll",
+      "explorer",
+      "explorer2"
+    ]
+  },
+  {
+    "name": "Door",
+    "icon": "door.png",
+    "shortcut": "D",
+    "defaultElement": "door",
+    "elements": [
+      "lockedDoor",
+      "blockedDoor",
+      "secretDoor",
+      "progressDoor",
+      "mapRelocate"
+    ]
+  },
+  {
+    "name": "Traps",
+    "icon": "trap.png",
+    "shortcut": "T",
+    "elements": [
+      "trap",
+      "trapBox",
+      "collapsibleFloor",
+      "drop",
+      "alarm",
+      "disabler"
+    ]
+  },
+  {
+    "name": "Activators",
+    "icon": "activator.png",
+    "defaultElement": "activator",
+    "shortcut": "A",
+    "elements": [
+      "lever",
+      "valve",
+      "rune",
+      "leverLocked",
+      "valveLocked",
+      "runeLocked"
+    ]
+  },
+  {
+    "name": "Quest Items",
+    "icon": "label.png",
+    "shortcut": "Q",
+    "elements": [
+      "label",
+      "questItem",
+      "useQuestItem",
+      "friendlyNpc",
+      "shiftyNpc",
+      "shrine"
+    ]
+  },
+  {
+    "name": "Entry/Exit",
+    "icon": "entrance.png",
+    "shortcut": "E",
+    "elements": [
+      "entrance",
+      "questExit",
+      "portal",
+      "entrance2",
+      "partyGather"
+    ]
+  },
+  {
+    "name": "Workstations",
+    "icon": "craftingStation.png",
+    "shortcut": "W",
+    "elements": [
+      "craftingStation",
+      "trader"
+    ]
+  }
+]

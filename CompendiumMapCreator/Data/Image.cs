@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Media.Imaging;
+using CompendiumMapCreator.Data;
 
 namespace CompendiumMapCreator
 {
@@ -11,8 +12,10 @@ namespace CompendiumMapCreator
 	{
 		private static readonly Dictionary<string, Image> Cache = new Dictionary<string, Image>();
 
-		public static Image GetImageFromResources(string fileName)
+		public static Image GetImageFromElementId(ElementId id)
 		{
+			string fileName = id.Value + ".png";
+
 			if (Cache.TryGetValue(fileName, out Image value))
 			{
 				return value;
@@ -22,6 +25,22 @@ namespace CompendiumMapCreator
 				Image image = new Image(GetImageUri(fileName), Rotation.Rotate0);
 
 				Cache.Add(fileName, image);
+
+				return image;
+			}
+		}
+
+		public static Image GetImageFromTool(ToolListItem item)
+		{
+			if (Cache.TryGetValue(item.Icon, out Image value))
+			{
+				return value;
+			}
+			else
+			{
+				Image image = new Image(GetImageUri(item.Icon), Rotation.Rotate0);
+
+				Cache.Add(item.Icon, image);
 
 				return image;
 			}
@@ -37,15 +56,6 @@ namespace CompendiumMapCreator
 
 		public int Height => this.DrawingImage.Height;
 
-		public Image(string uri, Rotation rotation)
-		{
-			Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(uri);
-
-			byte[] data = new BinaryReader(stream).ReadBytes((int)stream.Length);
-
-			this.Load(new MemoryStream(data, 0, data.Length, false, true), rotation);
-		}
-
 		public Image(byte[] data, Rotation rotation = Rotation.Rotate0)
 		{
 			this.Load(new MemoryStream(data, 0, data.Length, false, true), rotation);
@@ -56,8 +66,17 @@ namespace CompendiumMapCreator
 			this.Load(stream, rotation);
 		}
 
-		public static string GetImageUri(string fileName)
-			=> "CompendiumMapCreator." + fileName.Replace('\\', '.').Replace('/', '.');
+		internal Image(string uri, Rotation rotation = Rotation.Rotate0)
+		{
+			Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(uri);
+
+			byte[] data = new BinaryReader(stream).ReadBytes((int)stream.Length);
+
+			this.Load(new MemoryStream(data, 0, data.Length, false, true), rotation);
+		}
+
+		internal static string GetImageUri(string fileName)
+			=> "CompendiumMapCreator.Icons." + fileName.Replace('\\', '.').Replace('/', '.');
 
 		private void Load(MemoryStream stream, Rotation rotation)
 		{

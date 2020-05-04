@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using CompendiumMapCreator.Controls;
 using CompendiumMapCreator.Data;
 using CompendiumMapCreator.View;
+using CompendiumMapCreator.ViewModel;
 
 namespace CompendiumMapCreator
 {
@@ -16,7 +16,7 @@ namespace CompendiumMapCreator
 	{
 		private readonly DragHelper drag;
 		private ImagePoint change = new ImagePoint(0, 0);
-		private IList<Element> copied;
+		private IList<ElementVM> copied;
 		private bool justClosed;
 		private bool moving;
 		private ImagePoint origin;
@@ -25,16 +25,11 @@ namespace CompendiumMapCreator
 		{
 			this.InitializeComponent();
 
-			// this.SelectTool(Tools.Cursor);
 			this.ViewModel.PropertyChanged += (_, e) =>
 			{
 				if (e.PropertyName == nameof(this.ViewModel.Project))
 				{
 					this.Zoom.Center();
-				}
-				else if (e.PropertyName == nameof(this.ViewModel.SelectedTool))
-				{
-					this.SelectTool(this.ViewModel.SelectedTool);
 				}
 			};
 
@@ -77,7 +72,7 @@ namespace CompendiumMapCreator
 				return;
 			}
 
-			this.copied = new List<Element>(this.ViewModel.Project.Selected);
+			this.copied = new List<ElementVM>(this.ViewModel.Project.Selected);
 		}
 
 		private void Copy(object sender, RoutedEventArgs e)
@@ -97,9 +92,9 @@ namespace CompendiumMapCreator
 				return;
 			}
 
-			Element element = this.ViewModel.Project.Selected[0];
+			ElementVM element = this.ViewModel.Project.Selected[0];
 
-			this.ViewModel.Edit((element.Position() + new ImagePoint(element.Width / 2, element.Height / 2)).ToWindow(this.Zoom) + new WindowPoint(160, 20));
+			this.ViewModel.Edit((new ImagePoint(element.X, element.Y) + new ImagePoint(element.Width / 2, element.Height / 2)).ToWindow(this.Zoom) + new WindowPoint(160, 20));
 
 			this.EditWindow.Focus();
 		}
@@ -153,61 +148,24 @@ namespace CompendiumMapCreator
 			this.ViewModel.SaveProject(forcePrompt: true);
 		}
 
-		private void SelectTool(Tool tool)
-		{
-			bool Select(TreeViewItem item)
-			{
-				if (((Tool)item.Header).Description == tool.Description)
-				{
-					item.IsSelected = true;
-					return true;
-				}
-
-				bool isExpanded = item.IsExpanded;
-				if (!isExpanded)
-				{
-					item.IsExpanded = true;
-					item.UpdateLayout();
-				}
-
-				for (int i = 0; i < item.Items.Count; i++)
-				{
-					TreeViewItem sub = (TreeViewItem)item.ItemContainerGenerator.ContainerFromIndex(i);
-
-					if (Select(sub))
-					{
-						return true;
-					}
-				}
-
-				item.IsExpanded = isExpanded;
-				return false;
-			}
-
-			for (int i = 0; i < this.ToolsView.Items.Count; i++)
-			{
-				TreeViewItem item = (TreeViewItem)this.ToolsView.ItemContainerGenerator.ContainerFromIndex(i);
-
-				if (Select(item))
-				{
-					return;
-				}
-			}
-		}
-
 		private void ShowShortcuts(object sender, RoutedEventArgs e) => new ShortcutsWindow() { Owner = this }.Show();
 
 		private void Tools_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
-			Tool tool = (Tool)this.ToolsView.SelectedValue;
+			ToolVM tool = (ToolVM)this.ToolsView.SelectedValue;
 
-			if (tool.IsSelectable)
+			if (tool.ToolElement.HasValue)
 			{
 				this.ViewModel.SelectedTool = tool;
 			}
-			else
+			else if (tool == ToolVM.Cursor)
 			{
-				this.ViewModel.SelectedTool = tool.Tools[0];
+				this.ViewModel.SelectedTool = ToolVM.Cursor;
+			}
+			else if (tool.Elements != null)
+			{
+				tool.IsExpanded = true;
+				this.ViewModel.SelectedTool = tool.Elements[0];
 			}
 		}
 
@@ -284,44 +242,9 @@ namespace CompendiumMapCreator
 			}
 			else if (this.ViewModel.Editing.Visibility == Visibility.Collapsed)
 			{
-				switch (e.Key)
+				if (e.Key == Key.D1)
 				{
-					// Cursor
-					case Key.D1:
-						this.ViewModel.SetTool(Tools.Cursor);
-						return;
-
-					case Key.R:
-						this.ViewModel.SetTool(Tools.Rewards.Next(this.ViewModel.SelectedTool));
-						return;
-
-					case Key.C:
-						this.ViewModel.SetTool(Tools.Collectible.Next(this.ViewModel.SelectedTool));
-						return;
-
-					case Key.D:
-						this.ViewModel.SetTool(Tools.Door.Next(this.ViewModel.SelectedTool));
-						return;
-
-					case Key.T:
-						this.ViewModel.SetTool(Tools.Traps.Next(this.ViewModel.SelectedTool));
-						return;
-
-					case Key.A:
-						this.ViewModel.SetTool(Tools.Activators.Next(this.ViewModel.SelectedTool));
-						return;
-
-					case Key.Q:
-						this.ViewModel.SetTool(Tools.QuestItems.Next(this.ViewModel.SelectedTool));
-						return;
-
-					case Key.E:
-						this.ViewModel.SetTool(Tools.Movement.Next(this.ViewModel.SelectedTool));
-						return;
-
-					case Key.W:
-						this.ViewModel.SetTool(Tools.Workstation.Next(this.ViewModel.SelectedTool));
-						return;
+					this.ViewModel.SetTool(ToolVM.Cursor);
 				}
 			}
 
@@ -332,11 +255,6 @@ namespace CompendiumMapCreator
 					this.ViewModel.Delete();
 					break;
 			}
-		}
-
-		private void Window_Loaded(object sender, RoutedEventArgs e)
-		{
-			this.SelectTool(Tools.Cursor);
 		}
 
 		private void Window_MouseUp(object sender, MouseButtonEventArgs e)
@@ -367,7 +285,7 @@ namespace CompendiumMapCreator
 
 			if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
 			{
-				foreach (Element element in this.ViewModel.Project.Selected)
+				foreach (ElementVM element in this.ViewModel.Project.Selected)
 				{
 					element.Opacity = 0.25;
 				}
@@ -439,7 +357,7 @@ namespace CompendiumMapCreator
 
 			if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
 			{
-				foreach (Element element in this.ViewModel.Project.Selected)
+				foreach (ElementVM element in this.ViewModel.Project.Selected)
 				{
 					element.Opacity = 1;
 				}
@@ -542,7 +460,7 @@ namespace CompendiumMapCreator
 		{
 			foreach (object item in this.ToolsView.Items)
 			{
-				if (item is Tool tool)
+				if (item is ToolVM tool)
 				{
 					tool.IsExpanded = true;
 				}
@@ -553,11 +471,15 @@ namespace CompendiumMapCreator
 		{
 			foreach (object item in this.ToolsView.Items)
 			{
-				if (item is Tool tool)
+				if (item is ToolVM tool)
 				{
 					tool.IsExpanded = false;
 				}
 			}
+		}
+
+		private void BitmapImage_ImageFailed(object sender, ExceptionRoutedEventArgs e)
+		{
 		}
 	}
 }

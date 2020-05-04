@@ -1,40 +1,40 @@
 ﻿using System.Collections.Generic;
-using CompendiumMapCreator.Data;
+using CompendiumMapCreator.ViewModel;
 
 namespace CompendiumMapCreator.Edits
 {
 	public sealed class Rotate : Edit
 	{
-		private readonly Entrance element;
+		private readonly ElementVM element;
 		private readonly bool clockwise;
 
-		public Rotate(Entrance element, bool clockwise)
+		public Rotate(ElementVM element, bool clockwise)
 		{
 			this.element = element;
 			this.clockwise = clockwise;
 		}
 
-		public override void Apply(IList<Element> list)
+		public override void Apply(IList<ElementVM> list)
 		{
 			if (this.clockwise)
 			{
-				this.element.Rotate_Clockwise();
+				this.element.RotateCW();
 			}
 			else
 			{
-				this.element.Rotate_CounterClockwise();
+				this.element.RotateCC();
 			}
 		}
 
-		public override void Undo(IList<Element> list)
+		public override void Undo(IList<ElementVM> list)
 		{
 			if (this.clockwise)
 			{
-				this.element.Rotate_CounterClockwise();
+				this.element.RotateCC();
 			}
 			else
 			{
-				this.element.Rotate_Clockwise();
+				this.element.RotateCW();
 			}
 		}
 	}

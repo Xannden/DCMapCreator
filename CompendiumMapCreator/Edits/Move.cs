@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CompendiumMapCreator.ViewModel;
 
 namespace CompendiumMapCreator.Edits
 {
@@ -8,16 +9,16 @@ namespace CompendiumMapCreator.Edits
 
 		public int Y { get; }
 
-		public IList<Element> Elements { get; }
+		public IList<ElementVM> Elements { get; }
 
-		public Move(int x, int y, IList<Element> elements)
+		public Move(int x, int y, IList<ElementVM> elements)
 		{
 			this.X = x;
 			this.Y = y;
 			this.Elements = elements;
 		}
 
-		public override void Apply(IList<Element> list)
+		public override void Apply(IList<ElementVM> list)
 		{
 			for (int i = 0; i < this.Elements.Count; i++)
 			{
@@ -29,7 +30,7 @@ namespace CompendiumMapCreator.Edits
 			}
 		}
 
-		public override void Undo(IList<Element> list)
+		public override void Undo(IList<ElementVM> list)
 		{
 			for (int i = 0; i < this.Elements.Count; i++)
 			{

@@ -2,13 +2,26 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using CompendiumMapCreator.Data;
 
-namespace CompendiumMapCreator.Data
+namespace CompendiumMapCreator.ViewModel
 {
-	public class NumberedElement : Element
+	public class NumberedElementVM : ElementVM
 	{
 		private static Dictionary<int, Image> digitIcons;
+		private readonly Color color;
 		private int number;
+		private Image icon;
+
+		internal NumberedElementVM(ElementId id, int number)
+			: base(id)
+		{
+			byte[] color = App.Config.GetElement(id).Color;
+
+			this.color = Color.FromArgb(color[0], color[1], color[2]);
+
+			this.Number = number;
+		}
 
 		public int Number
 		{
@@ -17,17 +30,28 @@ namespace CompendiumMapCreator.Data
 			set
 			{
 				this.number = value;
-				this.Image = CreateImage(this.number, this.Background);
+
+				this.icon = CreateImage(this.number, this.color);
+
+				this.SendPropertyChanged(this, nameof(this.Image));
 			}
 		}
 
-		public Color Background { get; }
+		public override Image Image => this.icon;
 
-		public NumberedElement(int number, Color background, IconType type)
-			: base(CreateImage(number, background), type)
+		public override ElementVM Clone()
 		{
-			this.number = number;
-			this.Background = background;
+			return new NumberedElementVM(this.Id, this.Number);
+		}
+
+		protected override void WriteData(BinaryWriter writer)
+		{
+			writer.Write(this.Number);
+		}
+
+		protected override void ReadData(BinaryReader reader, int dataLength)
+		{
+			this.Number = reader.ReadInt32();
 		}
 
 		private static Image CreateImage(int number, Color color)
@@ -38,7 +62,7 @@ namespace CompendiumMapCreator.Data
 
 				for (int i = 0; i < 10; i++)
 				{
-					digitIcons.Add(i, Image.GetImageFromResources("Icons/" + i + ".png"));
+					digitIcons.Add(i, new Image(Image.GetImageUri(i + ".png")));
 				}
 			}
 

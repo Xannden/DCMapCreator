@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using CompendiumMapCreator.Data;
 
 namespace CompendiumMapCreator.Format.Projects
@@ -15,72 +16,35 @@ namespace CompendiumMapCreator.Format.Projects
 		{
 		}
 
-		protected override Element ReadElement(BinaryReader reader)
+		internal override bool SupportsOptional => false;
+
+		internal override bool SupportsCopy => false;
+
+		internal override bool SupportsExtraData => false;
+
+		protected override Dictionary<int, ElementId> ReadElementTable(BinaryReader reader)
 		{
-			IconType? type = this.ReadType(reader.ReadInt32());
-
-			int x = reader.ReadInt32();
-			int y = reader.ReadInt32();
-
-			Element element;
-
-			switch (type)
+			return new Dictionary<int, ElementId>
 			{
-				case IconType.Label:
-					{
-						int number = reader.ReadInt32();
-						string text = reader.ReadString();
-
-						element = new Label(text, number);
-					}
-
-					break;
-
-				case IconType.Portal:
-					{
-						int number = reader.ReadInt32();
-
-						element = new Portal(number);
-					}
-
-					break;
-
-				default:
-					element = new Element(type.Value);
-					break;
-			}
-
-			element.X = x;
-			element.Y = y;
-
-			return element;
-		}
-
-		private IconType? ReadType(int value)
-		{
-			return value switch
-			{
-				0 => IconType.Cursor,
-				1 => IconType.NormalChest,
-				2 => IconType.TrappedChest,
-				3 => IconType.LockedChest,
-				4 => IconType.LockedDoor,
-				5 => IconType.Opener,
-				6 => IconType.TrapBox,
-				7 => IconType.AnyCollectible,
-				8 => IconType.Lore,
-				9 => IconType.Natural,
-				10 => IconType.Arcane,
-				11 => IconType.QuestItem,
-				12 => IconType.QuestNPC,
-				13 => IconType.SecretDoor,
-				14 => IconType.QuestExit,
-				15 => IconType.Portal,
-				16 => IconType.Label,
-				17 => IconType.Trap,
-				18 => IconType.CollapsibleFloor,
-				19 => IconType.Entrance,
-				_ => throw new InvalidDataException(),
+				[1] = new ElementId("normalChest"),
+				[2] = new ElementId("trappedChest"),
+				[3] = new ElementId("lockedChest"),
+				[4] = new ElementId("lockedDoor"),
+				[5] = new ElementId("activator"),
+				[6] = new ElementId("trapBox"),
+				[7] = new ElementId("anyCollectible"),
+				[8] = new ElementId("loreCollectible"),
+				[9] = new ElementId("naturalCollectible"),
+				[10] = new ElementId("arcaneCollectible"),
+				[11] = new ElementId("questItem"),
+				[12] = new ElementId("friendlyNpc"),
+				[13] = new ElementId("secretDoor"),
+				[14] = new ElementId("questExit"),
+				[15] = new ElementId("portal"),
+				[16] = new ElementId("label"),
+				[17] = new ElementId("trap"),
+				[18] = new ElementId("collapsibleFloor"),
+				[19] = new ElementId("entrance"),
 			};
 		}
 	}

@@ -7,17 +7,28 @@ using MColor = System.Windows.Media.Color;
 
 namespace CompendiumMapCreator.ViewModel
 {
-	public class DragCollapsibleFloor : IDrag
+	public class DragAreaElement : IDrag
 	{
-		private ImagePoint start;
+		private readonly ElementId element;
+
+		private readonly ImagePoint start;
 
 		public Rectangle Selection { get; private set; }
 
-		public MColor Color => CollapsibleFloor.DrawingColor.ToMediaColor();
+		public MColor Color
+		{
+			get
+			{
+				byte[] color = App.Config.GetElement(this.element).Color;
 
-		public DragCollapsibleFloor(ImagePoint start)
+				return MColor.FromRgb(color[0], color[1], color[2]);
+			}
+		}
+
+		public DragAreaElement(ImagePoint start, ElementId element)
 		{
 			this.start = start;
+			this.element = element;
 		}
 
 		public void Update(int x, int y, Project project) => this.Selection = Rectangle.FromLTRB(Math.Min(this.start.X, x), Math.Min(this.start.Y, y), Math.Max(this.start.X, x) + 1, Math.Max(this.start.Y, y) + 1);
@@ -29,7 +40,12 @@ namespace CompendiumMapCreator.ViewModel
 				return (false, null);
 			}
 
-			return (true, new Add(new CollapsibleFloor(this.Selection.Width, this.Selection.Height) { X = this.Selection.Left, Y = this.Selection.Top }));
+			ElementVM element = ElementVM.CreateAreaElement(this.element, this.Selection.Width, this.Selection.Height);
+
+			element.X = this.Selection.Left;
+			element.Y = this.Selection.Top;
+
+			return (true, new Add(element));
 		}
 	}
 }

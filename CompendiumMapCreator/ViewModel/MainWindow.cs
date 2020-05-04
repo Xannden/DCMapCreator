@@ -24,11 +24,12 @@ namespace CompendiumMapCreator.ViewModel
 		private string imageDir;
 		private Project project;
 		private string projectDir;
-		private Tool selectedTool;
+		private ToolVM selectedTool;
 
 		public MainWindow()
 		{
 			this.Editing.Closing += (text, label) => this.Project?.AddEdit(new ChangeLabel(label, text));
+			this.ToolList = App.Config.GetTools();
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -58,13 +59,14 @@ namespace CompendiumMapCreator.ViewModel
 			}
 		}
 
-		public Tool SelectedTool
+		public ToolVM SelectedTool
 		{
 			get => this.selectedTool;
 
 			set
 			{
 				this.selectedTool = value;
+				this.selectedTool.IsSelected = true;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.SelectedTool)));
 			}
 		}
@@ -122,20 +124,9 @@ namespace CompendiumMapCreator.ViewModel
 			}
 		}
 
-		public List<Tool> ToolList => new List<Tool>()
-				{
-					Tools.Cursor,
-					Tools.Rewards,
-					Tools.Collectible,
-					Tools.Door,
-					Tools.Traps,
-					Tools.Activators,
-					Tools.QuestItems,
-					Tools.Movement,
-					Tools.Workstation,
-				};
+		public List<ToolVM> ToolList { get; }
 
-		public void AddElement(Element element)
+		public void AddElement(ElementVM element)
 		{
 			if (this.Project?.Image == null)
 			{
@@ -170,7 +161,7 @@ namespace CompendiumMapCreator.ViewModel
 				{
 					this.Project.AddEdit(new ChangeMap(this.Project, new Image(File.ReadAllBytes(dialog.FileName))));
 
-					this.SelectedTool = Tools.Cursor;
+					this.SelectedTool = ToolVM.Cursor;
 				}
 				catch (Exception)
 				{
@@ -205,14 +196,19 @@ namespace CompendiumMapCreator.ViewModel
 				return;
 			}
 
-			if (this.SelectedTool.Type != IconType.Cursor)
+			if (this.SelectedTool != ToolVM.Cursor && this.SelectedTool.ToolElement.HasValue)
 			{
-				Element element = this.CreateElement(this.SelectedTool.Type);
+				ElementVM element = ElementVM.CreateElement(this.SelectedTool.ToolElement.Value);
 
 				ImagePoint position = p - new ImagePoint(element.Width / 2, element.Height / 2);
 
 				element.X = position.X;
 				element.Y = position.Y;
+
+				if (element is NumberedElementVM ne)
+				{
+					ne.Number = this.project.Elements.Count((e) => e.Id == ne.Id && !e.IsCopy);
+				}
 
 				this.AddElement(element);
 				this.Project.Selected.Clear();
@@ -222,20 +218,6 @@ namespace CompendiumMapCreator.ViewModel
 			{
 				this.Project.Select(p, !Keyboard.IsKeyDown(Key.LeftCtrl));
 			}
-		}
-
-		public Element CreateElement(IconType type)
-		{
-			return type switch
-			{
-				IconType.Label => new Label(null, this.Project.Elements.Count((e) => e is Label l && !l.IsCopy)),
-				IconType.Portal => new Portal(this.Project.Elements.Count((e) => e is Portal p && !p.IsCopy)),
-				IconType.MapRelocate => new MapRelocate(this.Project.Elements.Count((e) => e is MapRelocate r && !r.IsCopy)),
-				IconType.Entrance => new Entrance(Rotation._0),
-				IconType.Trap => new Trap(5, 5),
-				IconType.CollapsibleFloor => new CollapsibleFloor(5, 5),
-				_ => new Element(type),
-			};
 		}
 
 		public void Delete()
@@ -283,13 +265,9 @@ namespace CompendiumMapCreator.ViewModel
 
 			if (!Keyboard.IsKeyDown(Key.Space))
 			{
-				if (this.SelectedTool.Type == IconType.Trap)
+				if (this.SelectedTool.IsArea)
 				{
-					this.dragging = new DragTrap(p);
-				}
-				else if (this.SelectedTool.Type == IconType.CollapsibleFloor)
-				{
-					this.dragging = new DragCollapsibleFloor(p);
+					this.dragging = new DragAreaElement(p, this.SelectedTool.ToolElement.Value);
 				}
 				else
 				{
@@ -300,9 +278,9 @@ namespace CompendiumMapCreator.ViewModel
 
 					if (this.Project.Selected.Count != 0)
 					{
-						this.dragging = new DragMove(new List<Element>(this.Project.Selected), p);
+						this.dragging = new DragMove(new List<ElementVM>(this.Project.Selected), p);
 					}
-					else if (this.SelectedTool.Type == IconType.Cursor)
+					else if (this.SelectedTool == ToolVM.Cursor)
 					{
 						this.dragging = new DragSelect(p);
 					}
@@ -321,12 +299,12 @@ namespace CompendiumMapCreator.ViewModel
 
 		public void Edit(WindowPoint p)
 		{
-			if (this.Project?.Selected.Count != 1 || !(this.Project.Selected[0] is Label))
+			if (this.Project?.Selected.Count != 1 || !(this.Project.Selected[0] is LabelElementVM))
 			{
 				return;
 			}
 
-			this.Editing.Start(p, (Label)this.Project.Selected[0]);
+			this.Editing.Start(p, (LabelElementVM)this.Project.Selected[0]);
 		}
 
 		public void Export()
@@ -358,7 +336,7 @@ namespace CompendiumMapCreator.ViewModel
 				{
 					this.Project = Project.FromImage(new Image(File.ReadAllBytes(dialog.FileName)));
 
-					this.SelectedTool = Tools.Cursor;
+					this.SelectedTool = ToolVM.Cursor;
 				}
 				catch (Exception)
 				{
@@ -379,7 +357,7 @@ namespace CompendiumMapCreator.ViewModel
 			{
 				this.Project = result;
 				this.Project.Edits.Clear();
-				this.SelectedTool = Tools.Cursor;
+				this.SelectedTool = ToolVM.Cursor;
 			}
 		}
 
@@ -390,22 +368,22 @@ namespace CompendiumMapCreator.ViewModel
 
 		public void RotateClockwise()
 		{
-			if (this.Project.Selected.Count != 1 || this.Project.Selected[0].Type != IconType.Entrance)
+			if (this.Project.Selected.Count != 1 || !this.Project.Selected[0].CanRotate)
 			{
 				return;
 			}
 
-			this.Project.AddEdit(new Rotate((Entrance)this.Project.Selected[0], clockwise: true));
+			this.Project.AddEdit(new Rotate(this.Project.Selected[0], clockwise: true));
 		}
 
 		public void RotateCounterClockwise()
 		{
-			if (this.Project.Selected.Count != 1 || this.Project.Selected[0].Type != IconType.Entrance)
+			if (this.Project.Selected.Count != 1 || !this.Project.Selected[0].CanRotate)
 			{
 				return;
 			}
 
-			this.Project.AddEdit(new Rotate((Entrance)this.Project.Selected[0], clockwise: false));
+			this.Project.AddEdit(new Rotate(this.Project.Selected[0], clockwise: false));
 		}
 
 		public void SaveProject(bool forcePrompt = false)
@@ -431,7 +409,7 @@ namespace CompendiumMapCreator.ViewModel
 			this.Project.Title = title;
 		}
 
-		public void SetTool(Tool tool)
+		public void SetTool(ToolVM tool)
 		{
 			this.SelectedTool = tool;
 			this.Project?.Selected.Clear();

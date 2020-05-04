@@ -12,13 +12,13 @@ namespace CompendiumMapCreator.ViewModel
 	{
 		private (int X, int Y) Change { get; set; }
 
-		private IList<Element> Elements { get; }
+		private IList<ElementVM> Elements { get; }
 
 		private ImagePoint Start { get; }
 
 		private ImagePoint[] Offsets { get; }
 
-		public DragMove(IList<Element> elements, ImagePoint start)
+		public DragMove(IList<ElementVM> elements, ImagePoint start)
 		{
 			this.Elements = elements;
 			this.Start = start;

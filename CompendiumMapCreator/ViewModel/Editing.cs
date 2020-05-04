@@ -7,7 +7,7 @@ namespace CompendiumMapCreator.ViewModel
 {
 	public class Editing : INotifyPropertyChanged
 	{
-		private Label label;
+		private LabelElementVM label;
 		private bool started;
 
 		public Visibility Visibility { get; private set; } = Visibility.Collapsed;
@@ -20,9 +20,9 @@ namespace CompendiumMapCreator.ViewModel
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public event Action<string, Label> Closing;
+		public event Action<string, LabelElementVM> Closing;
 
-		public void Start(WindowPoint p, Label label)
+		public void Start(WindowPoint p, LabelElementVM label)
 		{
 			if (this.started)
 			{

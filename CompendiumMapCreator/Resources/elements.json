@@ -1,0 +1,249 @@
+[
+  {
+    "id": "normalChest",
+    "name": "Normal Chest",
+    "type": "basic"
+  },
+  {
+    "id": "lockedChest",
+    "name": "Locked Chest",
+    "type": "basic"
+  },
+  {
+    "id": "rareChest",
+    "name": "Rare Chest",
+    "type": "basic"
+  },
+  {
+    "id": "trappedChest",
+    "name": "Trapped Chest",
+    "type": "basic"
+  },
+  {
+    "id": "anyCollectible",
+    "name": "Any Collectible",
+    "type": "basic",
+    "toolTip": "Adventurer's Pack, Rubble"
+  },
+  {
+    "id": "loreCollectible",
+    "name": "Lore Collectible",
+    "type": "basic",
+    "toolTip": "Some Bookshelf, Some Cabinet"
+  },
+  {
+    "id": "naturalCollectible",
+    "name": "Natural Collectible",
+    "type": "basic",
+    "toolTip": "Bones, Fungus, Moss, Mushroom, Some Crude Altar"
+  },
+  {
+    "id": "arcaneCollectible",
+    "name": "Arcane Collectible",
+    "type": "basic",
+    "toolTip": "Alchemy Table, Scroll Rack, Some Bookshelf, Some Cabinet, Some Crude Altar"
+  },
+  {
+    "id": "plantCollectible",
+    "name": "Plant Collectible",
+    "type": "basic",
+    "toolTip": "Flowering Plant"
+  },
+  {
+    "id": "scroll",
+    "name": "Scroll",
+    "type": "basic"
+  },
+  {
+    "id": "explorer",
+    "name": "Explorer",
+    "type": "basic"
+  },
+  {
+    "id": "explorer2",
+    "name": "Explorer 2",
+    "type": "basic"
+  },
+  {
+    "id": "door",
+    "name": "Door",
+    "type": "basic"
+  },
+  {
+    "id": "lockedDoor",
+    "name": "Locked Door",
+    "type": "basic"
+  },
+  {
+    "id": "blockedDoor",
+    "name": "Blocked Door",
+    "type": "basic"
+  },
+  {
+    "id": "secretDoor",
+    "name": "Secret Door",
+    "type": "basic"
+  },
+  {
+    "id": "progressDoor",
+    "name": "Progress Door",
+    "type": "basic"
+  },
+  {
+    "id": "mapRelocate",
+    "name": "Map Relocate",
+    "type": "numbered",
+    "color": "204, 38, 255"
+  },
+  {
+    "id": "trap",
+    "name": "Trap",
+    "type": "area",
+    "background": true,
+    "color": "47, 158, 0"
+  },
+  {
+    "id": "trapBox",
+    "name": "Trap Box",
+    "type": "basic"
+  },
+  {
+    "id": "collapsibleFloor",
+    "name": "Collapsible Floor",
+    "type": "area",
+    "background": true,
+    "color": "127, 0, 0"
+  },
+  {
+    "id": "drop",
+    "name": "Drop",
+    "type": "basic"
+  },
+  {
+    "id": "alarm",
+    "name": "Alarm",
+    "type": "basic"
+  },
+  {
+    "id": "disabler",
+    "name": "Disabler",
+    "type": "basic"
+  },
+  {
+    "id": "activator",
+    "name": "Activator",
+    "type": "basic"
+  },
+  {
+    "id": "lever",
+    "name": "Lever",
+    "type": "basic"
+  },
+  {
+    "id": "valve",
+    "name": "Valve",
+    "type": "basic"
+  },
+  {
+    "id": "rune",
+    "name": "Rune",
+    "type": "basic"
+  },
+  {
+    "id": "leverLocked",
+    "name": "Locked Lever",
+    "type": "basic"
+  },
+  {
+    "id": "valveLocked",
+    "name": "Locked Valve",
+    "type": "basic"
+  },
+  {
+    "id": "runeLocked",
+    "name": "Locked Rune",
+    "type": "basic"
+  },
+  {
+    "id": "label",
+    "name": "Label",
+    "type": "text",
+    "hidden": true,
+    "color": "255, 255, 0",
+    "pointer": false
+  },
+  {
+    "id": "call-out",
+    "name": "Call-out",
+    "type": "text",
+    "hidden": true,
+    "color": "255, 255, 0",
+    "pointer": true
+  },
+  {
+    "id": "questItem",
+    "name": "Quest Item",
+    "type": "basic"
+  },
+  {
+    "id": "useQuestItem",
+    "name": "Use Quest Item Here",
+    "type": "basic"
+  },
+  {
+    "id": "friendlyNpc",
+    "name": "Friendly NPC",
+    "type": "basic"
+  },
+  {
+    "id": "shiftyNpc",
+    "name": "Shifty NPC",
+    "type": "basic"
+  },
+  {
+    "id": "shrine",
+    "name": "Shrine",
+    "icon": ".png",
+    "type": "basic",
+    "hidden": true
+  },
+  {
+    "id": "entrance",
+    "name": "Entrance",
+    "type": "basic",
+    "important": true,
+    "rotate": true
+  },
+  {
+    "id": "questExit",
+    "name": "Quest Exit",
+    "type": "basic"
+  },
+  {
+    "id": "portal",
+    "name": "Portal",
+    "type": "numbered",
+    "color": "0, 255, 255"
+  },
+  {
+    "id": "entrance2",
+    "name": "Entrance 2",
+    "type": "basic",
+    "important": true
+  },
+  {
+    "id": "partyGather",
+    "name": "Party Gather",
+    "type": "basic"
+  },
+  {
+    "id": "craftingStation",
+    "name": "Crafting Station",
+    "type": "basic"
+  },
+  {
+    "id": "trader",
+    "name": "Trader",
+    "type": "basic"
+  }
+]
