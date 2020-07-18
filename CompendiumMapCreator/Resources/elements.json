@@ -90,6 +90,21 @@
     "type": "basic"
   },
   {
+    "id": "doorBreakable",
+    "name": "Breakable Door",
+    "type": "basic"
+  },
+  {
+    "id": "doorLockedBreakable",
+    "name": "Locked/Breakable Door",
+    "type": "basic"
+  },
+  {
+    "id": "questItemLocked",
+    "name": "Quest Item/Locked Door",
+    "type": "basic"
+  },
+  {
     "id": "mapRelocate",
     "name": "Map Relocate",
     "type": "numbered",
@@ -245,5 +260,86 @@
     "id": "trader",
     "name": "Trader",
     "type": "basic"
+  },
+  {
+    "id": "questNextEntrance",
+    "name": "Next Quest Entrance",
+    "type": "basic"
+  },
+  {
+    "id": "airshipEntrance",
+    "name": "Airship Entrance",
+    "type": "basic"
+  },
+  {
+    "id": "auctioneer",
+    "name": "Auctioneer",
+    "type": "basic"
+  },
+  {
+    "id": "bank",
+    "name": "Bank",
+    "type": "basic"
+  },
+  {
+    "id": "challenge",
+    "name": "Challenge",
+    "type": "basic"
+  },
+  {
+    "id": "hirelingVendor",
+    "name": "Hireling Vendor",
+    "type": "basic"
+  },
+  {
+    "id": "mailbox",
+    "name": "Mailbox",
+    "type": "basic"
+  },
+  {
+    "id": "patronAgent",
+    "name": "Patron Agent",
+    "type": "basic"
+  },
+  {
+    "id": "pawnShop",
+    "name": "Pawn Shop",
+    "type": "basic"
+  },
+  {
+    "id": "tavern",
+    "name": "Tavern",
+    "type": "basic"
+  },
+  {
+    "id": "trainer",
+    "name": "Trainer",
+    "type": "basic"
+  },
+  {
+    "id": "vendor",
+    "name": "Vendor",
+    "type": "basic"
+  },
+  {
+    "id": "questPuzzle",
+    "name": "Puzzle",
+    "type": "basic"
+  },
+  {
+    "id": "chestEpic",
+    "name": "Epic Chest",
+    "type": "basic"
+  },
+  {
+    "id": "chestTrappedMob",
+    "name": "Mob Trapped Chest",
+    "type": "basic"
+  },
+  {
+    "id": "chestMimic",
+    "name": "Mimic Chest",
+    "type": "basic"
   }
+
 ]

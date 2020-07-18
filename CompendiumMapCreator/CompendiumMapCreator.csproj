@@ -23,6 +23,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Icons\airshipEntrance.png" />
+    <None Remove="Icons\Auctioneer.png" />
+    <None Remove="Icons\Bank.png" />
+    <None Remove="Icons\Challenge.png" />
+    <None Remove="Icons\hirelingVendor.png" />
+    <None Remove="Icons\Mailbox.png" />
+    <None Remove="Icons\patronAgent.png" />
+    <None Remove="Icons\pawnShop.png" />
+    <None Remove="Icons\questNextEntrance.png" />
+    <None Remove="Icons\questPuzzle.png" />
+    <None Remove="Icons\Tavern.png" />
+    <None Remove="Icons\Trainer.png" />
+    <None Remove="Icons\Vendor.png" />
     <None Remove="Resources\elements.json" />
     <None Remove="Resources\tools.json" />
   </ItemGroup>
