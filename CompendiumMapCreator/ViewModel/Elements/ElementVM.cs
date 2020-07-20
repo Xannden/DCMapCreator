@@ -11,6 +11,7 @@ namespace CompendiumMapCreator.ViewModel
 		private byte[] unkownData;
 		private int x;
 		private int y;
+		private bool isCopy;
 		private double opacity = 1;
 		private int rotation = 0;
 
@@ -19,6 +20,17 @@ namespace CompendiumMapCreator.ViewModel
 		public ElementId Id { get; }
 
 		public bool IsCopy { get; set; }
+		public bool IsCopy
+		{
+			get => this.isCopy;
+
+			set
+			{
+				this.isCopy = value;
+
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsCopy)));
+			}
+		}
 
 		public bool Optional { get; set; }
 
