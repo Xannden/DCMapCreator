@@ -23,7 +23,8 @@ namespace CompendiumMapCreator.ViewModel
 			}
 		}
 
-		public override string ToolTip => this.Text;
+		public override string ToolTip => this.Text != string.Empty ? this.Text : null;
+
 		public override ElementVM Clone()
 		{
 			return new LabelElementVM(this.Id, this.Number);
@@ -32,7 +33,7 @@ namespace CompendiumMapCreator.ViewModel
 		protected override void WriteData(BinaryWriter writer)
 		{
 			writer.Write(this.Number);
-			writer.Write(this.Text);
+			writer.Write(this.Text ?? string.Empty);
 		}
 
 		protected override void ReadData(BinaryReader reader, int dataLength)
