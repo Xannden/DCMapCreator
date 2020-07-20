@@ -12,6 +12,7 @@ namespace CompendiumMapCreator.ViewModel
 		private int x;
 		private int y;
 		private double opacity = 1;
+		private int rotation = 0;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
@@ -45,6 +46,18 @@ namespace CompendiumMapCreator.ViewModel
 			}
 		}
 
+		public int Rotation
+		{
+			get => this.rotation;
+
+			set
+			{
+				this.rotation = value;
+
+				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.Rotation)));
+			}
+		}
+
 		public double Opacity
 		{
 			get => this.opacity;
@@ -67,7 +80,9 @@ namespace CompendiumMapCreator.ViewModel
 
 		public bool Hidden => this.Element.Hidden;
 
-		public byte Rotation { get; private set; }
+		public int CenterX => this.Width / 2;
+
+		public int CenterY => this.Height / 2;
 
 		public virtual Image Image => this.image ?? (this.image = Image.GetImageFromElementId(this.Id));
 
@@ -131,6 +146,12 @@ namespace CompendiumMapCreator.ViewModel
 				dataLength = reader.ReadInt32();
 			}
 
+			if (project.SupportsRotation && element.CanRotate)
+			{
+				element.Rotation = reader.ReadInt32();
+				dataLength -= sizeof(int);
+			}
+
 			element.ReadData(reader, dataLength);
 
 			return element;
@@ -138,10 +159,14 @@ namespace CompendiumMapCreator.ViewModel
 
 		public void RotateCC()
 		{
+			this.Rotation -= 90;
+			this.Rotation %= 360;
 		}
 
 		public void RotateCW()
 		{
+			this.Rotation += 90;
+			this.Rotation %= 360;
 		}
 
 		public bool Contains(ImagePoint point)
@@ -164,6 +189,11 @@ namespace CompendiumMapCreator.ViewModel
 			// Handle extra data
 			long start = writer.BaseStream.Position;
 			writer.Write(0); // write temp data to move the stream foreword
+
+			if (this.CanRotate)
+			{
+				writer.Write(this.Rotation);
+			}
 
 			this.WriteData(writer);
 

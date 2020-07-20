@@ -98,6 +98,9 @@
                         <converter:AddConverter x:Key="Add" />
                         <DataTemplate DataType="{x:Type vm:ElementVM}">
                             <Controls:OptionalBorder ShouldDisplay="{Binding Optional}">
+                                <Controls:OptionalBorder.RenderTransform>
+                                    <RotateTransform Angle="{Binding Rotation, Mode=OneWay}" CenterX="{Binding CenterX}" CenterY="{Binding CenterY}" />
+                                </Controls:OptionalBorder.RenderTransform>
                                 <Border Opacity="{Binding Opacity}" BorderThickness="1">
                                     <Border.Resources>
                                         <converter:EqualsToBrushConverter x:Key="EqualsToBrushConverter" IsFalse="Transparent" IsTrue="#7F87CEFA" />
@@ -114,12 +117,13 @@
                                             <BooleanToVisibilityConverter x:Key="boolToVisibility" />
                                         </Grid.Resources>
                                         <Image  Source="{Binding Image.BitmapImage}" Width="{Binding Width}" Height="{Binding Height}" ToolTip="{Binding ToolTip}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True">
+
                                             <Image.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy" />
                                                     <MenuItem Header="Delete" Click="Delete_Click" InputGestureText="Del" />
-                                                    <!-- <MenuItem Header="Rotate Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateClockwise" />
-                                                    <MenuItem Header="Rotate Counter Clockwise" Visibility="{Binding Converter={StaticResource RotateVisibile}}" Click="RotateCounterClockwise" /> -->
+                                                    <MenuItem Header="Rotate Clockwise" Visibility="{Binding CanRotate, Converter={StaticResource boolToVisibility}}" Click="RotateClockwise" />
+                                                    <MenuItem Header="Rotate Counter Clockwise" Visibility="{Binding CanRotate, Converter={StaticResource boolToVisibility}}" Click="RotateCounterClockwise" />
                                                     <MenuItem Header="Possible Location" IsCheckable="True" IsChecked="{Binding Optional}" />
                                                 </ContextMenu>
                                             </Image.ContextMenu>

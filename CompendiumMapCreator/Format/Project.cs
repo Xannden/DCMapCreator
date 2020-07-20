@@ -333,6 +333,8 @@ namespace CompendiumMapCreator.Format
 
 		internal virtual bool SupportsExtraData => true;
 
+		internal virtual bool SupportsRotation => true;
+
 		private void Load(BinaryReader reader)
 		{
 			this.Image = this.ReadImage(reader);
@@ -345,6 +347,7 @@ namespace CompendiumMapCreator.Format
 			for (int i = 0; i < count; i++)
 			{
 				int id = reader.ReadInt32();
+
 				ElementVM e = ElementVM.ReadElement(reader, table[id], this);
 
 				if (e != null)

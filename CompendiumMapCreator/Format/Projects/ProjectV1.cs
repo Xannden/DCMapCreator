@@ -22,6 +22,8 @@ namespace CompendiumMapCreator.Format.Projects
 
 		internal override bool SupportsExtraData => false;
 
+		internal override bool SupportsRotation => false;
+
 		protected override Dictionary<int, ElementId> ReadElementTable(BinaryReader reader)
 		{
 			return new Dictionary<int, ElementId>
