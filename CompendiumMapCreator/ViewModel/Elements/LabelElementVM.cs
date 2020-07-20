@@ -24,6 +24,10 @@ namespace CompendiumMapCreator.ViewModel
 		}
 
 		public override string ToolTip => this.Text;
+		public override ElementVM Clone()
+		{
+			return new LabelElementVM(this.Id, this.Number);
+		}
 
 		protected override void WriteData(BinaryWriter writer)
 		{
