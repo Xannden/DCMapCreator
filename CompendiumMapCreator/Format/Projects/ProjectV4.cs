@@ -47,7 +47,7 @@ namespace CompendiumMapCreator.Format.Projects
 				[22] = new ElementId("activator"),
 				[23] = new ElementId("lever"),
 				[24] = new ElementId("valve"),
-				[25] = new ElementId("Rune"),
+				[25] = new ElementId("rune"),
 				[26] = new ElementId("label"),
 				[27] = new ElementId("questItem"),
 				[28] = new ElementId("useQuestItem"),
