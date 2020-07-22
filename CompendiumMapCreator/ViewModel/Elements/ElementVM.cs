@@ -170,7 +170,24 @@ namespace CompendiumMapCreator.ViewModel
 
 			if (project.SupportsRotation && element.CanRotate)
 			{
-				element.Rotation = reader.ReadInt32();
+				int value = reader.ReadInt32();
+
+				switch (value)
+				{
+					case 1:
+						value = 90;
+						break;
+
+					case 2:
+						value = 180;
+						break;
+
+					case 3:
+						value = 270;
+						break;
+				}
+
+				element.Rotation = value;
 				dataLength -= sizeof(int);
 			}
 
