@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows;
 using CompendiumMapCreator.Data;
 using CompendiumMapCreator.Edits;
+using CompendiumMapCreator.Format.Export;
 using CompendiumMapCreator.Format.Projects;
 
 //using CompendiumMapCreator.Format.Projects;
@@ -215,7 +216,7 @@ namespace CompendiumMapCreator.Format
 
 		public void Export(bool addLegend, string file)
 		{
-			//Exporter.Run(file, this.Image, this.Elements, addLegend, this.Title);
+			Exporter.Run(file, this.Image, this.Elements, addLegend, this.Title);
 		}
 
 		public bool HasUnsaved() => this.saved.gen != this.Edits.Generation || this.saved.count != this.Edits.Count;
@@ -348,7 +349,12 @@ namespace CompendiumMapCreator.Format
 			{
 				int id = reader.ReadInt32();
 
-				ElementVM e = ElementVM.ReadElement(reader, table[id], this);
+				if (!table.TryGetValue(id, out ElementId eId))
+				{
+					continue;
+				}
+
+				ElementVM e = ElementVM.ReadElement(reader, eId, this);
 
 				if (e != null)
 				{
