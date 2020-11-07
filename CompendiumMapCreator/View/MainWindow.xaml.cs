@@ -478,8 +478,14 @@ namespace CompendiumMapCreator
 			}
 		}
 
-		private void BitmapImage_ImageFailed(object sender, ExceptionRoutedEventArgs e)
+		private void LabelWindow_Click(object sender, RoutedEventArgs e)
 		{
+			LabelWindow window = new LabelWindow()
+			{
+				Owner = this,
+			};
+
+			window.Show();
 		}
 	}
 }

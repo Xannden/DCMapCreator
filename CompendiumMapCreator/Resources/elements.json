@@ -20,6 +20,22 @@
     "type": "basic"
   },
   {
+    "id": "chestEpic",
+    "name": "Epic Chest",
+    "type": "basic"
+  },
+  {
+    "id": "chestMimic",
+    "name": "Mimic Chest",
+    "type": "basic"
+  },
+  {
+    "id": "chestTrappedMob",
+    "name": "Mob Trapped Chest",
+    "type": "basic"
+  },
+
+  {
     "id": "anyCollectible",
     "name": "Any Collectible",
     "type": "basic",
@@ -223,8 +239,14 @@
     "hidden": true
   },
   {
+    "id": "questPuzzle",
+    "name": "Puzzle",
+    "type": "basic"
+  },
+  {
     "id": "entrance",
     "name": "Entrance",
+    "exportName": "Dungeon Entrance",
     "type": "basic",
     "important": true,
     "rotate": true
@@ -235,16 +257,15 @@
     "type": "basic"
   },
   {
+    "id": "questNextEntrance",
+    "name": "Next Quest Entrance",
+    "type": "basic"
+  },
+  {
     "id": "portal",
     "name": "Portal",
     "type": "numbered",
     "color": "0, 255, 255"
-  },
-  {
-    "id": "entrance2",
-    "name": "Entrance 2",
-    "type": "basic",
-    "important": true
   },
   {
     "id": "partyGather",
@@ -261,11 +282,7 @@
     "name": "Trader",
     "type": "basic"
   },
-  {
-    "id": "questNextEntrance",
-    "name": "Next Quest Entrance",
-    "type": "basic"
-  },
+
   {
     "id": "airshipEntrance",
     "name": "Airship Entrance",
@@ -285,6 +302,12 @@
     "id": "challenge",
     "name": "Challenge",
     "type": "basic"
+  },
+  {
+    "id": "entrance2",
+    "name": "Entrance 2",
+    "type": "basic",
+    "important": true
   },
   {
     "id": "hirelingVendor",
@@ -320,25 +343,6 @@
     "id": "vendor",
     "name": "Vendor",
     "type": "basic"
-  },
-  {
-    "id": "questPuzzle",
-    "name": "Puzzle",
-    "type": "basic"
-  },
-  {
-    "id": "chestEpic",
-    "name": "Epic Chest",
-    "type": "basic"
-  },
-  {
-    "id": "chestTrappedMob",
-    "name": "Mob Trapped Chest",
-    "type": "basic"
-  },
-  {
-    "id": "chestMimic",
-    "name": "Mimic Chest",
-    "type": "basic"
   }
+
 ]

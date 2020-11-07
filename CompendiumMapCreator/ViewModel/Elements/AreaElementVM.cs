@@ -1,10 +1,11 @@
 ﻿using System.IO;
 using System.Windows.Media;
 using CompendiumMapCreator.Data;
+using CompendiumMapCreator.ViewModel.Elements;
 
 namespace CompendiumMapCreator.ViewModel
 {
-	public class AreaElementVM : ElementVM
+	public class AreaElementVM : BackgroundElementVM
 	{
 		private int width;
 		private int height;
@@ -22,7 +23,9 @@ namespace CompendiumMapCreator.ViewModel
 
 		public override int Width => this.width;
 
-		public SolidColorBrush Color => new SolidColorBrush(System.Windows.Media.Color.FromRgb(this.Element.Color[0], this.Element.Color[1], this.Element.Color[2]));
+		public SolidColorBrush ColorBrush => new SolidColorBrush(System.Windows.Media.Color.FromRgb(this.Element.Color[0], this.Element.Color[1], this.Element.Color[2]));
+
+		public System.Drawing.Color Color => System.Drawing.Color.FromArgb(this.Element.Color[0], this.Element.Color[1], this.Element.Color[2]);
 
 		public override ElementVM Clone()
 		{

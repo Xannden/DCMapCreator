@@ -102,15 +102,15 @@ namespace CompendiumMapCreator.ViewModel
 
 		public bool Hidden => this.Element.Hidden;
 
-		public int CenterX => this.Width / 2;
+		public double CenterX => (this.Width / 2.0) + 1;
 
-		public int CenterY => this.Height / 2;
+		public double CenterY => (this.Height / 2.0) + 1;
 
 		public virtual Image Image => this.image ?? (this.image = Image.GetImageFromElementId(this.Id));
 
 		public virtual string ToolTip { get; }
 
-		protected ElementData Element { get; }
+		internal ElementData Element { get; }
 
 		protected ElementVM(ElementId id)
 		{
@@ -127,15 +127,15 @@ namespace CompendiumMapCreator.ViewModel
 		{
 			ElementData data = App.Config.GetElement(id);
 
-			if (data.Type == "numbered")
+			if (data?.Type == "numbered")
 			{
 				return new NumberedElementVM(id, 0);
 			}
-			else if (data.Type == "text")
+			else if (data?.Type == "text")
 			{
 				return new LabelElementVM(id, 0);
 			}
-			else if (data.Type == "area")
+			else if (data?.Type == "area")
 			{
 				return new AreaElementVM(id, 8, 8);
 			}
@@ -262,7 +262,7 @@ namespace CompendiumMapCreator.ViewModel
 
 		protected virtual void ReadData(BinaryReader reader, int dataLength)
 		{
-			if (dataLength == 0)
+			if (dataLength <= 0)
 			{
 				return;
 			}

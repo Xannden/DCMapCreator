@@ -97,6 +97,7 @@ namespace CompendiumMapCreator.Data
 		{
 			Utf8JsonReader reader = new Utf8JsonReader(Resources.elements);
 
+			int order = 0;
 			while (reader.Read())
 			{
 				switch (reader.TokenType)
@@ -104,7 +105,16 @@ namespace CompendiumMapCreator.Data
 					case JsonTokenType.StartObject:
 						ElementData data = ElementData.ReadElementObject(reader);
 
+						data.Order = order;
+
+						if (data.Important)
+						{
+							data.Order = -1;
+						}
+
 						this.elements.Add(data.Id, data);
+
+						order++;
 						break;
 				}
 			}

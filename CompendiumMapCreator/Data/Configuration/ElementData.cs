@@ -7,7 +7,11 @@ namespace CompendiumMapCreator.Data
 	{
 		public ElementId Id { get; private set; }
 
+		public int Order { get; set; }
+
 		public string Name { get; private set; }
+
+		public string ExportName { get; private set; }
 
 		public string ToolTip { get; private set; }
 
@@ -24,6 +28,18 @@ namespace CompendiumMapCreator.Data
 		public byte[] Color { get; private set; }
 
 		public override string ToString() => $"{this.Id.ToString()}, {this.Type}";
+
+		public override bool Equals(object obj)
+		{
+			if (obj is ElementData d)
+			{
+				return this.Id == d.Id;
+			}
+			else
+			{
+				return false;
+			}
+		}
 
 		private ElementData()
 		{
@@ -53,6 +69,10 @@ namespace CompendiumMapCreator.Data
 
 							case "name":
 								element.Name = reader.GetString();
+								break;
+
+							case "exportName":
+								element.ExportName = reader.GetString();
 								break;
 
 							case "type":

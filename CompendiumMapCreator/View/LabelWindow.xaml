@@ -1,0 +1,30 @@
+﻿<Window x:Class="CompendiumMapCreator.View.LabelWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CompendiumMapCreator.View"
+        xmlns:vm="clr-namespace:CompendiumMapCreator.ViewModel"
+        mc:Ignorable="d"
+        Title="LabelWIndow" Height="450" Width="300">
+    <Window.DataContext>
+        <vm:LabelWindowVM />
+    </Window.DataContext>
+    <Grid>
+
+        <ListView ItemsSource="{Binding Lables}">
+            <ListView.ItemTemplate>
+                <DataTemplate DataType="{x:Type vm:LabelElementVM}">
+                    <Grid Height="30">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Image  Source="{Binding Image.BitmapImage}" Width="20" Height="20" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Text="{Binding Text}" VerticalAlignment="Center" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Window>

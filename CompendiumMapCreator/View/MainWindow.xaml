@@ -41,6 +41,7 @@
                 <MenuItem Header="Undo" InputGestureText="Ctrl+Z" Click="Undo_Click" Focusable="False" />
                 <MenuItem Header="Redo" InputGestureText="Ctrl+Y" Click="Redo_Click" Focusable="False" />
                 <MenuItem Header="Change Map" Click="ChangeMap_Click" Focusable="False" />
+                <MenuItem Header="Label Window" Click="LabelWindow_Click" Focusable="False" />
             </MenuItem>
             <MenuItem Header="_Options" Focusable="False">
                 <MenuItem Header="Set Title" Click="AddTitle_Click" Focusable="False" />
@@ -56,7 +57,6 @@
 
         <TreeView Name="ToolsView" Grid.Row="2" ItemsSource="{Binding ToolList}" SelectedItemChanged="Tools_SelectedItemChanged" IsTabStop="False">
             <TreeView.Resources>
-
                 <HierarchicalDataTemplate DataType="{x:Type vm:ToolVM}" ItemsSource="{Binding Elements}">
                     <StackPanel Orientation="Horizontal" Margin="0,1,0,1" ToolTip="{Binding ToolTip}">
                         <Image Height="18" Width="18" Margin="0,0,4,0" Source="{Binding Icon.BitmapImage}" RenderOptions.BitmapScalingMode="NearestNeighbor"  SnapsToDevicePixels="True" />
@@ -115,7 +115,6 @@
                                     </Border.BorderBrush>
 
                                     <Grid Width="{Binding Width}" Height="{Binding Height}">
-
                                         <Image  Source="{Binding Image.BitmapImage}" Width="{Binding Width}" Height="{Binding Height}" ToolTip="{Binding ToolTip}" RenderOptions.BitmapScalingMode="NearestNeighbor" SnapsToDevicePixels="True">
 
                                             <Image.ContextMenu>
@@ -218,7 +217,7 @@
                                         </MultiBinding>
                                     </Border.BorderBrush>
 
-                                    <Rectangle Width="{Binding Width}" Height="{Binding Height}" Fill="{Binding Color}" ToolTip="{Binding ToolTip}" />
+                                    <Rectangle Width="{Binding Width}" Height="{Binding Height}" Fill="{Binding ColorBrush}" ToolTip="{Binding ToolTip}" />
 
                                     <Border.ContextMenu>
                                         <ContextMenu>

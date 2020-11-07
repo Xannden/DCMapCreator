@@ -22,7 +22,25 @@ namespace CompendiumMapCreator
 			}
 			else
 			{
-				Image image = new Image(GetImageUri(fileName), Rotation.Rotate0);
+				Image image = new Image(GetImageUri(fileName));
+
+				Cache.Add(fileName, image);
+
+				return image;
+			}
+		}
+
+		public static Image GetImageFromFileName(string name)
+		{
+			string fileName = name + ".png";
+
+			if (Cache.TryGetValue(fileName, out Image value))
+			{
+				return value;
+			}
+			else
+			{
+				Image image = new Image(GetImageUri(fileName));
 
 				Cache.Add(fileName, image);
 
@@ -38,7 +56,7 @@ namespace CompendiumMapCreator
 			}
 			else
 			{
-				Image image = new Image(GetImageUri(item.Icon), Rotation.Rotate0);
+				Image image = new Image(GetImageUri(item.Icon));
 
 				Cache.Add(item.Icon, image);
 
@@ -56,29 +74,29 @@ namespace CompendiumMapCreator
 
 		public int Height => this.DrawingImage.Height;
 
-		public Image(byte[] data, Rotation rotation = Rotation.Rotate0)
+		public Image(byte[] data)
 		{
-			this.Load(new MemoryStream(data, 0, data.Length, false, true), rotation);
+			this.Load(new MemoryStream(data, 0, data.Length, false, true));
 		}
 
-		public Image(MemoryStream stream, Rotation rotation = Rotation.Rotate0)
+		public Image(MemoryStream stream)
 		{
-			this.Load(stream, rotation);
+			this.Load(stream);
 		}
 
-		internal Image(string uri, Rotation rotation = Rotation.Rotate0)
+		internal Image(string uri)
 		{
 			Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(uri);
 
 			byte[] data = new BinaryReader(stream).ReadBytes((int)stream.Length);
 
-			this.Load(new MemoryStream(data, 0, data.Length, false, true), rotation);
+			this.Load(new MemoryStream(data, 0, data.Length, false, true));
 		}
 
 		internal static string GetImageUri(string fileName)
 			=> "CompendiumMapCreator.Icons." + fileName.Replace('\\', '.').Replace('/', '.');
 
-		private void Load(MemoryStream stream, Rotation rotation)
+		private void Load(MemoryStream stream)
 		{
 			this.Data = stream;
 
@@ -86,27 +104,11 @@ namespace CompendiumMapCreator
 			this.BitmapImage.BeginInit();
 			this.BitmapImage.CacheOption = BitmapCacheOption.OnLoad;
 			this.BitmapImage.StreamSource = this.Data;
-			this.BitmapImage.Rotation = rotation;
 			this.BitmapImage.EndInit();
 
 			this.DrawingImage = (Bitmap)Bitmap.FromStream(this.Data);
 
 			this.DrawingImage.SetResolution(96, 96);
-
-			switch (rotation)
-			{
-				case Rotation.Rotate90:
-					this.DrawingImage.RotateFlip(RotateFlipType.Rotate90FlipNone);
-					break;
-
-				case Rotation.Rotate180:
-					this.DrawingImage.RotateFlip(RotateFlipType.Rotate180FlipNone);
-					break;
-
-				case Rotation.Rotate270:
-					this.DrawingImage.RotateFlip(RotateFlipType.Rotate270FlipNone);
-					break;
-			}
 		}
 
 		#region IDisposable Support

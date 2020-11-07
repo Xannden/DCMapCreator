@@ -73,6 +73,13 @@ namespace CompendiumMapCreator.Format
 			}
 		}
 
+		internal virtual bool SupportsOptional => true;
+
+		internal virtual bool SupportsCopy => true;
+
+		internal virtual bool SupportsExtraData => true;
+
+		internal virtual bool SupportsRotation => true;
 		public static Project FromImage(Image image) => new ProjectV6(image);
 
 		public static Project Load(ref string initialDirectory)
@@ -327,14 +334,6 @@ namespace CompendiumMapCreator.Format
 		}
 
 		protected abstract Dictionary<int, ElementId> ReadElementTable(BinaryReader reader);
-
-		internal virtual bool SupportsOptional => true;
-
-		internal virtual bool SupportsCopy => true;
-
-		internal virtual bool SupportsExtraData => true;
-
-		internal virtual bool SupportsRotation => true;
 
 		private void Load(BinaryReader reader)
 		{

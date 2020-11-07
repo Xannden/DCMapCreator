@@ -121,10 +121,10 @@
       "mailbox",
       "patronAgent",
       "pawnShop",
-      "vendor",
       "tavern",
       "trader",
-      "trainer"
+      "trainer",
+      "vendor"
     ]
   }
 ]
