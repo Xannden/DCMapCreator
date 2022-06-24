@@ -63,6 +63,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Updater\Update.csproj" />
+    <ProjectReference Include="..\Updater\Update.csproj" />
   </ItemGroup>
 
   <ItemGroup>

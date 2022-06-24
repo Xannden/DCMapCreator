@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29001.49
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompendiumMapCreator", "CompendiumMapCreator\CompendiumMapCreator.csproj", "{67CE7729-BA90-4190-8C60-8AC8A9AC140E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Update", "..\Updater\Update.csproj", "{86A8034D-1D12-4690-8CFD-834479D0D344}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Update", "Updater\Update.csproj", "{1AC51C82-8876-483E-A403-5370DBF26E1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{67CE7729-BA90-4190-8C60-8AC8A9AC140E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67CE7729-BA90-4190-8C60-8AC8A9AC140E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67CE7729-BA90-4190-8C60-8AC8A9AC140E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{86A8034D-1D12-4690-8CFD-834479D0D344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{86A8034D-1D12-4690-8CFD-834479D0D344}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{86A8034D-1D12-4690-8CFD-834479D0D344}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{86A8034D-1D12-4690-8CFD-834479D0D344}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AC51C82-8876-483E-A403-5370DBF26E1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AC51C82-8876-483E-A403-5370DBF26E1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AC51C82-8876-483E-A403-5370DBF26E1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AC51C82-8876-483E-A403-5370DBF26E1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
